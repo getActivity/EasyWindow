@@ -13,16 +13,16 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:2.0'
+        implementation 'com.hjq:xtoast:2.5'
     }
 
 #### 使用案例
 
-    new XToast(XToastActivity.this) // 传入 Application 表示设置成全局的
+    new XToast(XToastActivity.this) // 传入 Application 对象表示设置成全局的
             .setView(R.layout.toast_hint)
-            .setDraggable() // 设置成可拖拽的
-			.setDuration(1000) // 设置显示时长
-			.setAnimStyle(android.R.style.Animation_Translucent) // 设置动画样式
+            //.setDraggable() // 设置成可拖拽的
+            .setDuration(1000) // 设置显示时长
+            .setAnimStyle(android.R.style.Animation_Translucent) // 设置动画样式
             .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
             .setText(android.R.id.message, "点我消失")
             .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
@@ -31,6 +31,8 @@
                 public void onClick(XToast toast, TextView view) {
 					// 点击这个 View 后消失
                     toast.cancel();
+                    // 跳转到某个Activity
+                    // toast.startActivity(intent);
                 }
             })
             .show();
@@ -57,11 +59,11 @@
 
 * 架构工程：[AndroidProject](https://github.com/getActivity/AndroidProject)
 
-* 权限封装：[XXPermissions](https://github.com/getActivity/XXPermissions)
+* 权限框架：[XXPermissions](https://github.com/getActivity/XXPermissions)
 
-* 吐司封装：[ToastUtils](https://github.com/getActivity/ToastUtils)
+* 吐司框架：[ToastUtils](https://github.com/getActivity/ToastUtils)
 
-* 标题栏封装：[TitleBar](https://github.com/getActivity/TitleBar)
+* 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
 
 #### Android技术讨论Q群：78797078
 
@@ -72,7 +74,7 @@
 ## License
 
 ```text
-Copyright 2018 Huang JinQun
+Copyright 2019 Huang JinQun
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

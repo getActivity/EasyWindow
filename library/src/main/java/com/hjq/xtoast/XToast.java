@@ -1,9 +1,9 @@
 package com.hjq.xtoast;
 
-import android.annotation.IdRes;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -28,7 +28,7 @@ import java.util.Timer;
 public class XToast<X extends XToast> {
 
     // 当前是否已经显示
-    private boolean isShow;
+    private volatile boolean isShow;
 
     // 自定义拖动处理
     private AbsDraggable mDraggable;
@@ -84,9 +84,16 @@ public class XToast<X extends XToast> {
         mWindowParams.gravity = Gravity.CENTER;
     }
 
-
     public WindowManager getWindowManager() {
         return mWindowManager;
+    }
+
+    /**
+     * 添加标志位
+     */
+    public X addFlags(int flags) {
+        mWindowParams.flags |= flags;
+        return (X) this;
     }
 
     /**
@@ -200,6 +207,23 @@ public class XToast<X extends XToast> {
     }
 
     /**
+     * 获取上下文对象
+     */
+    public Context getContext() {
+        return mContext;
+    }
+
+    /**
+     * 跳转 Activity
+     */
+    public void startActivity(Intent intent) {
+        if (!(mContext instanceof Activity)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        mContext.startActivity(intent);
+    }
+
+    /**
      * 显示
      */
     public void show() {
@@ -292,7 +316,7 @@ public class XToast<X extends XToast> {
     /**
      * 设置可见状态
      */
-    public X setVisibility(@IdRes int id, @View.Visibility int visibility) {
+    public X setVisibility(int id, @View.Visibility int visibility) {
         findViewById(id).setVisibility(visibility);
         return (X) this;
     }
@@ -300,11 +324,19 @@ public class XToast<X extends XToast> {
     /**
      * 设置文本
      */
-    public X setText(@IdRes int id, int resId) {
+    public X setText(int resId) {
+        return setText(android.R.id.message, resId);
+    }
+
+    public X setText(int id, int resId) {
         return setText(id, mContext.getResources().getString(resId));
     }
 
-    public X setText(@IdRes int id, CharSequence text) {
+    public X setText(CharSequence text) {
+        return setText(android.R.id.message, text);
+    }
+
+    public X setText(int id, CharSequence text) {
         ((TextView) findViewById(id)).setText(text);
         return (X) this;
     }
@@ -312,11 +344,11 @@ public class XToast<X extends XToast> {
     /**
      * 设置背景
      */
-    public X setBackground(@IdRes int id, int resId) {
+    public X setBackground(int id, int resId) {
         return setBackground(id, mContext.getResources().getDrawable(resId));
     }
 
-    public X setBackground(@IdRes int id, Drawable drawable) {
+    public X setBackground(int id, Drawable drawable) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             findViewById(id).setBackground(drawable);
         } else {
@@ -328,11 +360,11 @@ public class XToast<X extends XToast> {
     /**
      * 设置图片
      */
-    public X setImageDrawable(@IdRes int id, int resId) {
+    public X setImageDrawable(int id, int resId) {
         return setBackground(id, mContext.getResources().getDrawable(resId));
     }
 
-    public X setImageDrawable(@IdRes int id, Drawable drawable) {
+    public X setImageDrawable(int id, Drawable drawable) {
         ((ImageView) findViewById(id)).setImageDrawable(drawable);
         return (X) this;
     }
@@ -340,7 +372,7 @@ public class XToast<X extends XToast> {
     /**
      * 设置点击事件
      */
-    public X setOnClickListener(@IdRes int id, OnClickListener l) {
+    public X setOnClickListener(int id, OnClickListener l) {
         new ViewClickHandler(this, findViewById(id), l);
         // 当前是否设置了不可触摸，如果是就移除掉
         if ((mWindowParams.flags & WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) != 0) {

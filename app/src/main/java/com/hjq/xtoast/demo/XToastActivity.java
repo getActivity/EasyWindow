@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.OnClickListener;
 import com.hjq.xtoast.OnToastLifecycle;
 import com.hjq.xtoast.XToast;
@@ -30,6 +31,7 @@ public class XToastActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toast);
+        ToastUtils.init(getApplication());
     }
 
     public void show1(View v) {
@@ -131,7 +133,7 @@ public class XToastActivity extends AppCompatActivity {
                                         // 点击后跳转到拨打电话界面
                                         Intent intent = new Intent(Intent.ACTION_DIAL);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
+                                        toast.startActivity(intent);
                                     }
                                 })
                                 .show();
@@ -147,5 +149,14 @@ public class XToastActivity extends AppCompatActivity {
                                 .show();
                     }
                 });
+    }
+
+    public void show7(View v) {
+        new XToast(XToastActivity.this)
+                .setDuration(1000)
+                .setView(ToastUtils.getToast().getView())
+                .setAnimStyle(android.R.style.Animation_Translucent)
+                .setText(android.R.id.message, "就问你溜不溜")
+                .show();
     }
 }

@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 26
+
     defaultConfig {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 14
-        targetSdkVersion 27
-        versionCode 20
-        versionName "2.0"
+        targetSdkVersion 26
+        versionCode 25
+        versionName "2.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -22,10 +22,14 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':library')
-    
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:design:27.1.1'
 
-    implementation 'com.hjq:xxpermissions:5.2'
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:design:26.1.0'
+
+    // 权限请求框架：https://github.com/getActivity/XXPermissions
+    implementation 'com.hjq:xxpermissions:5.3'
+    // 标题栏：https://github.com/getActivity/TitleBar
     implementation 'com.hjq:titlebar:5.0'
+    // 吐司工具类：https://github.com/getActivity/ToastUtils
+    implementation 'com.hjq:toast:5.6'
 }
