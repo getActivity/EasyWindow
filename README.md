@@ -13,7 +13,7 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:2.5'
+        implementation 'com.hjq:xtoast:2.6'
     }
 
 #### 使用案例
@@ -29,7 +29,7 @@
 
                 @Override
                 public void onClick(XToast toast, TextView view) {
-					// 点击这个 View 后消失
+                    // 点击这个 View 后消失
                     toast.cancel();
                     // 跳转到某个Activity
                     // toast.startActivity(intent);

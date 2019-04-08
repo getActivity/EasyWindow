@@ -1,9 +1,7 @@
 package com.hjq.xtoast;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
-import android.os.Build;
 import android.os.Bundle;
 
 /**
@@ -12,17 +10,18 @@ import android.os.Bundle;
  *    time   : 2019/01/04
  *    desc   : Toast 生命周期管理，防止内存泄露
  */
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Activity mActivity;
     private XToast mToast;
 
-    ToastLifecycle(Activity activity, XToast toast) {
+    private ToastLifecycle(XToast toast, Activity activity) {
         mActivity = activity;
         mToast = toast;
+    }
 
-        activity.getApplication().registerActivityLifecycleCallbacks(this);
+    static void register(XToast toast, Activity activity) {
+        activity.getApplication().registerActivityLifecycleCallbacks(new ToastLifecycle(toast, activity));
     }
 
     @Override

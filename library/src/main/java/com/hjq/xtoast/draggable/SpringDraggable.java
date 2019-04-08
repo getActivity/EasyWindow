@@ -15,6 +15,8 @@ import com.hjq.xtoast.AbsDraggable;
  */
 public class SpringDraggable extends AbsDraggable {
 
+    private boolean isTouchMove;
+
     private int mViewDownX;
     private int mViewDownY;
 
@@ -28,11 +30,13 @@ public class SpringDraggable extends AbsDraggable {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                isTouchMove = false;
                 // 获取当前触摸点在 View 的位置
                 mViewDownX = (int) event.getX();
                 mViewDownY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                isTouchMove = true;
                 // 更新移动的位置
                 updateViewLayout(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
                 break;
@@ -51,7 +55,7 @@ public class SpringDraggable extends AbsDraggable {
                 startAnimation(rawMoveX, rawFinalX - mViewDownX, rawMoveY - mViewDownY);
                 break;
         }
-        return false;
+        return isTouchMove;
     }
 
     /**

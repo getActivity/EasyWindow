@@ -25,6 +25,7 @@ import java.util.Timer;
  *    time   : 2019/01/04
  *    desc   : 超级 Toast（能做 Toast 做不到的事，应付项目中的特殊需求）
  */
+@SuppressWarnings("unchecked")
 public class XToast<X extends XToast> {
 
     // 当前是否已经显示
@@ -51,15 +52,13 @@ public class XToast<X extends XToast> {
         this((Context) activity);
 
         // 跟随 Activity 的生命周期
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            new ToastLifecycle(activity, this);
-        }
+        ToastLifecycle.register(this, activity);
     }
 
     public XToast(Application application) {
         this((Context) application);
 
-        // 设置成全局的悬浮窗
+        // 设置成全局的悬浮窗，注意需要先申请悬浮窗权限，推荐使用：https://github.com/getActivity/XXPermissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mWindowParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
@@ -121,7 +120,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置可以自由拖动
+     * 设置拖动
      */
     public X setDraggable() {
         return setDraggable(new MovingDraggable());
@@ -216,6 +215,10 @@ public class XToast<X extends XToast> {
     /**
      * 跳转 Activity
      */
+    public void startActivity(Class<? extends Activity> cls) {
+        startActivity(new Intent(mContext, cls));
+    }
+
     public void startActivity(Intent intent) {
         if (!(mContext instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -226,7 +229,7 @@ public class XToast<X extends XToast> {
     /**
      * 显示
      */
-    public void show() {
+    public X show() {
         if (mRootView == null || mWindowParams == null) {
             throw new IllegalArgumentException("WindowParams and view cannot be empty");
         }
@@ -255,12 +258,14 @@ public class XToast<X extends XToast> {
                 mListener.onShow(this);
             }
         } catch (NullPointerException | IllegalStateException | WindowManager.BadTokenException ignored) {}
+
+        return (X) this;
     }
 
     /**
      * 取消
      */
-    public void cancel() {
+    public X cancel() {
         if (isShow) {
             try {
                 // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
@@ -274,6 +279,8 @@ public class XToast<X extends XToast> {
             // 当前没有显示
             isShow = false;
         }
+
+        return (X) this;
     }
 
     /**
@@ -373,8 +380,20 @@ public class XToast<X extends XToast> {
      * 设置点击事件
      */
     public X setOnClickListener(int id, OnClickListener l) {
-        new ViewClickHandler(this, findViewById(id), l);
-        // 当前是否设置了不可触摸，如果是就移除掉
+        new ViewClickWrapper(this, findViewById(id), l);
+        // 当前是否设置了不可触摸，如果是就擦除掉
+        if ((mWindowParams.flags & WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) != 0) {
+            mWindowParams.flags &= ~WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        }
+        return (X) this;
+    }
+
+    /**
+     * 设置点击事件
+     */
+    public X setOnTouchListener(int id, OnTouchListener l) {
+        new ViewTouchWrapper(this, findViewById(id), l);
+        // 当前是否设置了不可触摸，如果是就擦除掉
         if ((mWindowParams.flags & WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE) != 0) {
             mWindowParams.flags &= ~WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
         }

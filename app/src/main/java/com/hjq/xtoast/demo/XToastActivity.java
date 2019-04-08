@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.OnClickListener;
 import com.hjq.xtoast.OnToastLifecycle;
+import com.hjq.xtoast.OnTouchListener;
 import com.hjq.xtoast.XToast;
 import com.hjq.xtoast.draggable.SpringDraggable;
 
@@ -121,7 +123,7 @@ public class XToastActivity extends AppCompatActivity {
                 .request(new OnPermission() {
 
                     @Override
-                    public void hasPermission(List<String> granted, boolean isAll) {
+                    public void hasPermission(List<String> granted, final boolean isAll) {
 
                         new XToast(getApplication()) // 传入 Application 表示这个是一个全局的 Toast
                                 .setView(R.layout.toast_phone)
@@ -134,6 +136,19 @@ public class XToastActivity extends AppCompatActivity {
                                         Intent intent = new Intent(Intent.ACTION_DIAL);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         toast.startActivity(intent);
+                                    }
+                                })
+                                .setOnTouchListener(R.id.iv_toast_call_phone, new OnTouchListener() {
+
+                                    private boolean isMove;
+
+                                    @Override
+                                    public boolean onTouch(XToast toast, View view, MotionEvent event) {
+                                        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                                            isMove = true;
+                                        }
+                                        System.out.println("测试");
+                                        return isMove;
                                     }
                                 })
                                 .show();

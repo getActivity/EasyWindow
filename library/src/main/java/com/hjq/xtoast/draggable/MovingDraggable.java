@@ -14,23 +14,27 @@ import com.hjq.xtoast.AbsDraggable;
  */
 public class MovingDraggable extends AbsDraggable {
 
-    private int mDownX;
-    private int mDownY;
+    private boolean isTouchMove;
+
+    private int mViewDownX;
+    private int mViewDownY;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mDownX = (int) event.getX();
-                mDownY = (int) event.getY();
+                isTouchMove = false;
+                mViewDownX = (int) event.getX();
+                mViewDownY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                isTouchMove = true;
                 int moveX = (int) event.getRawX();
                 int moveY = (int) (event.getRawY() - getStatusBarHeight());
-                updateViewLayout(moveX - mDownX, moveY - mDownY);
+                updateViewLayout(moveX - mViewDownX, moveY - mViewDownY);
                 break;
         }
-        return false;
+        return isTouchMove;
     }
 }
