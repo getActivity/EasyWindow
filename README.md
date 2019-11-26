@@ -13,16 +13,20 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:2.6'
+        implementation 'com.hjq:xtoast:3.0'
     }
 
 #### 使用案例
 
-    new XToast(XToastActivity.this) // 传入 Application 对象表示设置成全局的
+    // 传入 Application 对象表示设置成全局的
+    new XToast(XToastActivity.this)
             .setView(R.layout.toast_hint)
-            //.setDraggable() // 设置成可拖拽的
-            .setDuration(1000) // 设置显示时长
-            .setAnimStyle(android.R.style.Animation_Translucent) // 设置动画样式
+            // 设置成可拖拽的
+            //.setDraggable()
+            // 设置显示时长
+            .setDuration(1000)
+            // 设置动画样式
+            .setAnimStyle(android.R.style.Animation_Translucent)
             .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
             .setText(android.R.id.message, "点我消失")
             .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
@@ -53,11 +57,13 @@
 
 * 支持一键开启 Toast 拖拽功能
 
-* 支持 Toast 全局显示（需要权限）
+* 支持 Toast 全局显示（需要悬浮窗权限）
 
 #### 作者的其他开源项目
 
 * 架构工程：[AndroidProject](https://github.com/getActivity/AndroidProject)
+
+* 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp)
 
 * 权限框架：[XXPermissions](https://github.com/getActivity/XXPermissions)
 
@@ -65,11 +71,15 @@
 
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
 
+* 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
+
 #### Android技术讨论Q群：78797078
 
 #### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:
 
-![](pay_ali.png) ![](pay_wechat.png)
+![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_ali.png) ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_wechat.png)
+
+#### [点击查看捐赠列表](https://github.com/getActivity/Donate)
 
 ## License
 

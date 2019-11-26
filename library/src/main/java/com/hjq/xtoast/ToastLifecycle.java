@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/ToastUtils
+ *    github : https://github.com/getActivity/XToast
  *    time   : 2019/01/04
  *    desc   : Toast 生命周期管理，防止内存泄露
  */
@@ -15,13 +15,23 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
     private Activity mActivity;
     private XToast mToast;
 
-    private ToastLifecycle(XToast toast, Activity activity) {
+    ToastLifecycle(XToast toast, Activity activity) {
         mActivity = activity;
         mToast = toast;
     }
 
-    static void register(XToast toast, Activity activity) {
-        activity.getApplication().registerActivityLifecycleCallbacks(new ToastLifecycle(toast, activity));
+    /**
+     * 注册监听
+     */
+    void register() {
+        mActivity.getApplication().registerActivityLifecycleCallbacks(this);
+    }
+
+    /**
+     * 取消监听
+     */
+    void unregister() {
+        mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
     }
 
     @Override

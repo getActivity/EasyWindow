@@ -4,37 +4,37 @@ import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.hjq.xtoast.AbsDraggable;
+import com.hjq.xtoast.BaseDraggable;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/ToastUtils
+ *    github : https://github.com/getActivity/XToast
  *    time   : 2019/01/04
  *    desc   : 移动拖拽处理实现类
  */
-public class MovingDraggable extends AbsDraggable {
+public class MovingDraggable extends BaseDraggable {
 
-    private boolean isTouchMove;
-
-    private int mViewDownX;
-    private int mViewDownY;
+    private float mViewDownX;
+    private float mViewDownY;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                isTouchMove = false;
-                mViewDownX = (int) event.getX();
-                mViewDownY = (int) event.getY();
+                mViewDownX = event.getX();
+                mViewDownY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                isTouchMove = true;
-                int moveX = (int) event.getRawX();
-                int moveY = (int) (event.getRawY() - getStatusBarHeight());
-                updateViewLayout(moveX - mViewDownX, moveY - mViewDownY);
+                float rawMoveX = event.getRawX();
+                float rawMoveY = event.getRawY() - getStatusBarHeight();
+                updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
+                break;
+            case MotionEvent.ACTION_UP:
+                return mViewDownX != event.getX() || mViewDownY != event.getY();
+            default:
                 break;
         }
-        return isTouchMove;
+        return false;
     }
 }

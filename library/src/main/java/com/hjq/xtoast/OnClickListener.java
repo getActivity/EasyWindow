@@ -4,7 +4,7 @@ import android.view.View;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/ToastUtils
+ *    github : https://github.com/getActivity/XToast
  *    time   : 2019/01/04
  *    desc   : View 的点击事件封装
  */
