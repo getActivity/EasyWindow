@@ -16,6 +16,7 @@ import com.hjq.toast.ToastUtils;
 import com.hjq.xtoast.OnClickListener;
 import com.hjq.xtoast.OnToastListener;
 import com.hjq.xtoast.XToast;
+import com.hjq.xtoast.draggable.MovingDraggable;
 import com.hjq.xtoast.draggable.SpringDraggable;
 
 import java.util.List;
@@ -105,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我消失")
-                .setDraggable() // 设置成可拖拽的
+                // 设置成可拖拽的
+                .setDraggable(new MovingDraggable())
                 .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
 
                     @Override

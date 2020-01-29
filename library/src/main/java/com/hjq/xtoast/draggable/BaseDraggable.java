@@ -1,9 +1,11 @@
-package com.hjq.xtoast;
+package com.hjq.xtoast.draggable;
 
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
+
+import com.hjq.xtoast.XToast;
 
 /**
  *    author : Android 轮子哥
@@ -55,20 +57,25 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         return frame.top;
     }
 
-    public void updateLocation(float x, float y) {
+    protected void updateLocation(float x, float y) {
         updateLocation((int) x, (int) y);
     }
 
     /**
      * 更新 WindowManager 所在的位置
      */
-    public void updateLocation(int x, int y) {
+    protected void updateLocation(int x, int y) {
         if (mWindowParams.x != x || mWindowParams.y != y) {
             mWindowParams.x = x;
             mWindowParams.y = y;
             // 一定要先设置重心位置为左上角
             mWindowParams.gravity = Gravity.TOP | Gravity.START;
-            mWindowManager.updateViewLayout(mRootView, mWindowParams);
+            try {
+                mWindowManager.updateViewLayout(mRootView, mWindowParams);
+            } catch (IllegalArgumentException ignored) {
+                // 当 WindowManager 已经消失时调用会发生崩溃
+                // IllegalArgumentException: View not attached to window manager
+            }
         }
     }
 }

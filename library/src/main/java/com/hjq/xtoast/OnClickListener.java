@@ -9,5 +9,9 @@ import android.view.View;
  *    desc   : View 的点击事件封装
  */
 public interface OnClickListener<V extends View> {
+
+    /**
+     * 点击回调
+     */
     void onClick(XToast toast, V view);
 }

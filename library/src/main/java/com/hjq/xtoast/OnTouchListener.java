@@ -10,5 +10,9 @@ import android.view.View;
  *    desc   : View 的触摸事件封装
  */
 public interface OnTouchListener<V extends View> {
+
+    /**
+     * 触摸回调
+     */
     boolean onTouch(XToast toast, V view, MotionEvent event);
 }

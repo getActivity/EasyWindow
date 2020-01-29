@@ -9,12 +9,12 @@ package com.hjq.xtoast;
 public interface OnToastListener {
 
     /**
-     * 显示监听
+     * 显示回调
      */
     void onShow(XToast toast);
 
     /**
-     * 消失监听
+     * 消失回调
      */
     void onDismiss(XToast toast);
 }

@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 30
-        versionName "3.0"
+        versionCode 35
+        versionName "3.5"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,8 +32,6 @@ dependencies {
     implementation 'com.hjq:titlebar:6.0'
     // 吐司工具类：https://github.com/getActivity/ToastUtils
     implementation 'com.hjq:toast:8.0'
-
     // 内存泄漏捕捉：https://github.com/square/leakcanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0'
 }

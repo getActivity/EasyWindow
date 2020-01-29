@@ -13,7 +13,7 @@ import android.os.Bundle;
 final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Activity mActivity;
-    private XToast mToast;
+    private final XToast mToast;
 
     ToastLifecycle(XToast toast, Activity activity) {
         mActivity = activity;
@@ -48,6 +48,7 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
         // 一定要在 onPaused 方法中销毁掉，如果在 onDestroyed 方法中还是会导致内存泄露
         if (mActivity == activity && activity.isFinishing() && mToast.isShow()) {
             mToast.cancel();
+            mActivity = null;
         }
     }
 

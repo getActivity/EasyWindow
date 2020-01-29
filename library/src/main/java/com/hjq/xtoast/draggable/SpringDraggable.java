@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.hjq.xtoast.BaseDraggable;
 import com.hjq.xtoast.XToast;
 
 /**
@@ -18,8 +17,10 @@ import com.hjq.xtoast.XToast;
  */
 public class SpringDraggable extends BaseDraggable {
 
+    /** 屏幕高度 */
     private float mScreenWidth;
 
+    /** 手指按下的坐标 */
     private float mViewDownX;
     private float mViewDownY;
 
@@ -32,32 +33,38 @@ public class SpringDraggable extends BaseDraggable {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
-        // 获取当前触摸点在 屏幕 的位置
-        int rawMoveX = (int) event.getRawX();
-        int rawMoveY = (int) (event.getRawY() - getStatusBarHeight());
+        int rawMoveX;
+        int rawMoveY;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                // 获取当前触摸点在 View 的位置
+                // 记录按下的位置（相对 View 的坐标）
                 mViewDownX = (int) event.getX();
                 mViewDownY = (int) event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
+                // 记录移动的位置（相对屏幕的坐标）
+                rawMoveX = (int) event.getRawX();
+                rawMoveY = (int) (event.getRawY() - getStatusBarHeight());
                 // 更新移动的位置
                 updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
                 break;
             case MotionEvent.ACTION_UP:
+                // 记录移动的位置（相对屏幕的坐标）
+                rawMoveX = (int) event.getRawX();
+                rawMoveY = (int) (event.getRawY() - getStatusBarHeight());
                 // 自动回弹吸附
-                float rawFinalX;
+                final float rawFinalX;
                 if (rawMoveX < mScreenWidth / 2) {
+                    // 回弹到屏幕左边
                     rawFinalX = 0;
                 } else {
+                    // 回弹到屏幕右边
                     rawFinalX = mScreenWidth;
                 }
-                // updateLocation(endX - mViewDownX, mRawMoveY - mViewDownY);
                 // 从移动的点回弹到边界上
-                startAnimation(rawMoveX - mViewDownX, rawFinalX  - mViewDownX, rawMoveY- mViewDownY);
+                startAnimation(rawMoveX - mViewDownX, rawFinalX  - mViewDownX, rawMoveY - mViewDownY);
+                // 如果产生了移动就拦截这个事件（与按下的坐标不一致时）
                 return mViewDownX != (int) event.getX() || mViewDownY != (int) event.getY();
             default:
                 break;

@@ -13,7 +13,7 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:3.0'
+        implementation 'com.hjq:xtoast:3.5'
     }
 
 #### 使用案例
@@ -64,6 +64,8 @@
 * 架构工程：[AndroidProject](https://github.com/getActivity/AndroidProject)
 
 * 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp)
+
+* 日志框架：[Logcat](https://github.com/getActivity/Logcat)
 
 * 权限框架：[XXPermissions](https://github.com/getActivity/XXPermissions)
 

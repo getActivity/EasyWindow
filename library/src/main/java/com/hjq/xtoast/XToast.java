@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hjq.xtoast.draggable.BaseDraggable;
 import com.hjq.xtoast.draggable.MovingDraggable;
 
 /**
@@ -56,16 +57,13 @@ public class XToast<X extends XToast> {
     private XToast(Context context) {
         mContext = context;
         mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-
-        mWindowParams = new WindowManager.LayoutParams();
         // 配置一些默认的参数
+        mWindowParams = new WindowManager.LayoutParams();
         mWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
         mWindowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         mWindowParams.format = PixelFormat.TRANSLUCENT;
         mWindowParams.windowAnimations = android.R.style.Animation_Toast;
-        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         mWindowParams.packageName = context.getPackageName();
     }
 
@@ -75,7 +73,7 @@ public class XToast<X extends XToast> {
     public XToast(Activity activity) {
         this((Context) activity);
 
-        // 如果当前 Activity 是全屏模式，那么添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏位置上
+        // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏位置上
         if ((activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0) {
             addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
@@ -231,10 +229,25 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置重心
+     * 设置窗口重心
      */
     public X setGravity(int gravity) {
         mWindowParams.gravity = gravity;
+        if (isShow()) {
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口方向
+     *
+     * 自适应：ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+     * 横屏：ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+     * 竖屏：ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+     */
+    public X setOrientation(int orientation) {
+        mWindowParams.screenOrientation = orientation;
         if (isShow()) {
             update();
         }
@@ -495,6 +508,14 @@ public class XToast<X extends XToast> {
     }
     public X setHint(int id, CharSequence text) {
         ((TextView) findViewById(id)).setHint(text);
+        return (X) this;
+    }
+
+    /**
+     * 设置提示文本颜色
+     */
+    public X setHintColor(int id, int color) {
+        ((TextView) findViewById(id)).setHintTextColor(color);
         return (X) this;
     }
 
