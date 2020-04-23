@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(XToast toast, ImageView view) {
                                         // 点击后跳转到拨打电话界面
                                         Intent intent = new Intent(Intent.ACTION_DIAL);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         toast.startActivity(intent);
                                     }
                                 })

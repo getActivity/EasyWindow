@@ -63,8 +63,9 @@ public class XToast<X extends XToast> {
         mWindowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         mWindowParams.format = PixelFormat.TRANSLUCENT;
         mWindowParams.windowAnimations = android.R.style.Animation_Toast;
-        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         mWindowParams.packageName = context.getPackageName();
+        // 开启窗口常亮和设置可以触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
+        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
     }
 
     /**
@@ -73,8 +74,9 @@ public class XToast<X extends XToast> {
     public XToast(Activity activity) {
         this((Context) activity);
 
-        // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏位置上
         if ((activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0) {
+            // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏的位置上
+            // 如果不想让状态栏显示的时候把 WindowManager 顶下来，可以添加 FLAG_LAYOUT_IN_SCREEN，但是会导致软键盘无法调整窗口位置
             addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
@@ -104,7 +106,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 添加一个标志位
+     * 添加一个标记位
      */
     public X addWindowFlags(int flags) {
         mWindowParams.flags |= flags;
@@ -115,7 +117,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 移除一个标志位
+     * 移除一个标记位
      */
     public X removeWindowFlags(int flags) {
         mWindowParams.flags &= ~flags;
@@ -126,7 +128,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置标志位
+     * 设置标记位
      */
     public X setWindowFlags(int flags) {
         mWindowParams.flags = flags;
@@ -169,13 +171,10 @@ public class XToast<X extends XToast> {
      * 设置拖动规则
      */
     public X setDraggable(BaseDraggable draggable) {
-        // 当前是否设置了不可触摸，如果是就擦除掉
+        // 当前是否设置了不可触摸，如果是就擦除掉这个标记
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
-        // WindowManager 几个焦点总结：https://blog.csdn.net/zjx2014430/article/details/51776128
-        // 设置触摸范围为当前的 RootView，而不是整个 WindowManager
-        addWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         mDraggable = draggable;
         if (isShow()) {
             update();
@@ -562,30 +561,40 @@ public class XToast<X extends XToast> {
     /**
      * 设置点击事件
      */
+    public X setOnClickListener(OnClickListener listener) {
+        return setOnClickListener(mRootView, listener);
+    }
+
     public X setOnClickListener(int id, OnClickListener listener) {
-        new ViewClickWrapper(this, findViewById(id), listener);
+        return setOnClickListener(findViewById(id), listener);
+    }
+
+    private X setOnClickListener(View view, OnClickListener listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            if (isShow()) {
-                update();
-            }
         }
+        new ViewClickWrapper(this, view, listener);
         return (X) this;
     }
 
     /**
      * 设置触摸事件
      */
+    public X setOnTouchListener(OnTouchListener listener) {
+        return setOnTouchListener(mRootView, listener);
+    }
+
     public X setOnTouchListener(int id, OnTouchListener listener) {
-        new ViewTouchWrapper(this, findViewById(id), listener);
+        return setOnTouchListener(findViewById(id), listener);
+    }
+
+    private X setOnTouchListener(View view, OnTouchListener listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            if (isShow()) {
-                update();
-            }
         }
+        new ViewTouchWrapper(this, view, listener);
         return (X) this;
     }
 

@@ -13,7 +13,7 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:3.5'
+        implementation 'com.hjq:xtoast:5.0'
     }
 
 #### 使用案例
