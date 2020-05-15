@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ToastUtils.init(getApplication());
     }
 
     public void show1(View v) {
@@ -160,6 +159,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show7(View v) {
+        // 这里需要先初始化 ToastUtils，实际开发中这句代码应当放在 Application.onCreate 方法中
+        ToastUtils.init(getApplication());
+        // 将 ToastUtils 中的 View 转移给 XToast 来显示
         new XToast(MainActivity.this)
                 .setDuration(1000)
                 .setView(ToastUtils.getToast().getView())

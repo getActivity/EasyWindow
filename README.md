@@ -1,5 +1,7 @@
 # 超级 Toast
 
+> 码云地址：[Gitee](https://gitee.com/getActivity/XToast)
+
 > 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
 > 已投入公司项目多时，没有任何毛病，可胜任任何需求，[点击此处下载Demo](https://raw.githubusercontent.com/getActivity/XToast/master/XToast.apk)
@@ -13,7 +15,7 @@
 #### 集成步骤
 
     dependencies {
-        implementation 'com.hjq:xtoast:5.2'
+        implementation 'com.hjq:xtoast:5.3'
     }
 
 #### 使用案例
