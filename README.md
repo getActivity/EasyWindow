@@ -4,9 +4,7 @@
 
 > 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-> 已投入公司项目多时，没有任何毛病，可胜任任何需求，[点击此处下载Demo](https://raw.githubusercontent.com/getActivity/XToast/master/XToast.apk)
-
-> 想了解实现原理的可以点击此链接查看：[XToast](https://github.com/getActivity/XToast/blob/master/library/src/main/java/com/hjq/xtoast/XToast.java) 源码
+> 已投入公司项目多时，没有任何毛病，可胜任任何需求，[点击此处下载Demo](XToast.apk)
 
 ![](XToast.gif)
 

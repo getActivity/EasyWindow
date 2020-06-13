@@ -60,8 +60,11 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {
         if (mActivity == activity) {
-            mToast = null;
             mActivity = null;
+            if (mToast != null) {
+                mToast.recycle();
+                mToast = null;
+            }
         }
     }
 }

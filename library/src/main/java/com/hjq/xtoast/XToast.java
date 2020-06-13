@@ -54,23 +54,6 @@ public class XToast<X extends XToast> {
     /** 吐司显示和取消监听 */
     private OnToastListener mListener;
 
-    private XToast(Context context) {
-        mContext = context;
-        mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
-        // 配置一些默认的参数
-        mWindowParams = new WindowManager.LayoutParams();
-        mWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        mWindowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        mWindowParams.format = PixelFormat.TRANSLUCENT;
-        mWindowParams.windowAnimations = android.R.style.Animation_Toast;
-        mWindowParams.packageName = context.getPackageName();
-        // 开启窗口常亮和设置可以触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
-        // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
-        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-    }
-
     /**
      * 创建一个局部悬浮窗
      */
@@ -99,6 +82,23 @@ public class XToast<X extends XToast> {
         } else {
             setWindowType(WindowManager.LayoutParams.TYPE_PHONE);
         }
+    }
+
+    private XToast(Context context) {
+        mContext = context;
+        mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
+        // 配置一些默认的参数
+        mWindowParams = new WindowManager.LayoutParams();
+        mWindowParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        mWindowParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        mWindowParams.format = PixelFormat.TRANSLUCENT;
+        mWindowParams.windowAnimations = android.R.style.Animation_Toast;
+        mWindowParams.packageName = context.getPackageName();
+        // 开启窗口常亮和设置可以触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
+        // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
+        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
     }
 
     /**
@@ -404,6 +404,16 @@ public class XToast<X extends XToast> {
     public void update() {
         // 更新 WindowManger 的显示
         mWindowManager.updateViewLayout(mRootView, mWindowParams);
+    }
+
+    /**
+     * 回收
+     */
+    public void recycle() {
+        mContext = null;
+        mWindowManager = null;
+        mListener = null;
+        mDraggable = null;
     }
 
     /**
