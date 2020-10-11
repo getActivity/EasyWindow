@@ -2,6 +2,7 @@ package com.hjq.xtoast;
 
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 
 /**
@@ -24,14 +25,26 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
      * 注册监听
      */
     void register() {
-        mActivity.getApplication().registerActivityLifecycleCallbacks(this);
+        if (mActivity != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mActivity.registerActivityLifecycleCallbacks(this);
+            } else {
+                mActivity.getApplication().registerActivityLifecycleCallbacks(this);
+            }
+        }
     }
 
     /**
      * 取消监听
      */
     void unregister() {
-        mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
+        if (mActivity != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                mActivity.unregisterActivityLifecycleCallbacks(this);
+            } else {
+                mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
+            }
+        }
     }
 
     @Override

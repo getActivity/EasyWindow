@@ -105,6 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我消失")
+                // 设置外层不能被触摸
+                .setOutsideTouchable(false)
+                // 设置窗口背景阴影强度
+                .setBackgroundDimAmount(0.5f)
                 // 设置成可拖拽的
                 .setDraggable(new MovingDraggable())
                 .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
@@ -123,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 .request(new OnPermission() {
 
                     @Override
-                    public void hasPermission(List<String> granted, boolean isAll) {
+                    public void hasPermission(List<String> granted, boolean all) {
 
                         // 传入 Application 表示这个是一个全局的 Toast
                         new XToast(getApplication())
@@ -141,13 +145,15 @@ public class MainActivity extends AppCompatActivity {
                                         Intent intent = new Intent(Intent.ACTION_DIAL);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         toast.startActivity(intent);
+                                        // 安卓 10 在后台跳转 Activity 需要额外适配
+                                        // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                                     }
                                 })
                                 .show();
                     }
 
                     @Override
-                    public void noPermission(List<String> denied, boolean quick) {
+                    public void noPermission(List<String> denied, boolean never) {
                         new XToast(MainActivity.this)
                                 .setDuration(1000)
                                 .setView(R.layout.toast_hint)

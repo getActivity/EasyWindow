@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -102,6 +103,42 @@ public class XToast<X extends XToast> {
     }
 
     /**
+     * 是否外层可触摸
+     */
+    public X setOutsideTouchable(boolean touchable) {
+        int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        if (touchable) {
+            addWindowFlags(flags);
+        } else {
+            clearWindowFlags(flags);
+        }
+        if (isShow()) {
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口背景阴影强度
+     */
+    public X setBackgroundDimAmount(float amount) {
+        if (amount < 0 || amount > 1) {
+            throw new IllegalArgumentException("are you ok?");
+        }
+        mWindowParams.dimAmount = amount;
+        int flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        if (amount != 0) {
+            addWindowFlags(flags);
+        } else {
+            clearWindowFlags(flags);
+        }
+        if (isShow()) {
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
      * 是否有这个标志位
      */
     public boolean hasWindowFlags(int flags) {
@@ -122,7 +159,7 @@ public class XToast<X extends XToast> {
     /**
      * 移除一个标记位
      */
-    public X removeWindowFlags(int flags) {
+    public X clearWindowFlags(int flags) {
         mWindowParams.flags &= ~flags;
         if (isShow()) {
             update();
@@ -176,7 +213,7 @@ public class XToast<X extends XToast> {
     public X setDraggable(BaseDraggable draggable) {
         // 当前是否设置了不可触摸，如果是就擦除掉这个标记
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
         mDraggable = draggable;
         if (isShow()) {
@@ -244,9 +281,9 @@ public class XToast<X extends XToast> {
     /**
      * 设置窗口方向
      *
-     * 自适应：ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-     * 横屏：ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-     * 竖屏：ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+     * 自适应：{@link ActivityInfo#SCREEN_ORIENTATION_UNSPECIFIED}
+     * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
+     * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
      */
     public X setOrientation(int orientation) {
         mWindowParams.screenOrientation = orientation;
@@ -257,7 +294,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置 X 轴偏移量
+     * 设置水平偏移量
      */
     public X setXOffset(int x) {
         mWindowParams.x = x;
@@ -268,7 +305,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置 Y 轴偏移量
+     * 设置垂直偏移量
      */
     public X setYOffset(int y) {
         mWindowParams.y = y;
@@ -279,7 +316,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 设置 WindowManager 参数集
+     * 重新设置 WindowManager 参数集
      */
     public X setWindowParams(WindowManager.LayoutParams params) {
         mWindowParams = params;
@@ -337,6 +374,14 @@ public class XToast<X extends XToast> {
         if (mShow) {
             cancel();
         }
+
+        if (mContext instanceof Activity) {
+            if (((Activity) mContext).isFinishing() ||
+                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && ((Activity) mContext).isDestroyed())) {
+                return (X) this;
+            }
+        }
+
         try {
             // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
             // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
@@ -382,7 +427,8 @@ public class XToast<X extends XToast> {
 
                 // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
                 // java.lang.IllegalArgumentException: View=android.widget.TextView{3d2cee7 V.ED..... ........ 0,0-312,153} not attached to window manager
-                mWindowManager.removeView(mRootView);
+                mWindowManager.removeViewImmediate(mRootView);
+
                 // 回调监听
                 if (mListener != null) {
                     mListener.onDismiss(this);
@@ -585,7 +631,7 @@ public class XToast<X extends XToast> {
     private X setOnClickListener(View view, OnClickListener listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
         new ViewClickWrapper(this, view, listener);
         return (X) this;
@@ -605,7 +651,7 @@ public class XToast<X extends XToast> {
     private X setOnTouchListener(View view, OnTouchListener listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
         new ViewTouchWrapper(this, view, listener);
         return (X) this;

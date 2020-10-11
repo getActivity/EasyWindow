@@ -2,13 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 55
-        versionName "5.5"
+        versionCode 60
+        versionName "6.0"
     }
 }
 
@@ -16,7 +15,7 @@ publish {
     userOrg = 'getactivity'
     groupId = 'com.hjq'
     artifactId = 'xtoast'
-    version = '5.5'
+    version = '6.0'
     description = 'This is a simple and easy to use suspension window frame'
     website = "https://github.com/getActivity/XToast"
 }

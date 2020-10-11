@@ -12,38 +12,42 @@
 
 #### 集成步骤
 
-    dependencies {
-        implementation 'com.hjq:xtoast:5.5'
-    }
+```groovy
+dependencies {
+    implementation 'com.hjq:xtoast:6.0'
+}
+```
 
 #### 使用案例
 
-    // 传入 Application 对象表示设置成全局的
-    new XToast(XToastActivity.this)
-            .setView(R.layout.toast_hint)
-            // 设置成可拖拽的
-            //.setDraggable()
-            // 设置显示时长
-            .setDuration(1000)
-            // 设置动画样式
-            .setAnimStyle(android.R.style.Animation_Translucent)
-            .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
-            .setText(android.R.id.message, "点我消失")
-            .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
+```java
+// 传入 Application 对象表示设置成全局的
+new XToast(XToastActivity.this)
+        .setView(R.layout.toast_hint)
+        // 设置成可拖拽的
+        //.setDraggable()
+        // 设置显示时长
+        .setDuration(1000)
+        // 设置动画样式
+        .setAnimStyle(android.R.style.Animation_Translucent)
+        // 设置外层不能被触摸
+        .setOutsideTouchable(false)
+        // 设置窗口背景阴影强度
+        .setBackgroundDimAmount(0.5f)
+        .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+        .setText(android.R.id.message, "点我消失")
+        .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
 
-                @Override
-                public void onClick(XToast toast, TextView view) {
-                    // 点击这个 View 后消失
-                    toast.cancel();
-                    // 跳转到某个Activity
-                    // toast.startActivity(intent);
-                }
-            })
-            .show();
-
-#### 混淆规则
-
-    -keep class com.hjq.xtoast.** {*;}
+            @Override
+            public void onClick(XToast toast, TextView view) {
+                // 点击这个 View 后消失
+                toast.cancel();
+                // 跳转到某个Activity
+                // toast.startActivity(intent);
+            }
+        })
+        .show();
+```
 
 #### 框架亮点（原生 Toast 无法实现的功能）
 
@@ -61,7 +65,7 @@
 
 #### 作者的其他开源项目
 
-* 架构工程：[AndroidProject](https://github.com/getActivity/AndroidProject)
+* 安卓架构：[AndroidProject](https://github.com/getActivity/AndroidProject)
 
 * 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp)
 

@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 14
         targetSdkVersion 28
-        versionCode 55
-        versionName "5.5"
+        versionCode 60
+        versionName "6.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,17 +21,18 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
     implementation project(':library')
 
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.hjq:xxpermissions:6.2'
-    // 标题栏：https://github.com/getActivity/TitleBar
-    implementation 'com.hjq:titlebar:6.0'
+    implementation 'com.hjq:xxpermissions:8.8'
+    // 标题栏框架：https://github.com/getActivity/TitleBar
+    implementation 'com.hjq:titlebar:8.0'
     // 吐司工具类：https://github.com/getActivity/ToastUtils
-    implementation 'com.hjq:toast:8.2'
+    implementation 'com.hjq:toast:8.8'
     // 内存泄漏捕捉：https://github.com/square/leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 }

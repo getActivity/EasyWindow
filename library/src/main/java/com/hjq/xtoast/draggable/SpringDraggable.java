@@ -7,8 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.hjq.xtoast.XToast;
-
 /**
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/XToast
@@ -57,8 +55,8 @@ public class SpringDraggable extends BaseDraggable {
                 }
                 // 从移动的点回弹到边界上
                 startAnimation(rawMoveX - mViewDownX, rawFinalX  - mViewDownX, rawMoveY - mViewDownY);
-                // 如果产生了移动就拦截这个事件（与按下的坐标不一致时）
-                return mViewDownX != (int) event.getX() || mViewDownY != (int) event.getY();
+                // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
+                return isTouchMove(mViewDownX, event.getX(), mViewDownY, event.getY());
             default:
                 break;
         }

@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:onClick="show1"
-                android:text="自定义Toast显示动画" />
+                android:text="自定义 Toast 显示动画" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:onClick="show2"
-                android:text="自定义Toast显示时长" />
+                android:text="自定义 Toast 显示时长" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:onClick="show3"
-                android:text="监听Toast生命周期" />
+                android:text="监听 Toast 生命周期" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:onClick="show4"
-                android:text="Toast响应点击事件" />
+                android:text="Toast 响应点击事件" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -61,7 +61,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:onClick="show5"
-                android:text="可自由拖拽的Toast" />
+                android:text="可自由拖拽的 Toast" />
 
             <Button
                 android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp"
                 android:onClick="show6"
-                android:text="全局可拖拽的Toast" />
+                android:text="全局可拖拽的 Toast" />
 
             <Button
                 android:layout_width="wrap_content"
