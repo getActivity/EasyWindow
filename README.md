@@ -1,4 +1,4 @@
-# 超级 Toast
+# 悬浮窗框架
 
 > 码云地址：[Gitee](https://gitee.com/getActivity/XToast)
 
@@ -14,7 +14,8 @@
 
 ```groovy
 dependencies {
-    implementation 'com.hjq:xtoast:6.0'
+    // 悬浮窗框架：https://github.com/getActivity/XToast
+    implementation 'com.hjq:xtoast:6.2'
 }
 ```
 
@@ -65,7 +66,7 @@ new XToast(XToastActivity.this)
 
 #### 作者的其他开源项目
 
-* 安卓架构：[AndroidProject](https://github.com/getActivity/AndroidProject)
+* 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject)
 
 * 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp)
 

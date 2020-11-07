@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 60
-        versionName "6.0"
+        versionCode 62
+        versionName "6.2"
     }
 }
 
@@ -15,7 +15,7 @@ publish {
     userOrg = 'getactivity'
     groupId = 'com.hjq'
     artifactId = 'xtoast'
-    version = '6.0'
+    version = '6.2'
     description = 'This is a simple and easy to use suspension window frame'
     website = "https://github.com/getActivity/XToast"
 }

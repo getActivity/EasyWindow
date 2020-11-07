@@ -1,6 +1,5 @@
 package com.hjq.xtoast.demo;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // 这里需要先初始化 ToastUtils，实际开发中这句代码应当放在 Application.onCreate 方法中
+        ToastUtils.init(getApplication());
     }
 
     public void show1(View v) {
@@ -128,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void hasPermission(List<String> granted, boolean all) {
-
                         // 传入 Application 表示这个是一个全局的 Toast
                         new XToast(getApplication())
                                 .setView(R.layout.toast_phone)
@@ -141,10 +141,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onClick(XToast toast, ImageView view) {
+                                        ToastUtils.show("我被点击了");
                                         // 点击后跳转到拨打电话界面
-                                        Intent intent = new Intent(Intent.ACTION_DIAL);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        toast.startActivity(intent);
+                                        // Intent intent = new Intent(Intent.ACTION_DIAL);
+                                        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        // toast.startActivity(intent);
                                         // 安卓 10 在后台跳转 Activity 需要额外适配
                                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                                     }
@@ -165,14 +166,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show7(View v) {
-        // 这里需要先初始化 ToastUtils，实际开发中这句代码应当放在 Application.onCreate 方法中
-        ToastUtils.init(getApplication());
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
-        new XToast(MainActivity.this)
+        new XToast(this)
                 .setDuration(1000)
                 .setView(ToastUtils.getToast().getView())
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setText(android.R.id.message, "就问你溜不溜")
+                .setGravity(Gravity.BOTTOM)
+                .setYOffset(100)
                 .show();
     }
 }

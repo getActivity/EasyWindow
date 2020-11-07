@@ -253,7 +253,7 @@ public class XToast<X extends XToast> {
         if (isShow()) {
             if (mDuration != 0) {
                 removeCallbacks();
-                postDelayed(new ToastDismissRunnable(this), mDuration);
+                postDelayed(new CancelRunnable(this), mDuration);
             }
         }
         return (X) this;
@@ -390,7 +390,7 @@ public class XToast<X extends XToast> {
             mShow = true;
             // 如果当前限定了显示时长
             if (mDuration != 0) {
-                postDelayed(new ToastDismissRunnable(this), mDuration);
+                postDelayed(new CancelRunnable(this), mDuration);
             }
             // 如果设置了拖拽规则
             if (mDraggable != null) {

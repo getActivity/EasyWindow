@@ -57,6 +57,12 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         return frame.top;
     }
 
+    /**
+     * 更新悬浮窗的位置
+     *
+     * @param x             x 坐标
+     * @param y             y 坐标
+     */
     protected void updateLocation(float x, float y) {
         updateLocation((int) x, (int) y);
     }
@@ -90,6 +96,6 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * @param upY           手指抬起时的 y 坐标
      */
     protected boolean isTouchMove(float downX, float upX, float downY, float upY) {
-        return downX != upX || downY != upY;
+        return ((int) downX) != ((int) upX) || ((int) (downY)) != ((int) upY);
     }
 }

@@ -22,33 +22,33 @@ public class SpringDraggable extends BaseDraggable {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int rawMoveX;
-        int rawMoveY;
+        float rawMoveX;
+        float rawMoveY;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）
-                mViewDownX = (int) event.getX();
-                mViewDownY = (int) event.getY();
+                mViewDownX = event.getX();
+                mViewDownY = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 记录移动的位置（相对屏幕的坐标）
-                rawMoveX = (int) event.getRawX();
-                rawMoveY = (int) (event.getRawY() - getStatusBarHeight());
+                rawMoveX = event.getRawX();
+                rawMoveY = event.getRawY() - getStatusBarHeight();
                 // 更新移动的位置
                 updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
                 break;
             case MotionEvent.ACTION_UP:
                 // 记录移动的位置（相对屏幕的坐标）
-                rawMoveX = (int) event.getRawX();
-                rawMoveY = (int) (event.getRawY() - getStatusBarHeight());
+                rawMoveX = event.getRawX();
+                rawMoveY = event.getRawY() - getStatusBarHeight();
                 // 获取当前屏幕的宽度
                 int screenWidth = getScreenWidth();
                 // 自动回弹吸附
                 final float rawFinalX;
-                if (rawMoveX < screenWidth / 2) {
+                if (rawMoveX < screenWidth / 2f) {
                     // 回弹到屏幕左边
-                    rawFinalX = 0;
+                    rawFinalX = 0f;
                 } else {
                     // 回弹到屏幕右边
                     rawFinalX = screenWidth;

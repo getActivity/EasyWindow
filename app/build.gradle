@@ -5,10 +5,10 @@ android {
 
     defaultConfig {
         applicationId "com.hjq.xtoast.demo"
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 28
-        versionCode 60
-        versionName "6.0"
+        versionCode 62
+        versionName "6.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,11 +28,11 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.hjq:xxpermissions:8.8'
+    implementation 'com.hjq:xxpermissions:9.0'
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.hjq:titlebar:8.0'
+    implementation 'com.hjq:titlebar:8.2'
     // 吐司工具类：https://github.com/getActivity/ToastUtils
     implementation 'com.hjq:toast:8.8'
     // 内存泄漏捕捉：https://github.com/square/leakcanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 }
