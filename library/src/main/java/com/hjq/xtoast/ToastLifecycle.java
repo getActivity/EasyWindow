@@ -58,7 +58,7 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityPaused(Activity activity) {
-        // 一定要在 onPaused 方法中销毁掉，如果在 onDestroyed 方法中还是会导致内存泄露
+        // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
         if (mActivity != null && mToast != null && mActivity == activity && mToast.isShow() && mActivity.isFinishing()) {
             mToast.cancel();
         }
@@ -73,8 +73,12 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityDestroyed(Activity activity) {
         if (mActivity == activity) {
+            // 释放 Activity 的引用
             mActivity = null;
             if (mToast != null) {
+                if (mToast.isShow()) {
+                    mToast.cancel();
+                }
                 mToast.recycle();
                 mToast = null;
             }

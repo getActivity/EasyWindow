@@ -1,10 +1,10 @@
 # 悬浮窗框架
 
-> 码云地址：[Gitee](https://gitee.com/getActivity/XToast)
+* 码云地址：[Gitee](https://gitee.com/getActivity/XToast)
 
-> 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
+* 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-> 已投入公司项目多时，没有任何毛病，可胜任任何需求，[点击此处下载Demo](XToast.apk)
+* 已投入公司项目多时，没有任何毛病，可胜任任何需求，[点击此处下载Demo](XToast.apk)
 
 ![](XToast.gif)
 
@@ -15,7 +15,7 @@
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.hjq:xtoast:6.2'
+    implementation 'com.hjq:xtoast:6.5'
 }
 ```
 
@@ -79,6 +79,8 @@ new XToast(XToastActivity.this)
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
 
 * 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
+
+* Gson 解析容错：[GsonFactory](https://github.com/getActivity/GsonFactory)
 
 #### Android技术讨论Q群：78797078
 

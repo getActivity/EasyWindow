@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hjq.permissions.OnPermission;
+import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.ToastUtils;
@@ -125,16 +125,15 @@ public class MainActivity extends AppCompatActivity {
     public void show6(View v) {
         XXPermissions.with(this)
                 .permission(Permission.SYSTEM_ALERT_WINDOW)
-                .request(new OnPermission() {
+                .request(new OnPermissionCallback() {
 
                     @Override
-                    public void hasPermission(List<String> granted, boolean all) {
+                    public void onGranted(List<String> granted, boolean all) {
                         // 传入 Application 表示这个是一个全局的 Toast
                         new XToast(getApplication())
                                 .setView(R.layout.toast_phone)
                                 .setGravity(Gravity.END | Gravity.BOTTOM)
-                                .setXOffset(100)
-                                .setYOffset(100)
+                                .setYOffset(200)
                                 // 设置指定的拖拽规则
                                 .setDraggable(new SpringDraggable())
                                 .setOnClickListener(android.R.id.icon, new OnClickListener<ImageView>() {
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void noPermission(List<String> denied, boolean never) {
+                    public void onDenied(List<String> denied, boolean never) {
                         new XToast(MainActivity.this)
                                 .setDuration(1000)
                                 .setView(R.layout.toast_hint)
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
         new XToast(this)
                 .setDuration(1000)
-                .setView(ToastUtils.getToast().getView())
+                .setView(ToastUtils.getView())
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setText(android.R.id.message, "就问你溜不溜")
                 .setGravity(Gravity.BOTTOM)
