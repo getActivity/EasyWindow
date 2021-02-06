@@ -10,18 +10,17 @@ import android.view.View;
  *    time   : 2019/01/04
  *    desc   : {@link View.OnTouchListener} 包装类
  */
+@SuppressWarnings("rawtypes")
 final class ViewTouchWrapper implements View.OnTouchListener {
 
-    private final XToast mToast;
+    private final XToast<?> mToast;
     private final OnTouchListener mListener;
 
-    ViewTouchWrapper(XToast toast, View view, OnTouchListener listener) {
+    ViewTouchWrapper(XToast<?> toast, View view, OnTouchListener listener) {
         mToast = toast;
         mListener = listener;
 
-        view.setFocusable(true);
         view.setEnabled(true);
-        view.setClickable(true);
         view.setOnTouchListener(this);
     }
 

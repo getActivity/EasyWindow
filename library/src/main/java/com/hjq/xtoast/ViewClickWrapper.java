@@ -8,15 +8,17 @@ import android.view.View;
  *    time   : 2019/01/04
  *    desc   : {@link View.OnClickListener} 包装类
  */
+@SuppressWarnings("rawtypes")
 final class ViewClickWrapper implements View.OnClickListener {
 
-    private final XToast mToast;
+    private final XToast<?> mToast;
     private final OnClickListener mListener;
 
-    ViewClickWrapper(XToast toast, View view, OnClickListener listener) {
+    ViewClickWrapper(XToast<?> toast, View view, OnClickListener listener) {
         mToast = toast;
         mListener = listener;
 
+        view.setClickable(true);
         view.setOnClickListener(this);
     }
 

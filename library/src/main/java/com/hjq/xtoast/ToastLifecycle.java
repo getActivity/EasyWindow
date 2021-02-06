@@ -14,9 +14,9 @@ import android.os.Bundle;
 final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Activity mActivity;
-    private XToast mToast;
+    private XToast<?> mToast;
 
-    ToastLifecycle(XToast toast, Activity activity) {
+    ToastLifecycle(XToast<?> toast, Activity activity) {
         mActivity = activity;
         mToast = toast;
     }
@@ -25,12 +25,14 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
      * 注册监听
      */
     void register() {
-        if (mActivity != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                mActivity.registerActivityLifecycleCallbacks(this);
-            } else {
-                mActivity.getApplication().registerActivityLifecycleCallbacks(this);
-            }
+        if (mActivity == null) {
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mActivity.registerActivityLifecycleCallbacks(this);
+        } else {
+            mActivity.getApplication().registerActivityLifecycleCallbacks(this);
         }
     }
 
@@ -38,12 +40,14 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
      * 取消监听
      */
     void unregister() {
-        if (mActivity != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                mActivity.unregisterActivityLifecycleCallbacks(this);
-            } else {
-                mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
-            }
+        if (mActivity == null) {
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            mActivity.unregisterActivityLifecycleCallbacks(this);
+        } else {
+            mActivity.getApplication().unregisterActivityLifecycleCallbacks(this);
         }
     }
 
@@ -59,9 +63,10 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
     @Override
     public void onActivityPaused(Activity activity) {
         // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
-        if (mActivity != null && mToast != null && mActivity == activity && mToast.isShow() && mActivity.isFinishing()) {
-            mToast.cancel();
+        if (mActivity != activity || !mActivity.isFinishing() || mToast == null || !mToast.isShow()) {
+            return;
         }
+        mToast.cancel();
     }
 
     @Override
@@ -72,16 +77,19 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (mActivity == activity) {
-            // 释放 Activity 的引用
-            mActivity = null;
-            if (mToast != null) {
-                if (mToast.isShow()) {
-                    mToast.cancel();
-                }
-                mToast.recycle();
-                mToast = null;
-            }
+        if (mActivity != activity) {
+            return;
         }
+        // 释放 Activity 的引用
+        mActivity = null;
+
+        if (mToast == null) {
+            return;
+        }
+        if (mToast.isShow()) {
+            mToast.cancel();
+        }
+        mToast.recycle();
+        mToast = null;
     }
 }

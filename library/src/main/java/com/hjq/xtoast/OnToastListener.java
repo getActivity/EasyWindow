@@ -11,10 +11,10 @@ public interface OnToastListener {
     /**
      * 显示回调
      */
-    void onShow(XToast toast);
+    void onShow(XToast<?> toast);
 
     /**
      * 消失回调
      */
-    void onDismiss(XToast toast);
+    void onDismiss(XToast<?> toast);
 }

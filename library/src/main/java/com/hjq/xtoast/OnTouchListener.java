@@ -14,5 +14,5 @@ public interface OnTouchListener<V extends View> {
     /**
      * 触摸回调
      */
-    boolean onTouch(XToast toast, V view, MotionEvent event);
+    boolean onTouch(XToast<?> toast, V view, MotionEvent event);
 }

@@ -15,7 +15,7 @@ public class IOSToast {
     private static final int TIME = 3000;
 
     public static void showSucceed(Activity activity, CharSequence text) {
-        new XToast(activity)
+        new XToast<>(activity)
                 .setDuration(TIME)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
@@ -25,7 +25,7 @@ public class IOSToast {
     }
 
     public static void showFail(Activity activity, CharSequence text) {
-        new XToast(activity)
+        new XToast<>(activity)
                 .setDuration(TIME)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Activity)
@@ -35,7 +35,7 @@ public class IOSToast {
     }
 
     public static void showWarn(Activity activity, CharSequence text) {
-        new XToast(activity)
+        new XToast<>(activity)
                 .setDuration(TIME)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Dialog)

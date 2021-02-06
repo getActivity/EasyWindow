@@ -13,5 +13,5 @@ public interface OnClickListener<V extends View> {
     /**
      * 点击回调
      */
-    void onClick(XToast toast, V view);
+    void onClick(XToast<?> toast, V view);
 }

@@ -15,7 +15,7 @@ import com.hjq.xtoast.XToast;
  */
 public abstract class BaseDraggable implements View.OnTouchListener {
 
-    private XToast mToast;
+    private XToast<?> mToast;
     private View mRootView;
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mWindowParams;
@@ -23,7 +23,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     /**
      * Toast 显示后回调这个类
      */
-    public void start(XToast toast) {
+    public void start(XToast<?> toast) {
         mToast = toast;
         mRootView = toast.getView();
         mWindowManager = toast.getWindowManager();
@@ -32,7 +32,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         mRootView.setOnTouchListener(this);
     }
 
-    protected XToast getXToast() {
+    protected XToast<?> getXToast() {
         return mToast;
     }
 

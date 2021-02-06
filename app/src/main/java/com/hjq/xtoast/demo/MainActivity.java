@@ -1,13 +1,14 @@
 package com.hjq.xtoast.demo;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.snackbar.Snackbar;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
@@ -24,7 +25,7 @@ import java.util.List;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/XToast
  *    time   : 2019/01/04
- *    desc   : XToast 使用案例
+ *    desc   : Demo 使用案例
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -32,12 +33,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // 这里需要先初始化 ToastUtils，实际开发中这句代码应当放在 Application.onCreate 方法中
-        ToastUtils.init(getApplication());
     }
 
     public void show1(View v) {
-        new XToast(this)
+        new XToast<>(this)
                 .setDuration(3000)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show2(View v) {
-        new XToast(this)
+        new XToast<>(this)
                 .setDuration(1000)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Activity)
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show3(View v) {
-        new XToast(this)
+        new XToast<>(this)
                 .setDuration(3000)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Dialog)
@@ -66,12 +65,12 @@ public class MainActivity extends AppCompatActivity {
                 .setOnToastListener(new OnToastListener() {
 
                     @Override
-                    public void onShow(XToast toast) {
+                    public void onShow(XToast<?> toast) {
                         Snackbar.make(getWindow().getDecorView(), "XToast 显示了", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
-                    public void onDismiss(XToast toast) {
+                    public void onDismiss(XToast<?> toast) {
                         Snackbar.make(getWindow().getDecorView(), "XToast 消失了", Snackbar.LENGTH_SHORT).show();
                     }
                 })
@@ -79,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show4(View v) {
-        new XToast(this)
+        new XToast<>(this)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
@@ -87,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
 
                     @Override
-                    public void onClick(final XToast toast, TextView view) {
+                    public void onClick(final XToast<?> toast, TextView view) {
                         view.setText("那么听话啊");
                         getWindow().getDecorView().postDelayed(new Runnable() {
                             @Override
@@ -101,12 +100,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void show5(View v) {
-        new XToast(this)
+        new XToast<>(this)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我消失")
-                // 设置外层不能被触摸
+                // 设置外层是否能被触摸
                 .setOutsideTouchable(false)
                 // 设置窗口背景阴影强度
                 .setBackgroundDimAmount(0.5f)
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
 
                     @Override
-                    public void onClick(XToast toast, TextView view) {
+                    public void onClick(XToast<?> toast, TextView view) {
                         toast.cancel();
                     }
                 })
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onGranted(List<String> granted, boolean all) {
                         // 传入 Application 表示这个是一个全局的 Toast
-                        new XToast(getApplication())
+                        new XToast<>(getApplication())
                                 .setView(R.layout.toast_phone)
                                 .setGravity(Gravity.END | Gravity.BOTTOM)
                                 .setYOffset(200)
@@ -139,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setOnClickListener(android.R.id.icon, new OnClickListener<ImageView>() {
 
                                     @Override
-                                    public void onClick(XToast toast, ImageView view) {
+                                    public void onClick(XToast<?> toast, ImageView view) {
                                         ToastUtils.show("我被点击了");
                                         // 点击后跳转到拨打电话界面
                                         // Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onDenied(List<String> denied, boolean never) {
-                        new XToast(MainActivity.this)
+                        new XToast<>(MainActivity.this)
                                 .setDuration(1000)
                                 .setView(R.layout.toast_hint)
                                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_error)
@@ -166,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void show7(View v) {
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
-        new XToast(this)
+        new XToast<>(this)
                 .setDuration(1000)
                 .setView(ToastUtils.getView())
                 .setAnimStyle(android.R.style.Animation_Translucent)

@@ -31,7 +31,7 @@ import com.hjq.xtoast.draggable.MovingDraggable;
  *    desc   : 超级 Toast（能做 Toast 做不到的事，应付项目中的特殊需求）
  */
 @SuppressWarnings("unchecked")
-public class XToast<X extends XToast> {
+public class XToast<X extends XToast<?>> {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -61,10 +61,11 @@ public class XToast<X extends XToast> {
     public XToast(Activity activity) {
         this((Context) activity);
 
-        if ((activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0) {
+        if ((activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0 ||
+                (activity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
             // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏的位置上
             // 如果不想让状态栏显示的时候把 WindowManager 顶下来，可以添加 FLAG_LAYOUT_IN_SCREEN，但是会导致软键盘无法调整窗口位置
-            addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.TYPE_STATUS_BAR);
         }
 
         // 跟随 Activity 的生命周期
@@ -81,7 +82,7 @@ public class XToast<X extends XToast> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
         } else {
-            setWindowType(WindowManager.LayoutParams.TYPE_PHONE);
+            setWindowType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
     }
 
@@ -250,11 +251,9 @@ public class XToast<X extends XToast> {
      */
     public X setDuration(int duration) {
         mDuration = duration;
-        if (isShow()) {
-            if (mDuration != 0) {
-                removeCallbacks();
-                postDelayed(new CancelRunnable(this), mDuration);
-            }
+        if (isShow() && mDuration != 0) {
+            removeCallbacks();
+            postDelayed(new CancelRunnable(this), mDuration);
         }
         return (X) this;
     }
@@ -363,28 +362,28 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 显示
+     * 显示悬浮窗
      */
     public X show() {
         if (mRootView == null || mWindowParams == null) {
             throw new IllegalArgumentException("WindowParams and view cannot be empty");
         }
 
-        // 如果当前已经显示取消上一次显示
+        // 如果当前已经显示则进行更新
         if (mShow) {
-            cancel();
+            update();
+            return (X) this;
         }
 
         if (mContext instanceof Activity) {
             if (((Activity) mContext).isFinishing() ||
-                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && ((Activity) mContext).isDestroyed())) {
+                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
+                            ((Activity) mContext).isDestroyed())) {
                 return (X) this;
             }
         }
 
         try {
-            // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
-            // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
             mWindowManager.addView(mRootView, mWindowParams);
             // 当前已经显示
             mShow = true;
@@ -407,6 +406,8 @@ public class XToast<X extends XToast> {
                 mListener.onShow(this);
             }
         } catch (NullPointerException | IllegalStateException | WindowManager.BadTokenException e) {
+            // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
+            // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
             e.printStackTrace();
         }
 
@@ -414,29 +415,32 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 取消
+     * 销毁悬浮窗
      */
     public X cancel() {
-        if (mShow) {
-            try {
+        if (!mShow) {
+            return (X) this;
+        }
 
-                // 反注册 Activity 生命周期
-                if (mLifecycle != null) {
-                    mLifecycle.unregister();
-                }
+        try {
 
-                // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
-                // java.lang.IllegalArgumentException: View=android.widget.TextView{3d2cee7 V.ED..... ........ 0,0-312,153} not attached to window manager
-                mWindowManager.removeViewImmediate(mRootView);
-
-                // 回调监听
-                if (mListener != null) {
-                    mListener.onDismiss(this);
-                }
-
-            } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
-                e.printStackTrace();
+            // 反注册 Activity 生命周期
+            if (mLifecycle != null) {
+                mLifecycle.unregister();
             }
+
+            // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
+            // java.lang.IllegalArgumentException: View=android.widget.TextView{3d2cee7 V.ED..... ........ 0,0-312,153} not attached to window manager
+            mWindowManager.removeViewImmediate(mRootView);
+
+            // 回调监听
+            if (mListener != null) {
+                mListener.onDismiss(this);
+            }
+
+        } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
+            e.printStackTrace();
+        } finally {
             // 当前没有显示
             mShow = false;
         }
@@ -445,7 +449,7 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 更新
+     * 刷新悬浮窗
      */
     public void update() {
         // 更新 WindowManger 的显示
@@ -453,13 +457,16 @@ public class XToast<X extends XToast> {
     }
 
     /**
-     * 回收
+     * 回收操作
      */
     public void recycle() {
         mContext = null;
+        mRootView = null;
         mWindowManager = null;
-        mListener = null;
+        mWindowParams = null;
+        mLifecycle = null;
         mDraggable = null;
+        mListener = null;
     }
 
     /**
@@ -620,15 +627,15 @@ public class XToast<X extends XToast> {
     /**
      * 设置点击事件
      */
-    public X setOnClickListener(OnClickListener listener) {
+    public X setOnClickListener(OnClickListener<? extends View> listener) {
         return setOnClickListener(mRootView, listener);
     }
 
-    public X setOnClickListener(int id, OnClickListener listener) {
+    public X setOnClickListener(int id, OnClickListener<? extends View> listener) {
         return setOnClickListener(findViewById(id), listener);
     }
 
-    private X setOnClickListener(View view, OnClickListener listener) {
+    private X setOnClickListener(View view, OnClickListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -640,15 +647,15 @@ public class XToast<X extends XToast> {
     /**
      * 设置触摸事件
      */
-    public X setOnTouchListener(OnTouchListener listener) {
+    public X setOnTouchListener(OnTouchListener<? extends View> listener) {
         return setOnTouchListener(mRootView, listener);
     }
 
-    public X setOnTouchListener(int id, OnTouchListener listener) {
+    public X setOnTouchListener(int id, OnTouchListener<? extends View> listener) {
         return setOnTouchListener(findViewById(id), listener);
     }
 
-    private X setOnTouchListener(View view, OnTouchListener listener) {
+    private X setOnTouchListener(View view, OnTouchListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);

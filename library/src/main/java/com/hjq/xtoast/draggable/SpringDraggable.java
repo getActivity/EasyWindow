@@ -21,7 +21,7 @@ public class SpringDraggable extends BaseDraggable {
     private float mViewDownY;
 
     /** 回弹的方向 */
-    private int mOrientation;
+    private final int mOrientation;
 
     public SpringDraggable() {
         this(LinearLayout.HORIZONTAL);

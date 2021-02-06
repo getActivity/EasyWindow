@@ -1,6 +1,6 @@
 package com.hjq.xtoast;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 
 /**
  *    author : Android 轮子哥
@@ -8,7 +8,7 @@ import java.lang.ref.WeakReference;
  *    time   : 2019/01/04
  *    desc   : Toast 定时销毁任务
  */
-final class CancelRunnable extends WeakReference<XToast> implements Runnable {
+final class CancelRunnable extends SoftReference<XToast<?>> implements Runnable {
 
     CancelRunnable(XToast toast) {
         super(toast);
@@ -16,9 +16,10 @@ final class CancelRunnable extends WeakReference<XToast> implements Runnable {
 
     @Override
     public void run() {
-        XToast toast = get();
-        if (toast != null && toast.isShow()) {
-            toast.cancel();
+        XToast<?> toast = get();
+        if (toast == null || !toast.isShow()) {
+            return;
         }
+        toast.cancel();
     }
 }
