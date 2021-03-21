@@ -10,7 +10,7 @@ import com.hjq.xtoast.XToast;
  *    time   : 2019/01/04
  *    desc   : 仿 IOS 弹框
  */
-public class IOSToast {
+public final class IOSToast {
 
     private static final int TIME = 3000;
 

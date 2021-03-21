@@ -15,7 +15,7 @@
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.hjq:xtoast:6.6'
+    implementation 'com.hjq:xtoast:6.8'
 }
 ```
 
@@ -40,7 +40,7 @@ new XToast<>(XToastActivity.this)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
+        .setOnClickListener(android.R.id.message, new XToast.OnClickListener<TextView>() {
 
             @Override
             public void onClick(XToast toast, TextView view) {
@@ -53,7 +53,31 @@ new XToast<>(XToastActivity.this)
         .show();
 ```
 
-* Kotlin 用法
+* Kotlin 用法（二选一）
+
+```kotlin
+XToast<XToast<*>>(activity).apply {
+    setView(R.layout.toast_hint)
+    // 设置成可拖拽的
+    //setDraggable()
+    // 设置显示时长
+    setDuration(1000)
+    // 设置动画样式
+    //setAnimStyle(android.R.style.Animation_Translucent)
+    // 设置外层是否能被触摸
+    //setOutsideTouchable(false)
+    // 设置窗口背景阴影强度
+    //setBackgroundDimAmount(0.5f)
+    setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+    setText(android.R.id.message, "点我消失")
+    setOnClickListener(android.R.id.message, XToast.OnClickListener<TextView?> { toast: XToast<*>, view: TextView? ->
+        // 点击这个 View 后消失
+        toast.cancel()
+        // 跳转到某个Activity
+        // toast.startActivity(intent);
+    })
+}.show()
+```
 
 ```kotlin
 XToast<XToast<*>>(activity)
@@ -70,13 +94,11 @@ XToast<XToast<*>>(activity)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, object : OnClickListener<TextView?> {
-            override fun onClick(toast: XToast<XToast<*>>, view: TextView?) {
-                // 点击这个 View 后消失
-                toast.cancel()
-                // 跳转到某个Activity
-                // toast.startActivity(intent);
-            }
+        .setOnClickListener(android.R.id.message, XToast.OnClickListener<TextView?> { toast: XToast<*>, view: TextView? ->
+            // 点击这个 View 后消失
+            toast.cancel()
+            // 跳转到某个Activity
+            // toast.startActivity(intent);
         })
         .show()
 ```
@@ -155,11 +177,11 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
 
 * 日志查看框架：[Logcat](https://github.com/getActivity/Logcat)
 
-#### Android技术讨论Q群：78797078
-
 #### 微信公众号：Android轮子哥
 
 ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/official_ccount.png)
+
+#### Android 技术分享 QQ 群：78797078
 
 #### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:
 

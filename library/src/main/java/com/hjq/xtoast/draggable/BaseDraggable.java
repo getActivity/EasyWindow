@@ -1,5 +1,6 @@
 package com.hjq.xtoast.draggable;
 
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.View;
@@ -52,9 +53,17 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 获取状态栏的高度
      */
     protected int getStatusBarHeight() {
-        Rect frame = new Rect();
-        getRootView().getWindowVisibleDisplayFrame(frame);
-        return frame.top;
+        Rect rect = new Rect();
+        getRootView().getWindowVisibleDisplayFrame(rect);
+        return rect.top;
+    }
+
+    /**
+     * 当前是否是横屏
+     */
+    protected boolean isLandscape() {
+        return mRootView.getResources().getConfiguration().orientation
+                == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     /**

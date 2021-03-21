@@ -13,8 +13,6 @@ import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.ToastUtils;
-import com.hjq.xtoast.OnClickListener;
-import com.hjq.xtoast.OnToastListener;
 import com.hjq.xtoast.XToast;
 import com.hjq.xtoast.draggable.MovingDraggable;
 import com.hjq.xtoast.draggable.SpringDraggable;
@@ -27,7 +25,7 @@ import java.util.List;
  *    time   : 2019/01/04
  *    desc   : Demo 使用案例
  */
-public class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAnimStyle(android.R.style.Animation_Dialog)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_warning)
                 .setText(android.R.id.message, "是不是感觉很牛逼")
-                .setOnToastListener(new OnToastListener() {
+                .setOnToastListener(new XToast.OnToastListener() {
 
                     @Override
                     public void onShow(XToast<?> toast) {
@@ -83,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我点我点我")
-                .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
+                .setOnClickListener(android.R.id.message, new XToast.OnClickListener<TextView>() {
 
                     @Override
                     public void onClick(final XToast<?> toast, TextView view) {
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 .setBackgroundDimAmount(0.5f)
                 // 设置成可拖拽的
                 .setDraggable(new MovingDraggable())
-                .setOnClickListener(android.R.id.message, new OnClickListener<TextView>() {
+                .setOnClickListener(android.R.id.message, new XToast.OnClickListener<TextView>() {
 
                     @Override
                     public void onClick(XToast<?> toast, TextView view) {
@@ -135,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setYOffset(200)
                                 // 设置指定的拖拽规则
                                 .setDraggable(new SpringDraggable())
-                                .setOnClickListener(android.R.id.icon, new OnClickListener<ImageView>() {
+                                .setOnClickListener(android.R.id.icon, new XToast.OnClickListener<ImageView>() {
 
                                     @Override
                                     public void onClick(XToast<?> toast, ImageView view) {

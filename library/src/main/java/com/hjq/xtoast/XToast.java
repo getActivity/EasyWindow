@@ -9,10 +9,12 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -104,6 +106,64 @@ public class XToast<X extends XToast<?>> {
     }
 
     /**
+     * 设置宽度
+     */
+    public X setWidth(int width) {
+        mWindowParams.width = width;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置高度
+     */
+    public X setHeight(int height) {
+        mWindowParams.height = height;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口重心
+     */
+    public X setGravity(int gravity) {
+        mWindowParams.gravity = gravity;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口方向
+     *
+     * 自适应：{@link ActivityInfo#SCREEN_ORIENTATION_UNSPECIFIED}
+     * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
+     * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
+     */
+    public X setOrientation(int orientation) {
+        mWindowParams.screenOrientation = orientation;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置水平偏移量
+     */
+    public X setXOffset(int x) {
+        mWindowParams.x = x;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置垂直偏移量
+     */
+    public X setYOffset(int y) {
+        mWindowParams.y = y;
+        update();
+        return (X) this;
+    }
+
+    /**
      * 是否外层可触摸
      */
     public X setOutsideTouchable(boolean touchable) {
@@ -113,9 +173,7 @@ public class XToast<X extends XToast<?>> {
         } else {
             clearWindowFlags(flags);
         }
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -133,9 +191,7 @@ public class XToast<X extends XToast<?>> {
         } else {
             clearWindowFlags(flags);
         }
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -151,9 +207,7 @@ public class XToast<X extends XToast<?>> {
      */
     public X addWindowFlags(int flags) {
         mWindowParams.flags |= flags;
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -162,9 +216,7 @@ public class XToast<X extends XToast<?>> {
      */
     public X clearWindowFlags(int flags) {
         mWindowParams.flags &= ~flags;
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -173,9 +225,7 @@ public class XToast<X extends XToast<?>> {
      */
     public X setWindowFlags(int flags) {
         mWindowParams.flags = flags;
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -184,9 +234,7 @@ public class XToast<X extends XToast<?>> {
      */
     public X setWindowType(int type) {
         mWindowParams.type = type;
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -195,9 +243,110 @@ public class XToast<X extends XToast<?>> {
      */
     public X setAnimStyle(int id) {
         mWindowParams.windowAnimations = id;
-        if (isShow()) {
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置软键盘模式
+     */
+    public X setSoftInputMode(int mode) {
+        mWindowParams.softInputMode = mode;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口 Token
+     */
+    public X setWindowToken(IBinder token) {
+        mWindowParams.token = token;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口透明度
+     */
+    public X setWindowAlpha(float alpha) {
+        mWindowParams.alpha = alpha;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置垂直间距
+     */
+    public X setVerticalMargin(float verticalMargin) {
+        mWindowParams.verticalMargin = verticalMargin;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置水平间距
+     */
+    public X setHorizontalMargin(float horizontalMargin) {
+        mWindowParams.horizontalMargin = horizontalMargin;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置位图格式
+     */
+    public X setBitmapFormat(int format) {
+        mWindowParams.format = format;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置状态栏的可见性
+     */
+    public X setSystemUiVisibility(int systemUiVisibility) {
+        mWindowParams.systemUiVisibility = systemUiVisibility;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置垂直权重
+     */
+    public X setVerticalWeight(float verticalWeight) {
+        mWindowParams.verticalWeight = verticalWeight;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置挖孔屏下的显示模式
+     */
+    public X setLayoutInDisplayCutoutMode(int mode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            mWindowParams.layoutInDisplayCutoutMode = mode;
             update();
         }
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口在哪个显示屏上显示
+     */
+    public X setPreferredDisplayModeId(int id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mWindowParams.preferredDisplayModeId = id;
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
+     * 重新设置 WindowManager 参数集
+     */
+    public X setWindowParams(WindowManager.LayoutParams params) {
+        mWindowParams = params;
+        update();
         return (X) this;
     }
 
@@ -216,32 +365,14 @@ public class XToast<X extends XToast<?>> {
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
+        // 当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
+        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)) {
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        }
         mDraggable = draggable;
         if (isShow()) {
             update();
             mDraggable.start(this);
-        }
-        return (X) this;
-    }
-
-    /**
-     * 设置宽度
-     */
-    public X setWidth(int width) {
-        mWindowParams.width = width;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
-     * 设置高度
-     */
-    public X setHeight(int height) {
-        mWindowParams.height = height;
-        if (isShow()) {
-            update();
         }
         return (X) this;
     }
@@ -267,65 +398,6 @@ public class XToast<X extends XToast<?>> {
     }
 
     /**
-     * 设置窗口重心
-     */
-    public X setGravity(int gravity) {
-        mWindowParams.gravity = gravity;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
-     * 设置窗口方向
-     *
-     * 自适应：{@link ActivityInfo#SCREEN_ORIENTATION_UNSPECIFIED}
-     * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
-     * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
-     */
-    public X setOrientation(int orientation) {
-        mWindowParams.screenOrientation = orientation;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
-     * 设置水平偏移量
-     */
-    public X setXOffset(int x) {
-        mWindowParams.x = x;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
-     * 设置垂直偏移量
-     */
-    public X setYOffset(int y) {
-        mWindowParams.y = y;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
-     * 重新设置 WindowManager 参数集
-     */
-    public X setWindowParams(WindowManager.LayoutParams params) {
-        mWindowParams = params;
-        if (isShow()) {
-            update();
-        }
-        return (X) this;
-    }
-
-    /**
      * 设置布局
      */
     public X setView(int id) {
@@ -335,29 +407,35 @@ public class XToast<X extends XToast<?>> {
     public X setView(View view) {
         mRootView = view;
 
-        ViewGroup.LayoutParams params = mRootView.getLayoutParams();
-        if (params != null && mWindowParams.width == WindowManager.LayoutParams.WRAP_CONTENT &&
+        ViewGroup.LayoutParams layoutParams = mRootView.getLayoutParams();
+        if (layoutParams != null && mWindowParams.width == WindowManager.LayoutParams.WRAP_CONTENT &&
                 mWindowParams.height == WindowManager.LayoutParams.WRAP_CONTENT) {
             // 如果当前 Dialog 的宽高设置了自适应，就以布局中设置的宽高为主
-            setWidth(params.width);
-            setHeight(params.height);
+            setWidth(layoutParams.width);
+            setHeight(layoutParams.height);
         }
 
         // 如果当前没有设置重心，就自动获取布局重心
         if (mWindowParams.gravity == Gravity.NO_GRAVITY) {
-            if (params instanceof FrameLayout.LayoutParams) {
-                setGravity(((FrameLayout.LayoutParams) params).gravity);
-            } else if (params instanceof LinearLayout.LayoutParams) {
-                setGravity(((LinearLayout.LayoutParams) params).gravity);
-            } else {
+            if (layoutParams instanceof FrameLayout.LayoutParams) {
+                int gravity = ((FrameLayout.LayoutParams) layoutParams).gravity;
+                if (gravity != FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY) {
+                    setGravity(gravity);
+                }
+            } else if (layoutParams instanceof LinearLayout.LayoutParams) {
+                int gravity = ((LinearLayout.LayoutParams) layoutParams).gravity;
+                if (gravity != FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY) {
+                    setGravity(gravity);
+                }
+            }
+
+            if (mWindowParams.gravity == Gravity.NO_GRAVITY) {
                 // 默认重心是居中
                 setGravity(Gravity.CENTER);
             }
         }
 
-        if (isShow()) {
-            update();
-        }
+        update();
         return (X) this;
     }
 
@@ -384,6 +462,10 @@ public class XToast<X extends XToast<?>> {
         }
 
         try {
+            // 如果 View 已经被添加的情况下，就先把 View 移除掉
+            if (mRootView.getParent() != null) {
+                mWindowManager.removeViewImmediate(mRootView);
+            }
             mWindowManager.addView(mRootView, mWindowParams);
             // 当前已经显示
             mShow = true;
@@ -405,7 +487,7 @@ public class XToast<X extends XToast<?>> {
             if (mListener != null) {
                 mListener.onShow(this);
             }
-        } catch (NullPointerException | IllegalStateException | WindowManager.BadTokenException e) {
+        } catch (NullPointerException | IllegalStateException | IllegalArgumentException | WindowManager.BadTokenException e) {
             // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
             // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
             e.printStackTrace();
@@ -452,6 +534,9 @@ public class XToast<X extends XToast<?>> {
      * 刷新悬浮窗
      */
     public void update() {
+        if (!isShow()) {
+            return;
+        }
         // 更新 WindowManger 的显示
         mWindowManager.updateViewLayout(mRootView, mWindowParams);
     }
@@ -635,7 +720,7 @@ public class XToast<X extends XToast<?>> {
         return setOnClickListener(findViewById(id), listener);
     }
 
-    private X setOnClickListener(View view, OnClickListener<? extends View> listener) {
+    private X setOnClickListener(View view, XToast.OnClickListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -655,7 +740,7 @@ public class XToast<X extends XToast<?>> {
         return setOnTouchListener(findViewById(id), listener);
     }
 
-    private X setOnTouchListener(View view, OnTouchListener<? extends View> listener) {
+    private X setOnTouchListener(View view, XToast.OnTouchListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -701,5 +786,43 @@ public class XToast<X extends XToast<?>> {
      */
     public void removeCallbacks() {
         HANDLER.removeCallbacksAndMessages(this);
+    }
+
+    /**
+     * View 的点击事件监听
+     */
+    public interface OnClickListener<V extends View> {
+
+        /**
+         * 点击回调
+         */
+        void onClick(XToast<?> toast, V view);
+    }
+
+    /**
+     * View 的触摸事件监听
+     */
+    public interface OnTouchListener<V extends View> {
+
+        /**
+         * 触摸回调
+         */
+        boolean onTouch(XToast<?> toast, V view, MotionEvent event);
+    }
+
+    /**
+     * Toast 显示销毁监听
+     */
+    public interface OnToastListener {
+
+        /**
+         * 显示回调
+         */
+        void onShow(XToast<?> toast);
+
+        /**
+         * 消失回调
+         */
+        void onDismiss(XToast<?> toast);
     }
 }

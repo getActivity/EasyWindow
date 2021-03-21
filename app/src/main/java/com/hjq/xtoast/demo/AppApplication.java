@@ -10,7 +10,7 @@ import com.hjq.toast.ToastUtils;
  *    time   : 2021/01/24
  *    desc   : 应用入口
  */
-public class AppApplication extends Application {
+public final class AppApplication extends Application {
 
     @Override
     public void onCreate() {

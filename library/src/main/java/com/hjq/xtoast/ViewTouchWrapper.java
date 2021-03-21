@@ -14,9 +14,9 @@ import android.view.View;
 final class ViewTouchWrapper implements View.OnTouchListener {
 
     private final XToast<?> mToast;
-    private final OnTouchListener mListener;
+    private final XToast.OnTouchListener mListener;
 
-    ViewTouchWrapper(XToast<?> toast, View view, OnTouchListener listener) {
+    ViewTouchWrapper(XToast<?> toast, View view, XToast.OnTouchListener listener) {
         mToast = toast;
         mListener = listener;
 
