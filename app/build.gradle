@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 68
-        versionName "6.8"
+        versionCode 69
+        versionName "6.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -35,7 +35,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.hjq:xxpermissions:10.5'
+    implementation 'com.hjq:xxpermissions:10.6'
     // 标题栏框架：https://github.com/getActivity/TitleBar
     implementation 'com.hjq:titlebar:8.5'
     // 吐司工具类：https://github.com/getActivity/ToastUtils

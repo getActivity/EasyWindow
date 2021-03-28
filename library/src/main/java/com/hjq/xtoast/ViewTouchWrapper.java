@@ -16,18 +16,15 @@ final class ViewTouchWrapper implements View.OnTouchListener {
     private final XToast<?> mToast;
     private final XToast.OnTouchListener mListener;
 
-    ViewTouchWrapper(XToast<?> toast, View view, XToast.OnTouchListener listener) {
+    ViewTouchWrapper(XToast<?> toast, XToast.OnTouchListener listener) {
         mToast = toast;
         mListener = listener;
-
-        view.setEnabled(true);
-        view.setOnTouchListener(this);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @SuppressWarnings("unchecked")
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        return mListener.onTouch(mToast, v, event);
+    public boolean onTouch(View view, MotionEvent event) {
+        return mListener.onTouch(mToast, view, event);
     }
 }

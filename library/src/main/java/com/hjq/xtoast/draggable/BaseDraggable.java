@@ -1,6 +1,5 @@
 package com.hjq.xtoast.draggable;
 
-import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.View;
@@ -50,20 +49,21 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     }
 
     /**
-     * 获取状态栏的高度
+     * 获取窗口不可见的宽度，一般情况下为横屏状态下刘海的高度
      */
-    protected int getStatusBarHeight() {
+    protected int getWindowInvisibleWidth() {
         Rect rect = new Rect();
-        getRootView().getWindowVisibleDisplayFrame(rect);
-        return rect.top;
+        mRootView.getWindowVisibleDisplayFrame(rect);
+        return rect.left;
     }
 
     /**
-     * 当前是否是横屏
+     * 获取窗口不可见的高度，一般情况下为状态栏的高度
      */
-    protected boolean isLandscape() {
-        return mRootView.getResources().getConfiguration().orientation
-                == Configuration.ORIENTATION_LANDSCAPE;
+    protected int getWindowInvisibleHeight() {
+        Rect rect = new Rect();
+        mRootView.getWindowVisibleDisplayFrame(rect);
+        return rect.top;
     }
 
     /**
@@ -80,17 +80,22 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 更新 WindowManager 所在的位置
      */
     protected void updateLocation(int x, int y) {
-        if (mWindowParams.x != x || mWindowParams.y != y) {
-            mWindowParams.x = x;
-            mWindowParams.y = y;
-            // 一定要先设置重心位置为左上角
-            mWindowParams.gravity = Gravity.TOP | Gravity.START;
-            try {
-                mWindowManager.updateViewLayout(mRootView, mWindowParams);
-            } catch (IllegalArgumentException ignored) {
-                // 当 WindowManager 已经消失时调用会发生崩溃
-                // IllegalArgumentException: View not attached to window manager
-            }
+        // 屏幕默认的重心
+        int screenGravity = Gravity.TOP | Gravity.START;
+        // 判断本次移动的位置是否跟当前的窗口位置是否一致
+        if (mWindowParams.gravity == screenGravity && mWindowParams.x == x && mWindowParams.y == y) {
+            return;
+        }
+
+        mWindowParams.x = x;
+        mWindowParams.y = y;
+        // 一定要先设置重心位置为左上角
+        mWindowParams.gravity = screenGravity;
+        try {
+            mWindowManager.updateViewLayout(mRootView, mWindowParams);
+        } catch (IllegalArgumentException ignored) {
+            // 当 WindowManager 已经消失时调用会发生崩溃
+            // IllegalArgumentException: View not attached to window manager
         }
     }
 

@@ -14,17 +14,14 @@ final class ViewClickWrapper implements View.OnClickListener {
     private final XToast<?> mToast;
     private final XToast.OnClickListener mListener;
 
-    ViewClickWrapper(XToast<?> toast, View view, XToast.OnClickListener listener) {
+    ViewClickWrapper(XToast<?> toast, XToast.OnClickListener listener) {
         mToast = toast;
         mListener = listener;
-
-        view.setClickable(true);
-        view.setOnClickListener(this);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final void onClick(View v) {
-        mListener.onClick(mToast, v);
+    public final void onClick(View view) {
+        mListener.onClick(mToast, view);
     }
 }

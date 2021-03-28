@@ -15,7 +15,7 @@
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.hjq:xtoast:6.8'
+    implementation 'com.hjq:xtoast:6.9'
 }
 ```
 

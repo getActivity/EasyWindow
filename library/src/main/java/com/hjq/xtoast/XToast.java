@@ -30,7 +30,8 @@ import com.hjq.xtoast.draggable.MovingDraggable;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/XToast
  *    time   : 2019/01/04
- *    desc   : 超级 Toast（能做 Toast 做不到的事，应付项目中的特殊需求）
+ *    desc   : 悬浮窗框架
+ *    doc    : https://developer.android.google.cn/reference/android/view/WindowManager.html
  */
 @SuppressWarnings("unchecked")
 public class XToast<X extends XToast<?>> {
@@ -67,7 +68,7 @@ public class XToast<X extends XToast<?>> {
                 (activity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
             // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏的位置上
             // 如果不想让状态栏显示的时候把 WindowManager 顶下来，可以添加 FLAG_LAYOUT_IN_SCREEN，但是会导致软键盘无法调整窗口位置
-            addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN | WindowManager.LayoutParams.TYPE_STATUS_BAR);
+            addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
         // 跟随 Activity 的生命周期
@@ -710,6 +711,45 @@ public class XToast<X extends XToast<?>> {
     }
 
     /**
+     * 获取 Handler
+     */
+    public Handler getHandler() {
+        return HANDLER;
+    }
+
+    /**
+     * 延迟执行
+     */
+    public boolean post(Runnable runnable) {
+        return postDelayed(runnable, 0);
+    }
+
+    /**
+     * 延迟一段时间执行
+     */
+    public boolean postDelayed(Runnable runnable, long delayMillis) {
+        if (delayMillis < 0) {
+            delayMillis = 0;
+        }
+        return postAtTime(runnable, SystemClock.uptimeMillis() + delayMillis);
+    }
+
+    /**
+     * 在指定的时间执行
+     */
+    public boolean postAtTime(Runnable runnable, long uptimeMillis) {
+        // 发送和这个 WindowManager 相关的消息回调
+        return HANDLER.postAtTime(runnable, this, uptimeMillis);
+    }
+
+    /**
+     * 移除消息回调
+     */
+    public void removeCallbacks() {
+        HANDLER.removeCallbacksAndMessages(this);
+    }
+
+    /**
      * 设置点击事件
      */
     public X setOnClickListener(OnClickListener<? extends View> listener) {
@@ -725,7 +765,9 @@ public class XToast<X extends XToast<?>> {
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
-        new ViewClickWrapper(this, view, listener);
+
+        view.setClickable(true);
+        view.setOnClickListener(new ViewClickWrapper(this, listener));
         return (X) this;
     }
 
@@ -745,47 +787,9 @@ public class XToast<X extends XToast<?>> {
         if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
             clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         }
-        new ViewTouchWrapper(this, view, listener);
+        view.setEnabled(true);
+        view.setOnTouchListener(new ViewTouchWrapper(this, listener));
         return (X) this;
-    }
-
-    /**
-     * 获取 Handler
-     */
-    public Handler getHandler() {
-        return HANDLER;
-    }
-
-    /**
-     * 延迟执行
-     */
-    public boolean post(Runnable r) {
-        return postDelayed(r, 0);
-    }
-
-    /**
-     * 延迟一段时间执行
-     */
-    public boolean postDelayed(Runnable r, long delayMillis) {
-        if (delayMillis < 0) {
-            delayMillis = 0;
-        }
-        return postAtTime(r, SystemClock.uptimeMillis() + delayMillis);
-    }
-
-    /**
-     * 在指定的时间执行
-     */
-    public boolean postAtTime(Runnable r, long uptimeMillis) {
-        // 发送和这个 WindowManager 相关的消息回调
-        return HANDLER.postAtTime(r, this, uptimeMillis);
-    }
-
-    /**
-     * 移除消息回调
-     */
-    public void removeCallbacks() {
-        HANDLER.removeCallbacksAndMessages(this);
     }
 
     /**

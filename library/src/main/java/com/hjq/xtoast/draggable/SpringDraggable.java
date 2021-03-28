@@ -52,28 +52,16 @@ public class SpringDraggable extends BaseDraggable {
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 记录移动的位置（相对屏幕的坐标）
-                rawMoveX = event.getRawX();
-                rawMoveY = event.getRawY() - getStatusBarHeight();
-                if (isLandscape()) {
-                    // 如果是在横屏的模式下，应该要减去状态栏的高度
-                    // 如果是在竖屏的模式下，则不需要减去状态栏的高度
-                    // 因为在横屏情况下，刘海会占据 x 轴一个状态栏的高度
-                    rawMoveX -= getStatusBarHeight();
-                }
+                rawMoveX = event.getRawX() - getWindowInvisibleWidth();
+                rawMoveY = event.getRawY() - getWindowInvisibleHeight();
 
                 // 更新移动的位置
                 updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
                 break;
             case MotionEvent.ACTION_UP:
                 // 记录移动的位置（相对屏幕的坐标）
-                rawMoveX = event.getRawX();
-                rawMoveY = event.getRawY() - getStatusBarHeight();
-                if (isLandscape()) {
-                    // 如果是在横屏的模式下，应该要减去状态栏的高度
-                    // 如果是在竖屏的模式下，则不需要减去状态栏的高度
-                    // 因为在横屏情况下，刘海会占据 x 轴一个状态栏的高度
-                    rawMoveX -= getStatusBarHeight();
-                }
+                rawMoveX = event.getRawX() - getWindowInvisibleWidth();
+                rawMoveY = event.getRawY() - getWindowInvisibleHeight();
 
                 // 自动回弹吸附
                 switch (mOrientation) {
