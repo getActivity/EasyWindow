@@ -165,7 +165,7 @@ public final class MainActivity extends AppCompatActivity {
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
         new XToast<>(this)
                 .setDuration(1000)
-                .setView(ToastUtils.getView())
+                .setView(ToastUtils.getStyle().createView(this))
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setText(android.R.id.message, "就问你溜不溜")
                 .setGravity(Gravity.BOTTOM)

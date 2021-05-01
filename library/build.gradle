@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 30
@@ -9,15 +8,6 @@ android {
         versionCode 69
         versionName "6.9"
     }
-}
-
-publish {
-    userOrg = 'getactivity'
-    groupId = 'com.hjq'
-    artifactId = 'xtoast'
-    publishVersion = '6.9'
-    desc = 'This is a simple and easy to use suspension window frame'
-    website = "https://github.com/getActivity/XToast"
 }
 
 tasks.withType(Javadoc) {

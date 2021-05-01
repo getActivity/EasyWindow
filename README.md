@@ -12,10 +12,26 @@
 
 #### 集成步骤
 
+* 在项目根目录下的 `build.gradle` 文件中加入
+
+```groovy
+buildscript {
+    ......
+}
+allprojects {
+    repositories {
+        // JitPack 远程仓库：https://jitpack.io
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+* 在项目 app 模块下的 `build.gradle` 文件中加入
+
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.hjq:xtoast:6.9'
+    implementation 'com.github.getActivity:XToast:6.9'
 }
 ```
 
