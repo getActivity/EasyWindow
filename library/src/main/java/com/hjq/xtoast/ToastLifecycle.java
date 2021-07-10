@@ -86,9 +86,6 @@ final class ToastLifecycle implements Application.ActivityLifecycleCallbacks {
         if (mToast == null) {
             return;
         }
-        if (mToast.isShow()) {
-            mToast.cancel();
-        }
         mToast.recycle();
         mToast = null;
     }

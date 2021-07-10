@@ -1,6 +1,6 @@
 # 悬浮窗框架
 
-* 码云地址：[Gitee](https://gitee.com/getActivity/XToast)
+* 项目地址：[Github](https://github.com/getActivity/XToast)、[码云](https://gitee.com/getActivity/XToast)
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
@@ -16,11 +16,12 @@
 
 ```groovy
 buildscript {
-    ......
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
 }
 allprojects {
     repositories {
-        // JitPack 远程仓库：https://jitpack.io
         maven { url 'https://jitpack.io' }
     }
 }
@@ -31,7 +32,7 @@ allprojects {
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:6.9'
+    implementation 'com.github.getActivity:XToast:8.0'
 }
 ```
 
@@ -137,7 +138,7 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         new XToast<>(activity)
-                .setXXXX()
+                .setXxx()
                 .show();
     }
 

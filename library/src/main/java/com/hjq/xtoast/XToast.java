@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
@@ -33,8 +34,8 @@ import com.hjq.xtoast.draggable.MovingDraggable;
  *    desc   : 悬浮窗框架
  *    doc    : https://developer.android.google.cn/reference/android/view/WindowManager.html
  */
-@SuppressWarnings("unchecked")
-public class XToast<X extends XToast<?>> {
+@SuppressWarnings({"unchecked", "unused", "deprecation", "UnusedReturnValue"})
+public class XToast<X extends XToast<?>> implements Runnable {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -384,8 +385,8 @@ public class XToast<X extends XToast<?>> {
     public X setDuration(int duration) {
         mDuration = duration;
         if (isShow() && mDuration != 0) {
-            removeCallbacks();
-            postDelayed(new CancelRunnable(this), mDuration);
+            removeCallbacks(this);
+            postDelayed(this, mDuration);
         }
         return (X) this;
     }
@@ -440,10 +441,79 @@ public class XToast<X extends XToast<?>> {
         return (X) this;
     }
 
+    public void showAsDropDown(View anchorView) {
+        showAsDropDown(anchorView, Gravity.BOTTOM);
+    }
+
+    public void showAsDropDown(View anchorView, int showGravity) {
+        showAsDropDown(anchorView, showGravity, 0 , 0);
+    }
+
+    /**
+     * 将悬浮窗显示在某个 View 下方（和 PopupWindow 同名方法作用类似）
+     *
+     * @param anchorView            锚点 View
+     * @param showGravity           显示重心
+     * @param xOff                  水平偏移
+     * @param yOff                  垂直偏移
+     */
+    public void showAsDropDown(View anchorView, int showGravity, int xOff, int yOff) {
+        if (mRootView == null || mWindowParams == null) {
+            throw new IllegalArgumentException("WindowParams and view cannot be empty");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            // 适配布局反方向
+            showGravity = Gravity.getAbsoluteGravity(showGravity, anchorView.getResources().getConfiguration().getLayoutDirection());
+        }
+
+        int[] anchorViewLocation = new int[2];
+        anchorView.getLocationOnScreen(anchorViewLocation);
+
+        Rect windowVisibleRect = new Rect();
+        anchorView.getWindowVisibleDisplayFrame(windowVisibleRect);
+
+        mWindowParams.gravity = Gravity.TOP | Gravity.START;
+        mWindowParams.x = anchorViewLocation[0] - windowVisibleRect.left + xOff;
+        mWindowParams.y = anchorViewLocation[1] - windowVisibleRect.top + yOff;
+
+        if ((showGravity & Gravity.LEFT) == Gravity.LEFT) {
+            int rootViewWidth = mRootView.getWidth();
+            if (rootViewWidth == 0) {
+                rootViewWidth = mRootView.getMeasuredWidth();
+            }
+            if (rootViewWidth == 0) {
+                mRootView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                rootViewWidth = mRootView.getMeasuredWidth();
+            }
+            mWindowParams.x -= rootViewWidth;
+        } else if ((showGravity & Gravity.RIGHT) == Gravity.RIGHT) {
+            mWindowParams.x += anchorView.getWidth();
+        }
+
+        if ((showGravity & Gravity.TOP) == Gravity.TOP) {
+            int rootViewHeight = mRootView.getHeight();
+            if (rootViewHeight == 0) {
+                rootViewHeight = mRootView.getMeasuredHeight();
+            }
+            if (rootViewHeight == 0) {
+                mRootView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                rootViewHeight = mRootView.getMeasuredHeight();
+            }
+            mWindowParams.y -= rootViewHeight;
+        } else if ((showGravity & Gravity.BOTTOM) == Gravity.BOTTOM) {
+            mWindowParams.y += anchorView.getHeight();
+        }
+
+        show();
+    }
+
     /**
      * 显示悬浮窗
      */
-    public X show() {
+    public void show() {
         if (mRootView == null || mWindowParams == null) {
             throw new IllegalArgumentException("WindowParams and view cannot be empty");
         }
@@ -451,14 +521,14 @@ public class XToast<X extends XToast<?>> {
         // 如果当前已经显示则进行更新
         if (mShow) {
             update();
-            return (X) this;
+            return;
         }
 
         if (mContext instanceof Activity) {
             if (((Activity) mContext).isFinishing() ||
                     (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
                             ((Activity) mContext).isDestroyed())) {
-                return (X) this;
+                return;
             }
         }
 
@@ -472,7 +542,8 @@ public class XToast<X extends XToast<?>> {
             mShow = true;
             // 如果当前限定了显示时长
             if (mDuration != 0) {
-                postDelayed(new CancelRunnable(this), mDuration);
+                removeCallbacks(this);
+                postDelayed(this, mDuration);
             }
             // 如果设置了拖拽规则
             if (mDraggable != null) {
@@ -493,16 +564,14 @@ public class XToast<X extends XToast<?>> {
             // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
             e.printStackTrace();
         }
-
-        return (X) this;
     }
 
     /**
      * 销毁悬浮窗
      */
-    public X cancel() {
+    public void cancel() {
         if (!mShow) {
-            return (X) this;
+            return;
         }
 
         try {
@@ -516,6 +585,9 @@ public class XToast<X extends XToast<?>> {
             // java.lang.IllegalArgumentException: View=android.widget.TextView{3d2cee7 V.ED..... ........ 0,0-312,153} not attached to window manager
             mWindowManager.removeViewImmediate(mRootView);
 
+            // 移除销毁任务
+            removeCallbacks(this);
+
             // 回调监听
             if (mListener != null) {
                 mListener.onDismiss(this);
@@ -527,8 +599,6 @@ public class XToast<X extends XToast<?>> {
             // 当前没有显示
             mShow = false;
         }
-
-        return (X) this;
     }
 
     /**
@@ -543,9 +613,12 @@ public class XToast<X extends XToast<?>> {
     }
 
     /**
-     * 回收操作
+     * 回收释放
      */
     public void recycle() {
+        if (isShow()) {
+            cancel();
+        }
         mContext = null;
         mRootView = null;
         mWindowManager = null;
@@ -597,7 +670,7 @@ public class XToast<X extends XToast<?>> {
         if (mRootView == null) {
             throw new IllegalStateException("Please setup view");
         }
-        return (V) mRootView.findViewById(id);
+        return mRootView.findViewById(id);
     }
 
     /**
@@ -745,7 +818,11 @@ public class XToast<X extends XToast<?>> {
     /**
      * 移除消息回调
      */
-    public void removeCallbacks() {
+    public void removeCallbacks(Runnable runnable) {
+        HANDLER.removeCallbacks(runnable);
+    }
+
+    public void removeCallbacksAndMessages() {
         HANDLER.removeCallbacksAndMessages(this);
     }
 
@@ -790,6 +867,14 @@ public class XToast<X extends XToast<?>> {
         view.setEnabled(true);
         view.setOnTouchListener(new ViewTouchWrapper(this, listener));
         return (X) this;
+    }
+
+    /**
+     * {@link Runnable}
+     */
+    @Override
+    public void run() {
+        cancel();
     }
 
     /**

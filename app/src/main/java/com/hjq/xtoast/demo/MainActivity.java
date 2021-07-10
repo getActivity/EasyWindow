@@ -86,7 +86,7 @@ public final class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(final XToast<?> toast, TextView view) {
                         view.setText("那么听话啊");
-                        getWindow().getDecorView().postDelayed(new Runnable() {
+                        toast.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 toast.cancel();
@@ -98,6 +98,23 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     public void show5(View v) {
+        new XToast<>(this)
+                .setView(R.layout.toast_hint)
+                .setAnimStyle(android.R.style.Animation_Translucent)
+                .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+                .setDuration(2000)
+                .setText(android.R.id.message, "位置算的准不准")
+                .setOnClickListener(android.R.id.message, new XToast.OnClickListener<TextView>() {
+
+                    @Override
+                    public void onClick(final XToast<?> toast, TextView view) {
+                        toast.cancel();
+                    }
+                })
+                .showAsDropDown(v, Gravity.BOTTOM);
+    }
+
+    public void show6(View v) {
         new XToast<>(this)
                 .setView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
@@ -119,7 +136,7 @@ public final class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void show6(View v) {
+    public void show7(View v) {
         XXPermissions.with(this)
                 .permission(Permission.SYSTEM_ALERT_WINDOW)
                 .request(new OnPermissionCallback() {
@@ -161,7 +178,7 @@ public final class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void show7(View v) {
+    public void show8(View v) {
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
         new XToast<>(this)
                 .setDuration(1000)

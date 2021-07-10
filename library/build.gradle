@@ -5,8 +5,15 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 69
-        versionName "6.9"
+        versionCode 80
+        versionName "8.0"
+    }
+
+    android.libraryVariants.all { variant ->
+        // aar 输出文件名配置
+        variant.outputs.all { output ->
+            outputFileName = "xtoast-${android.defaultConfig.versionName}.aar"
+        }
     }
 }
 

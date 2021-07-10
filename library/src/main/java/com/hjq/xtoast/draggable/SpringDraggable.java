@@ -97,7 +97,7 @@ public class SpringDraggable extends BaseDraggable {
                         break;
                 }
                 // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
-                return isTouchMove(mViewDownX, event.getX(), mViewDownY, event.getY());
+                return isTouchMove(v.getContext(), mViewDownX, event.getX(), mViewDownY, event.getY());
             default:
                 break;
         }
