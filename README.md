@@ -32,7 +32,7 @@ allprojects {
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:8.0'
+    implementation 'com.github.getActivity:XToast:8.1'
 }
 ```
 

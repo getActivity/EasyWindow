@@ -1,10 +1,8 @@
 package com.hjq.xtoast.draggable;
 
-import android.content.Context;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.WindowManager;
 
 import com.hjq.xtoast.XToast;
@@ -48,6 +46,24 @@ public abstract class BaseDraggable implements View.OnTouchListener {
 
     protected View getRootView() {
         return mRootView;
+    }
+
+    /**
+     * 获取当前 Window 的宽度
+     */
+    protected int getWindowWidth() {
+        Rect rect = new Rect();
+        getRootView().getWindowVisibleDisplayFrame(rect);
+        return rect.right - rect.left;
+    }
+
+    /**
+     * 获取当前 Window 的高度
+     */
+    protected int getWindowHeight() {
+        Rect rect = new Rect();
+        getRootView().getWindowVisibleDisplayFrame(rect);
+        return rect.bottom - rect.top;
     }
 
     /**
@@ -111,8 +127,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * @param downY         手指按下时的 y 坐标
      * @param upY           手指抬起时的 y 坐标
      */
-    protected boolean isTouchMove(Context context, float downX, float upX, float downY, float upY) {
-        return Math.abs(downX - upX) > ViewConfiguration.get(context).getScaledTouchSlop() ||
-                Math.abs(downY - upY) > ViewConfiguration.get(context).getScaledTouchSlop();
+    protected boolean isTouchMove(float downX, float upX, float downY, float upY) {
+        return Math.abs(downX - upX) >= 1f || Math.abs(downY - upY) >= 1f;
     }
 }
