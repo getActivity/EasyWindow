@@ -36,7 +36,7 @@ public final class MainActivity extends AppCompatActivity {
     public void show1(View v) {
         new XToast<>(this)
                 .setDuration(3000)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "这个动画是不是很骚")
@@ -46,7 +46,7 @@ public final class MainActivity extends AppCompatActivity {
     public void show2(View v) {
         new XToast<>(this)
                 .setDuration(1000)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Activity)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_error)
                 .setText(android.R.id.message, "一秒后消失")
@@ -56,7 +56,7 @@ public final class MainActivity extends AppCompatActivity {
     public void show3(View v) {
         new XToast<>(this)
                 .setDuration(3000)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Dialog)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_warning)
                 .setText(android.R.id.message, "是不是感觉很牛逼")
@@ -77,7 +77,7 @@ public final class MainActivity extends AppCompatActivity {
 
     public void show4(View v) {
         new XToast<>(this)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我点我点我")
@@ -99,7 +99,7 @@ public final class MainActivity extends AppCompatActivity {
 
     public void show5(View v) {
         new XToast<>(this)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setDuration(2000)
@@ -116,7 +116,7 @@ public final class MainActivity extends AppCompatActivity {
 
     public void show6(View v) {
         new XToast<>(this)
-                .setView(R.layout.toast_hint)
+                .setContentView(R.layout.toast_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
                 .setText(android.R.id.message, "点我消失")
@@ -145,7 +145,7 @@ public final class MainActivity extends AppCompatActivity {
                     public void onGranted(List<String> granted, boolean all) {
                         // 传入 Application 表示这个是一个全局的 Toast
                         new XToast<>(getApplication())
-                                .setView(R.layout.toast_phone)
+                                .setContentView(R.layout.toast_phone)
                                 .setGravity(Gravity.END | Gravity.BOTTOM)
                                 .setYOffset(200)
                                 // 设置指定的拖拽规则
@@ -163,6 +163,13 @@ public final class MainActivity extends AppCompatActivity {
                                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                                     }
                                 })
+                                .setOnLongClickListener(android.R.id.icon, new XToast.OnLongClickListener<View>() {
+                                    @Override
+                                    public boolean onLongClick(XToast<?> toast, View view) {
+                                        ToastUtils.show("我被长按了");
+                                        return true;
+                                    }
+                                })
                                 .show();
                     }
 
@@ -170,7 +177,7 @@ public final class MainActivity extends AppCompatActivity {
                     public void onDenied(List<String> denied, boolean never) {
                         new XToast<>(MainActivity.this)
                                 .setDuration(1000)
-                                .setView(R.layout.toast_hint)
+                                .setContentView(R.layout.toast_hint)
                                 .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_error)
                                 .setText(android.R.id.message, "请先授予悬浮窗权限")
                                 .show();
@@ -182,7 +189,7 @@ public final class MainActivity extends AppCompatActivity {
         // 将 ToastUtils 中的 View 转移给 XToast 来显示
         new XToast<>(this)
                 .setDuration(1000)
-                .setView(ToastUtils.getStyle().createView(this))
+                .setContentView(ToastUtils.getStyle().createView(this))
                 .setAnimStyle(android.R.style.Animation_Translucent)
                 .setText(android.R.id.message, "就问你溜不溜")
                 .setGravity(Gravity.BOTTOM)

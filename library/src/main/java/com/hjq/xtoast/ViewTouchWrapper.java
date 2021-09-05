@@ -25,6 +25,9 @@ final class ViewTouchWrapper implements View.OnTouchListener {
     @SuppressWarnings("unchecked")
     @Override
     public boolean onTouch(View view, MotionEvent event) {
+        if (mListener == null) {
+            return false;
+        }
         return mListener.onTouch(mToast, view, event);
     }
 }

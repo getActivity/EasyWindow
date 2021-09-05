@@ -4,9 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="100dp"
     android:background="@drawable/dialog_toast_bg"
     android:gravity="center"
+    android:layout_margin="100dp"
     android:minWidth="120dp"
     android:minHeight="120dp"
     android:orientation="vertical">

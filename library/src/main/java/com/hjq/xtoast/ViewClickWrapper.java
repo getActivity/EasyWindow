@@ -22,6 +22,9 @@ final class ViewClickWrapper implements View.OnClickListener {
     @SuppressWarnings("unchecked")
     @Override
     public final void onClick(View view) {
+        if (mListener == null) {
+            return;
+        }
         mListener.onClick(mToast, view);
     }
 }

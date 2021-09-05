@@ -42,7 +42,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
     /** 上下文 */
     private Context mContext;
     /** 根布局 */
-    private View mRootView;
+    private ViewGroup mDecorView;
     /** 悬浮窗口 */
     private WindowManager mWindowManager;
     /** 窗口参数 */
@@ -92,6 +92,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
 
     private XToast(Context context) {
         mContext = context;
+        mDecorView = new WindowLayout(context);
         mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
         // 配置一些默认的参数
         mWindowParams = new WindowManager.LayoutParams();
@@ -169,7 +170,8 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 是否外层可触摸
      */
     public X setOutsideTouchable(boolean touchable) {
-        int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         if (touchable) {
             addWindowFlags(flags);
         } else {
@@ -400,16 +402,36 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
-     * 设置布局
+     * 设置根布局（一般情况下推荐使用 {@link #setContentView} 方法来填充布局）
      */
-    public X setView(int id) {
-        return setView(LayoutInflater.from(mContext).inflate(id, new FrameLayout(mContext), false));
+    public X setDecorView(ViewGroup viewGroup) {
+        mDecorView = viewGroup;
+        return (X) this;
     }
 
-    public X setView(View view) {
-        mRootView = view;
+    /**
+     * 设置内容布局
+     */
+    public X setContentView(int id) {
+        return setContentView(LayoutInflater.from(mContext).inflate(id, mDecorView, false));
+    }
 
-        ViewGroup.LayoutParams layoutParams = mRootView.getLayoutParams();
+    public X setContentView(View view) {
+        if (mDecorView.getChildCount() > 0) {
+            mDecorView.removeAllViews();
+        }
+        mDecorView.addView(view);
+
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams marginLayoutParams = ((ViewGroup.MarginLayoutParams) layoutParams);
+            // 清除 Margin，因为 WindowManager 没有这一属性可以设置，并且会跟根布局相冲突
+            marginLayoutParams.topMargin = 0;
+            marginLayoutParams.bottomMargin = 0;
+            marginLayoutParams.leftMargin = 0;
+            marginLayoutParams.rightMargin = 0;
+        }
+
         if (layoutParams != null && mWindowParams.width == WindowManager.LayoutParams.WRAP_CONTENT &&
                 mWindowParams.height == WindowManager.LayoutParams.WRAP_CONTENT) {
             // 如果当前 Dialog 的宽高设置了自适应，就以布局中设置的宽高为主
@@ -458,13 +480,14 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * @param yOff                  垂直偏移
      */
     public void showAsDropDown(View anchorView, int showGravity, int xOff, int yOff) {
-        if (mRootView == null || mWindowParams == null) {
+        if (mDecorView.getChildCount() == 0 || mWindowParams == null) {
             throw new IllegalArgumentException("WindowParams and view cannot be empty");
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             // 适配布局反方向
-            showGravity = Gravity.getAbsoluteGravity(showGravity, anchorView.getResources().getConfiguration().getLayoutDirection());
+            showGravity = Gravity.getAbsoluteGravity(showGravity,
+                    anchorView.getResources().getConfiguration().getLayoutDirection());
         }
 
         int[] anchorViewLocation = new int[2];
@@ -478,14 +501,14 @@ public class XToast<X extends XToast<?>> implements Runnable {
         mWindowParams.y = anchorViewLocation[1] - windowVisibleRect.top + yOff;
 
         if ((showGravity & Gravity.LEFT) == Gravity.LEFT) {
-            int rootViewWidth = mRootView.getWidth();
+            int rootViewWidth = mDecorView.getWidth();
             if (rootViewWidth == 0) {
-                rootViewWidth = mRootView.getMeasuredWidth();
+                rootViewWidth = mDecorView.getMeasuredWidth();
             }
             if (rootViewWidth == 0) {
-                mRootView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                mDecorView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                rootViewWidth = mRootView.getMeasuredWidth();
+                rootViewWidth = mDecorView.getMeasuredWidth();
             }
             mWindowParams.x -= rootViewWidth;
         } else if ((showGravity & Gravity.RIGHT) == Gravity.RIGHT) {
@@ -493,14 +516,14 @@ public class XToast<X extends XToast<?>> implements Runnable {
         }
 
         if ((showGravity & Gravity.TOP) == Gravity.TOP) {
-            int rootViewHeight = mRootView.getHeight();
+            int rootViewHeight = mDecorView.getHeight();
             if (rootViewHeight == 0) {
-                rootViewHeight = mRootView.getMeasuredHeight();
+                rootViewHeight = mDecorView.getMeasuredHeight();
             }
             if (rootViewHeight == 0) {
-                mRootView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                mDecorView.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                rootViewHeight = mRootView.getMeasuredHeight();
+                rootViewHeight = mDecorView.getMeasuredHeight();
             }
             mWindowParams.y -= rootViewHeight;
         } else if ((showGravity & Gravity.BOTTOM) == Gravity.BOTTOM) {
@@ -514,7 +537,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 显示悬浮窗
      */
     public void show() {
-        if (mRootView == null || mWindowParams == null) {
+        if (mDecorView.getChildCount() == 0 || mWindowParams == null) {
             throw new IllegalArgumentException("WindowParams and view cannot be empty");
         }
 
@@ -534,10 +557,10 @@ public class XToast<X extends XToast<?>> implements Runnable {
 
         try {
             // 如果 View 已经被添加的情况下，就先把 View 移除掉
-            if (mRootView.getParent() != null) {
-                mWindowManager.removeViewImmediate(mRootView);
+            if (mDecorView.getParent() != null) {
+                mWindowManager.removeViewImmediate(mDecorView);
             }
-            mWindowManager.addView(mRootView, mWindowParams);
+            mWindowManager.addView(mDecorView, mWindowParams);
             // 当前已经显示
             mShow = true;
             // 如果当前限定了显示时长
@@ -559,9 +582,10 @@ public class XToast<X extends XToast<?>> implements Runnable {
             if (mListener != null) {
                 mListener.onShow(this);
             }
-        } catch (NullPointerException | IllegalStateException | IllegalArgumentException | WindowManager.BadTokenException e) {
+        } catch (NullPointerException | IllegalStateException |
+                IllegalArgumentException | WindowManager.BadTokenException e) {
             // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
-            // java.lang.IllegalStateException: View android.widget.TextView{3d2cee7 V.ED..... ......ID 0,0-312,153} has already been added to the window manager.
+            // java.lang.IllegalStateException: View has already been added to the window manager.
             e.printStackTrace();
         }
     }
@@ -582,8 +606,8 @@ public class XToast<X extends XToast<?>> implements Runnable {
             }
 
             // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
-            // java.lang.IllegalArgumentException: View=android.widget.TextView{3d2cee7 V.ED..... ........ 0,0-312,153} not attached to window manager
-            mWindowManager.removeViewImmediate(mRootView);
+            // java.lang.IllegalArgumentException: View not attached to window manager
+            mWindowManager.removeViewImmediate(mDecorView);
 
             // 移除销毁任务
             removeCallbacks(this);
@@ -609,7 +633,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
             return;
         }
         // 更新 WindowManger 的显示
-        mWindowManager.updateViewLayout(mRootView, mWindowParams);
+        mWindowManager.updateViewLayout(mDecorView, mWindowParams);
     }
 
     /**
@@ -620,7 +644,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
             cancel();
         }
         mContext = null;
-        mRootView = null;
+        mDecorView = null;
         mWindowManager = null;
         mWindowParams = null;
         mLifecycle = null;
@@ -659,18 +683,25 @@ public class XToast<X extends XToast<?>> implements Runnable {
     /**
      * 获取根布局
      */
-    public View getView() {
-        return mRootView;
+    public View getDecorView() {
+        return mDecorView;
+    }
+
+    /**
+     * 获取内容布局
+     */
+    public View getContentView() {
+        if (mDecorView.getChildCount() == 0) {
+            return null;
+        }
+        return mDecorView.getChildAt(0);
     }
 
     /**
      * 根据 ViewId 获取 View
      */
     public <V extends View> V findViewById(int id) {
-        if (mRootView == null) {
-            throw new IllegalStateException("Please setup view");
-        }
-        return mRootView.findViewById(id);
+        return mDecorView.findViewById(id);
     }
 
     /**
@@ -830,7 +861,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 设置点击事件
      */
     public X setOnClickListener(OnClickListener<? extends View> listener) {
-        return setOnClickListener(mRootView, listener);
+        return setOnClickListener(mDecorView, listener);
     }
 
     public X setOnClickListener(int id, OnClickListener<? extends View> listener) {
@@ -849,10 +880,32 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
+     * 设置长按事件
+     */
+    public X setOnLongClickListener(OnLongClickListener<? extends View> listener) {
+        return setOnLongClickListener(mDecorView, listener);
+    }
+
+    public X setOnLongClickListener(int id, OnLongClickListener<? extends View> listener) {
+        return setOnLongClickListener(findViewById(id), listener);
+    }
+
+    private X setOnLongClickListener(View view, XToast.OnLongClickListener<? extends View> listener) {
+        // 当前是否设置了不可触摸，如果是就擦除掉
+        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+
+        view.setClickable(true);
+        view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
+        return (X) this;
+    }
+
+    /**
      * 设置触摸事件
      */
     public X setOnTouchListener(OnTouchListener<? extends View> listener) {
-        return setOnTouchListener(mRootView, listener);
+        return setOnTouchListener(mDecorView, listener);
     }
 
     public X setOnTouchListener(int id, OnTouchListener<? extends View> listener) {
@@ -886,6 +939,17 @@ public class XToast<X extends XToast<?>> implements Runnable {
          * 点击回调
          */
         void onClick(XToast<?> toast, V view);
+    }
+
+    /**
+     * View 的长按事件监听
+     */
+    public interface OnLongClickListener<V extends View> {
+
+        /**
+         * 长按回调
+         */
+        boolean onLongClick(XToast<?> toast, V view);
     }
 
     /**

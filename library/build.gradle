@@ -5,16 +5,24 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 81
-        versionName "8.1"
+        versionCode 82
+        versionName "8.2"
     }
 
     android.libraryVariants.all { variant ->
         // aar 输出文件名配置
         variant.outputs.all { output ->
-            outputFileName = "xtoast-${android.defaultConfig.versionName}.aar"
+            outputFileName = "${rootProject.name}-${android.defaultConfig.versionName}.aar"
         }
     }
+}
+
+afterEvaluate {
+    // 排除 BuildConfig.class 和 R.class
+    generateReleaseBuildConfig.enabled = false
+    generateDebugBuildConfig.enabled = false
+    generateReleaseResValues.enabled = false
+    generateDebugResValues.enabled = false
 }
 
 tasks.withType(Javadoc) {

@@ -32,7 +32,7 @@ allprojects {
 ```groovy
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:8.1'
+    implementation 'com.github.getActivity:XToast:8.2'
 }
 ```
 
@@ -44,7 +44,7 @@ dependencies {
 // 传入 Activity 对象表示设置成局部的，不需要有悬浮窗权限
 // 传入 Application 对象表示设置成全局的，但需要有悬浮窗权限
 new XToast<>(XToastActivity.this)
-        .setView(R.layout.toast_hint)
+        .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
         // 设置显示时长
@@ -74,7 +74,7 @@ new XToast<>(XToastActivity.this)
 
 ```kotlin
 XToast<XToast<*>>(activity).apply {
-    setView(R.layout.toast_hint)
+    setContentView(R.layout.toast_hint)
     // 设置成可拖拽的
     //setDraggable()
     // 设置显示时长
@@ -98,7 +98,7 @@ XToast<XToast<*>>(activity).apply {
 
 ```kotlin
 XToast<XToast<*>>(activity)
-        .setView(R.layout.toast_hint)
+        .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
         // 设置显示时长
@@ -189,6 +189,8 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar)
 
 * 国际化框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages)
+
+* Shape 框架：[ShapeView](https://github.com/getActivity/ShapeView)
 
 * Gson 解析容错：[GsonFactory](https://github.com/getActivity/GsonFactory)
 

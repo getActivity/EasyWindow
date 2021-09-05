@@ -16,7 +16,7 @@ import com.hjq.xtoast.XToast;
 public abstract class BaseDraggable implements View.OnTouchListener {
 
     private XToast<?> mToast;
-    private View mRootView;
+    private View mDecorView;
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mWindowParams;
 
@@ -25,11 +25,11 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      */
     public void start(XToast<?> toast) {
         mToast = toast;
-        mRootView = toast.getView();
+        mDecorView = toast.getDecorView();
         mWindowManager = toast.getWindowManager();
         mWindowParams = toast.getWindowParams();
 
-        mRootView.setOnTouchListener(this);
+        mDecorView.setOnTouchListener(this);
     }
 
     protected XToast<?> getXToast() {
@@ -45,7 +45,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     }
 
     protected View getRootView() {
-        return mRootView;
+        return mDecorView;
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      */
     protected int getWindowInvisibleWidth() {
         Rect rect = new Rect();
-        mRootView.getWindowVisibleDisplayFrame(rect);
+        mDecorView.getWindowVisibleDisplayFrame(rect);
         return rect.left;
     }
 
@@ -80,7 +80,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      */
     protected int getWindowInvisibleHeight() {
         Rect rect = new Rect();
-        mRootView.getWindowVisibleDisplayFrame(rect);
+        mDecorView.getWindowVisibleDisplayFrame(rect);
         return rect.top;
     }
 
@@ -110,7 +110,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         // 一定要先设置重心位置为左上角
         mWindowParams.gravity = screenGravity;
         try {
-            mWindowManager.updateViewLayout(mRootView, mWindowParams);
+            mWindowManager.updateViewLayout(mDecorView, mWindowParams);
         } catch (IllegalArgumentException ignored) {
             // 当 WindowManager 已经消失时调用会发生崩溃
             // IllegalArgumentException: View not attached to window manager
