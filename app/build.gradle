@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 82
-        versionName "8.2"
+        versionCode 83
+        versionName "8.3"
     }
 
     // 支持 Java JDK 8
@@ -54,16 +54,16 @@ dependencies {
     implementation fileTree(include: ['*.aar'], dir: 'libs')
     implementation project(':library')
 
-    // AppCompat 库：https://developer.android.google.cn/jetpack/androidx/releases/appcompat?hl=zh-cn
-    implementation 'androidx.appcompat:appcompat:1.3.0'
+    // AndroidX 库：https://github.com/androidx/androidx
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     // Material 库：https://github.com/material-components/material-components-android
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.github.getActivity:XXPermissions:12.2'
+    implementation 'com.github.getActivity:XXPermissions:12.3'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.github.getActivity:TitleBar:9.0'
+    implementation 'com.github.getActivity:TitleBar:9.2'
 
     // 吐司框架：https://github.com/getActivity/ToastUtils
     implementation 'com.github.getActivity:ToastUtils:9.5'

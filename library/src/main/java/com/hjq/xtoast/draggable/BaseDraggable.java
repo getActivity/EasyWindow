@@ -111,23 +111,10 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         mWindowParams.gravity = screenGravity;
         try {
             mWindowManager.updateViewLayout(mDecorView, mWindowParams);
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException e) {
             // 当 WindowManager 已经消失时调用会发生崩溃
             // IllegalArgumentException: View not attached to window manager
+            e.printStackTrace();
         }
-    }
-
-    /**
-     * 判断用户是否移动了，判断标准以下：
-     * 根据手指按下和抬起时的坐标进行判断，不能根据有没有 move 事件来判断
-     * 因为在有些机型上面，就算用户没有手指没有移动也会产生 move 事件
-     *
-     * @param downX         手指按下时的 x 坐标
-     * @param upX           手指抬起时的 x 坐标
-     * @param downY         手指按下时的 y 坐标
-     * @param upY           手指抬起时的 y 坐标
-     */
-    protected boolean isTouchMove(float downX, float upX, float downY, float upY) {
-        return Math.abs(downX - upX) >= 1f || Math.abs(downY - upY) >= 1f;
     }
 }

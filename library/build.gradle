@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 82
-        versionName "8.2"
+        versionCode 83
+        versionName "8.3"
     }
 
     android.libraryVariants.all { variant ->
