@@ -33,6 +33,7 @@ import com.hjq.xtoast.draggable.MovingDraggable;
  *    time   : 2019/01/04
  *    desc   : 悬浮窗框架
  *    doc    : https://developer.android.google.cn/reference/android/view/WindowManager.html
+ *             https://developer.android.google.cn/reference/kotlin/android/view/WindowManager.LayoutParams?hl=en
  */
 @SuppressWarnings({"unchecked", "unused", "deprecation", "UnusedReturnValue"})
 public class XToast<X extends XToast<?>> implements Runnable {
@@ -49,15 +50,15 @@ public class XToast<X extends XToast<?>> implements Runnable {
     private WindowManager.LayoutParams mWindowParams;
 
     /** 当前是否已经显示 */
-    private boolean mShow;
+    private boolean mShowing;
     /** 窗口显示时长 */
     private int mDuration;
     /** Toast 生命周期管理 */
-    private ToastLifecycle mLifecycle;
+    private ActivityLifecycle mLifecycle;
     /** 自定义拖动处理 */
     private BaseDraggable mDraggable;
     /** 吐司显示和取消监听 */
-    private OnToastListener mListener;
+    private OnLifecycle mListener;
 
     /**
      * 创建一个局部悬浮窗
@@ -73,7 +74,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
         }
 
         // 跟随 Activity 的生命周期
-        mLifecycle = new ToastLifecycle(this, activity);
+        mLifecycle = new ActivityLifecycle(this, activity);
     }
 
     /**
@@ -101,10 +102,9 @@ public class XToast<X extends XToast<?>> implements Runnable {
         mWindowParams.format = PixelFormat.TRANSLUCENT;
         mWindowParams.windowAnimations = android.R.style.Animation_Toast;
         mWindowParams.packageName = context.getPackageName();
-        // 开启窗口常亮和设置可以触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
+        // 设置触摸外层布局（除 WindowManager 外的布局，默认是 WindowManager 显示的时候外层不可触摸）
         // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
-        mWindowParams.flags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+        mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
     }
 
@@ -113,6 +113,14 @@ public class XToast<X extends XToast<?>> implements Runnable {
      */
     public X setWidth(int width) {
         mWindowParams.width = width;
+        if (mDecorView.getChildCount() > 0) {
+            View contentView = mDecorView.getChildAt(0);
+            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
+            if (layoutParams != null && layoutParams.width != width) {
+                layoutParams.width = width;
+                contentView.setLayoutParams(layoutParams);
+            }
+        }
         update();
         return (X) this;
     }
@@ -122,6 +130,14 @@ public class XToast<X extends XToast<?>> implements Runnable {
      */
     public X setHeight(int height) {
         mWindowParams.height = height;
+        if (mDecorView.getChildCount() > 0) {
+            View contentView = mDecorView.getChildAt(0);
+            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
+            if (layoutParams != null && layoutParams.height != height) {
+                layoutParams.height = height;
+                contentView.setLayoutParams(layoutParams);
+            }
+        }
         update();
         return (X) this;
     }
@@ -142,7 +158,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
      * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
      */
-    public X setOrientation(int orientation) {
+    public X setScreenOrientation(int orientation) {
         mWindowParams.screenOrientation = orientation;
         update();
         return (X) this;
@@ -253,9 +269,18 @@ public class XToast<X extends XToast<?>> implements Runnable {
 
     /**
      * 设置软键盘模式
+     *
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_STATE_UNSPECIFIED}：没有指定状态,系统会选择一个合适的状态或依赖于主题的设置
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_STATE_UNCHANGED}：不会改变软键盘状态
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_STATE_HIDDEN}：当用户进入该窗口时，软键盘默认隐藏
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_STATE_ALWAYS_HIDDEN}：当窗口获取焦点时，软键盘总是被隐藏
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_ADJUST_RESIZE}：当软键盘弹出时，窗口会调整大小
+     * {@link WindowManager.LayoutParams#SOFT_INPUT_ADJUST_PAN}：当软键盘弹出时，窗口不需要调整大小，要确保输入焦点是可见的
      */
     public X setSoftInputMode(int mode) {
         mWindowParams.softInputMode = mode;
+        // 如果设置了不能触摸，则擦除这个标记，否则会导致无法弹出输入法
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         update();
         return (X) this;
     }
@@ -346,6 +371,67 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
+     * 设置窗口标题
+     */
+    public X setWindowTitle(CharSequence title) {
+        mWindowParams.setTitle(title);
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置屏幕的亮度
+     */
+    public X setScreenBrightness(float screenBrightness) {
+        mWindowParams.screenBrightness = screenBrightness;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置按键的亮度
+     */
+    public X setButtonBrightness(float buttonBrightness) {
+        mWindowParams.buttonBrightness = buttonBrightness;
+        update();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口的刷新率
+     */
+    public X setPreferredRefreshRate(float preferredRefreshRate) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWindowParams.preferredRefreshRate = preferredRefreshRate;
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口的颜色模式
+     */
+    public X setColorMode(int colorMode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mWindowParams.setColorMode(colorMode);
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口高斯模糊半径大小（Android 12 才有的）
+     */
+    public X setBlurBehindRadius(int blurBehindRadius) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            mWindowParams.setBlurBehindRadius(blurBehindRadius);
+            addWindowFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+            update();
+        }
+        return (X) this;
+    }
+
+    /**
      * 重新设置 WindowManager 参数集
      */
     public X setWindowParams(WindowManager.LayoutParams params) {
@@ -365,16 +451,13 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 设置拖动规则
      */
     public X setDraggable(BaseDraggable draggable) {
-        // 当前是否设置了不可触摸，如果是就擦除掉这个标记
-        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        }
-        // 当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
-        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)) {
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        }
+        // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
         mDraggable = draggable;
-        if (isShow()) {
+        if (isShowing()) {
             update();
             mDraggable.start(this);
         }
@@ -386,7 +469,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      */
     public X setDuration(int duration) {
         mDuration = duration;
-        if (isShow() && mDuration != 0) {
+        if (isShowing() && mDuration != 0) {
             removeCallbacks(this);
             postDelayed(this, mDuration);
         }
@@ -394,9 +477,9 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
-     * 设置监听
+     * 设置生命周期监听
      */
-    public X setOnToastListener(OnToastListener listener) {
+    public X setOnToastLifecycle(OnLifecycle listener) {
         mListener = listener;
         return (X) this;
     }
@@ -432,30 +515,36 @@ public class XToast<X extends XToast<?>> implements Runnable {
             marginLayoutParams.rightMargin = 0;
         }
 
-        if (layoutParams != null && mWindowParams.width == WindowManager.LayoutParams.WRAP_CONTENT &&
-                mWindowParams.height == WindowManager.LayoutParams.WRAP_CONTENT) {
-            // 如果当前 Dialog 的宽高设置了自适应，就以布局中设置的宽高为主
-            setWidth(layoutParams.width);
-            setHeight(layoutParams.height);
-        }
-
         // 如果当前没有设置重心，就自动获取布局重心
         if (mWindowParams.gravity == Gravity.NO_GRAVITY) {
             if (layoutParams instanceof FrameLayout.LayoutParams) {
                 int gravity = ((FrameLayout.LayoutParams) layoutParams).gravity;
                 if (gravity != FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY) {
-                    setGravity(gravity);
+                    mWindowParams.gravity = gravity;
                 }
             } else if (layoutParams instanceof LinearLayout.LayoutParams) {
                 int gravity = ((LinearLayout.LayoutParams) layoutParams).gravity;
                 if (gravity != FrameLayout.LayoutParams.UNSPECIFIED_GRAVITY) {
-                    setGravity(gravity);
+                    mWindowParams.gravity = gravity;
                 }
             }
 
             if (mWindowParams.gravity == Gravity.NO_GRAVITY) {
                 // 默认重心是居中
-                setGravity(Gravity.CENTER);
+                mWindowParams.gravity = Gravity.CENTER;
+            }
+        }
+
+        if (layoutParams != null) {
+            if (mWindowParams.width == WindowManager.LayoutParams.WRAP_CONTENT &&
+                    mWindowParams.height == WindowManager.LayoutParams.WRAP_CONTENT) {
+                // 如果当前 Dialog 的宽高设置了自适应，就以布局中设置的宽高为主
+                mWindowParams.width = layoutParams.width;
+                mWindowParams.height = layoutParams.height;
+            } else {
+                // 如果当前通过代码动态设置了宽高，则以动态设置的为主
+                layoutParams.width = mWindowParams.width;
+                layoutParams.height = mWindowParams.height;
             }
         }
 
@@ -542,7 +631,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
         }
 
         // 如果当前已经显示则进行更新
-        if (mShow) {
+        if (mShowing) {
             update();
             return;
         }
@@ -562,7 +651,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
             }
             mWindowManager.addView(mDecorView, mWindowParams);
             // 当前已经显示
-            mShow = true;
+            mShowing = true;
             // 如果当前限定了显示时长
             if (mDuration != 0) {
                 removeCallbacks(this);
@@ -582,6 +671,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
             if (mListener != null) {
                 mListener.onShow(this);
             }
+
         } catch (NullPointerException | IllegalStateException |
                 IllegalArgumentException | WindowManager.BadTokenException e) {
             // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
@@ -594,7 +684,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 销毁悬浮窗
      */
     public void cancel() {
-        if (!mShow) {
+        if (!mShowing) {
             return;
         }
 
@@ -621,7 +711,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
             e.printStackTrace();
         } finally {
             // 当前没有显示
-            mShow = false;
+            mShowing = false;
         }
     }
 
@@ -629,7 +719,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 刷新悬浮窗
      */
     public void update() {
-        if (!isShow()) {
+        if (!isShowing()) {
             return;
         }
         // 更新 WindowManger 的显示
@@ -640,23 +730,26 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 回收释放
      */
     public void recycle() {
-        if (isShow()) {
+        if (isShowing()) {
             cancel();
         }
+        if (mListener != null) {
+            mListener.onRecycler(this);
+        }
+        mListener = null;
         mContext = null;
         mDecorView = null;
         mWindowManager = null;
         mWindowParams = null;
         mLifecycle = null;
         mDraggable = null;
-        mListener = null;
     }
 
     /**
      * 当前是否已经显示
      */
-    public boolean isShow() {
-        return mShow;
+    public boolean isShowing() {
+        return mShowing;
     }
 
     /**
@@ -869,10 +962,8 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     private X setOnClickListener(View view, XToast.OnClickListener<? extends View> listener) {
-        // 当前是否设置了不可触摸，如果是就擦除掉
-        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        }
+        // 如果当前是否设置了不可触摸，如果是就擦除掉
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         view.setClickable(true);
         view.setOnClickListener(new ViewClickWrapper(this, listener));
@@ -891,10 +982,8 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     private X setOnLongClickListener(View view, XToast.OnLongClickListener<? extends View> listener) {
-        // 当前是否设置了不可触摸，如果是就擦除掉
-        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        }
+        // 如果当前是否设置了不可触摸，如果是就擦除掉
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         view.setClickable(true);
         view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
@@ -914,9 +1003,8 @@ public class XToast<X extends XToast<?>> implements Runnable {
 
     private X setOnTouchListener(View view, XToast.OnTouchListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
-        if (hasWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)) {
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        }
+        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
         view.setEnabled(true);
         view.setOnTouchListener(new ViewTouchWrapper(this, listener));
         return (X) this;
@@ -964,18 +1052,23 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
-     * Toast 显示销毁监听
+     * Toast 生命周期监听
      */
-    public interface OnToastListener {
+    public interface OnLifecycle {
 
         /**
          * 显示回调
          */
-        void onShow(XToast<?> toast);
+        default void onShow(XToast<?> toast) {}
 
         /**
          * 消失回调
          */
-        void onDismiss(XToast<?> toast);
+        default void onDismiss(XToast<?> toast) {}
+
+        /**
+         * 回收回调
+         */
+        default void onRecycler(XToast<?> toast) {}
     }
 }

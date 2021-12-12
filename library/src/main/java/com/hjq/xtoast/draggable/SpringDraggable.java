@@ -21,6 +21,9 @@ public class SpringDraggable extends BaseDraggable {
     /** 回弹的方向 */
     private final int mOrientation;
 
+    /** 触摸移动标记 */
+    private boolean mMoveTouch;
+
     public SpringDraggable() {
         this(LinearLayout.HORIZONTAL);
     }
@@ -47,6 +50,7 @@ public class SpringDraggable extends BaseDraggable {
                 // 记录按下的位置（相对 View 的坐标）
                 mViewDownX = event.getX();
                 mViewDownY = event.getY();
+                mMoveTouch = false;
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 记录移动的位置（相对屏幕的坐标）
@@ -55,6 +59,11 @@ public class SpringDraggable extends BaseDraggable {
 
                 // 更新移动的位置
                 updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
+
+                if (!mMoveTouch && isTouchMove(mViewDownX, event.getX(), mViewDownY, event.getY())) {
+                    // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
+                    mMoveTouch = true;
+                }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -95,7 +104,7 @@ public class SpringDraggable extends BaseDraggable {
                     default:
                         break;
                 }
-                break;
+                return mMoveTouch;
             default:
                 break;
         }
