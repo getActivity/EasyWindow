@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!-- Base application theme. -->
@@ -8,8 +9,6 @@
         <item name="colorAccent">@color/colorAccent</item>
         <!-- 解决 Android 5.1 及以上版本 Button 英文字符串自动变大写的问题 -->
         <item name="android:textAllCaps">false</item>
-        <!-- 设置窗口全屏 -->
-<!--        <item name="android:windowFullscreen">true</item>-->
     </style>
 
     <!-- 缩放动画 -->

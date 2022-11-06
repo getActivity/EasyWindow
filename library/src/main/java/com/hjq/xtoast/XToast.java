@@ -35,8 +35,8 @@ import com.hjq.xtoast.draggable.MovingDraggable;
  *    doc    : https://developer.android.google.cn/reference/android/view/WindowManager.html
  *             https://developer.android.google.cn/reference/kotlin/android/view/WindowManager.LayoutParams?hl=en
  */
-@SuppressWarnings({"unchecked", "unused", "deprecation", "UnusedReturnValue"})
-public class XToast<X extends XToast<?>> implements Runnable {
+@SuppressWarnings({"unchecked", "unused", "UnusedReturnValue"})
+public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationMonitor.OnScreenOrientationCallback {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -59,6 +59,9 @@ public class XToast<X extends XToast<?>> implements Runnable {
     private BaseDraggable mDraggable;
     /** 吐司显示和取消监听 */
     private OnLifecycle mListener;
+
+    /** 屏幕旋转监听 */
+    private ScreenOrientationMonitor mScreenOrientationMonitor;
 
     /**
      * 创建一个局部悬浮窗
@@ -451,16 +454,25 @@ public class XToast<X extends XToast<?>> implements Runnable {
      * 设置拖动规则
      */
     public X setDraggable(BaseDraggable draggable) {
-        // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
         mDraggable = draggable;
-        if (isShowing()) {
-            update();
-            mDraggable.start(this);
+        if (draggable != null) {
+            // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
+            clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+            if (isShowing()) {
+                update();
+                draggable.start(this);
+            }
         }
+
+        if (mScreenOrientationMonitor == null) {
+            mScreenOrientationMonitor = new ScreenOrientationMonitor(mContext);
+            mScreenOrientationMonitor.setOnScreenOrientationCallback(this);
+        }
+        mScreenOrientationMonitor.register(mContext);
+
         return (X) this;
     }
 
@@ -733,6 +745,9 @@ public class XToast<X extends XToast<?>> implements Runnable {
         if (isShowing()) {
             cancel();
         }
+        if (mScreenOrientationMonitor != null) {
+            mScreenOrientationMonitor.unregister(mContext);
+        }
         if (mListener != null) {
             mListener.onRecycler(this);
         }
@@ -841,10 +856,23 @@ public class XToast<X extends XToast<?>> implements Runnable {
     }
 
     /**
-     * 设置文本颜色
+     * 设置字体颜色
      */
     public X setTextColor(int id, int color) {
         ((TextView) findViewById(id)).setTextColor(color);
+        return (X) this;
+    }
+
+    /**
+     * 设置字体大小
+     */
+    public X setTextSize(int id, float size) {
+        ((TextView) findViewById(id)).setTextSize(size);
+        return (X) this;
+    }
+
+    public X setTextSize(int id, int unit, float size) {
+        ((TextView) findViewById(id)).setTextSize(unit, size);
         return (X) this;
     }
 
@@ -854,6 +882,7 @@ public class XToast<X extends XToast<?>> implements Runnable {
     public X setHint(int viewId, int stringId) {
         return setHint(viewId, mContext.getResources().getString(stringId));
     }
+
     public X setHint(int id, CharSequence text) {
         ((TextView) findViewById(id)).setHint(text);
         return (X) this;
@@ -1016,6 +1045,20 @@ public class XToast<X extends XToast<?>> implements Runnable {
     @Override
     public void run() {
         cancel();
+    }
+
+    /**
+     * {@link ScreenOrientationMonitor.OnScreenOrientationCallback}
+     */
+    @Override
+    public void onScreenOrientationChange(int orientation) {
+        if (!isShowing()) {
+            return;
+        }
+        if (mDraggable == null) {
+            return;
+        }
+        mDraggable.onScreenOrientationChange(orientation);
     }
 
     /**

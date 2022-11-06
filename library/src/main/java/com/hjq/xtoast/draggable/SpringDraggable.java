@@ -14,6 +14,11 @@ import android.widget.LinearLayout;
  */
 public class SpringDraggable extends BaseDraggable {
 
+    /** 水平方向回弹 */
+    public static final int ORIENTATION_HORIZONTAL = LinearLayout.HORIZONTAL;
+    /** 垂直方向回弹 */
+    public static final int ORIENTATION_VERTICAL = LinearLayout.VERTICAL;
+
     /** 手指按下的坐标 */
     private float mViewDownX;
     private float mViewDownY;
@@ -25,14 +30,14 @@ public class SpringDraggable extends BaseDraggable {
     private boolean mMoveTouch;
 
     public SpringDraggable() {
-        this(LinearLayout.HORIZONTAL);
+        this(ORIENTATION_HORIZONTAL);
     }
 
     public SpringDraggable(int orientation) {
         mOrientation = orientation;
         switch (mOrientation) {
-            case LinearLayout.HORIZONTAL:
-            case LinearLayout.VERTICAL:
+            case ORIENTATION_HORIZONTAL:
+            case ORIENTATION_VERTICAL:
                 break;
             default:
                 throw new IllegalArgumentException("You cannot pass in directions other than horizontal or vertical");
@@ -73,7 +78,7 @@ public class SpringDraggable extends BaseDraggable {
 
                 // 自动回弹吸附
                 switch (mOrientation) {
-                    case LinearLayout.HORIZONTAL:
+                    case ORIENTATION_HORIZONTAL:
                         final float rawFinalX;
                         // 获取当前屏幕的宽度
                         int screenWidth = getWindowWidth();
@@ -87,7 +92,7 @@ public class SpringDraggable extends BaseDraggable {
                         // 从移动的点回弹到边界上
                         startHorizontalAnimation(rawMoveX - mViewDownX, rawFinalX  - mViewDownX, rawMoveY - mViewDownY);
                         break;
-                    case LinearLayout.VERTICAL:
+                    case ORIENTATION_VERTICAL:
                         final float rawFinalY;
                         // 获取当前屏幕的高度
                         int screenHeight = getWindowHeight();

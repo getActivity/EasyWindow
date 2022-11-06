@@ -22,6 +22,8 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mWindowParams;
 
+    private final Rect mTempRect = new Rect();
+
     /**
      * Toast 显示后回调这个类
      */
@@ -46,7 +48,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         return mWindowParams;
     }
 
-    protected View getRootView() {
+    protected View getDecorView() {
         return mDecorView;
     }
 
@@ -54,36 +56,75 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 获取当前 Window 的宽度
      */
     protected int getWindowWidth() {
-        Rect rect = new Rect();
-        getRootView().getWindowVisibleDisplayFrame(rect);
-        return rect.right - rect.left;
+        getDecorView().getWindowVisibleDisplayFrame(mTempRect);
+        return mTempRect.right - mTempRect.left;
     }
 
     /**
      * 获取当前 Window 的高度
      */
     protected int getWindowHeight() {
-        Rect rect = new Rect();
-        getRootView().getWindowVisibleDisplayFrame(rect);
-        return rect.bottom - rect.top;
+        getDecorView().getWindowVisibleDisplayFrame(mTempRect);
+        return mTempRect.bottom - mTempRect.top;
     }
 
     /**
      * 获取窗口不可见的宽度，一般情况下为横屏状态下刘海的高度
      */
     protected int getWindowInvisibleWidth() {
-        Rect rect = new Rect();
-        mDecorView.getWindowVisibleDisplayFrame(rect);
-        return rect.left;
+        getDecorView().getWindowVisibleDisplayFrame(mTempRect);
+        return mTempRect.left;
     }
 
     /**
      * 获取窗口不可见的高度，一般情况下为状态栏的高度
      */
     protected int getWindowInvisibleHeight() {
-        Rect rect = new Rect();
-        mDecorView.getWindowVisibleDisplayFrame(rect);
-        return rect.top;
+        getDecorView().getWindowVisibleDisplayFrame(mTempRect);
+        return mTempRect.top;
+    }
+
+    /**
+     * 屏幕方向发生了变化
+     */
+    public void onScreenOrientationChange(int orientation) {
+        int windowWidth = getWindowWidth();
+        int windowHeight = getWindowHeight();
+
+        int[] location = new int[2];
+        getDecorView().getLocationOnScreen(location);
+
+        int viewWidth = getDecorView().getWidth();
+        int viewHeight = getDecorView().getHeight();
+
+        float startX = location[0] - getWindowInvisibleWidth();
+        float startY = location[1] - getWindowInvisibleHeight();
+
+        float percentX;
+        if (startX < 1) {
+            percentX = 0;
+        } else if (Math.abs(windowWidth - (startX + viewWidth)) < 1) {
+            percentX = 1;
+        } else {
+            float centerX = startX + viewWidth / 2f;
+            percentX = centerX / (float) windowWidth;
+        }
+
+        float percentY;
+        if (startY < 1) {
+            percentY = 0;
+        } else if (Math.abs(windowHeight - (startY + viewHeight)) < 1) {
+            percentY = 1;
+        } else {
+            float centerY = startY + viewHeight / 2f;
+            percentY = centerY / (float) windowHeight;
+        }
+
+        getXToast().postDelayed(() -> {
+            int x = (int) (getWindowWidth() * percentX - viewWidth / 2f);
+            int y = (int) (getWindowHeight() * percentY - viewWidth / 2f);
+            updateLocation(x, y);
+        }, 100);
     }
 
     /**
