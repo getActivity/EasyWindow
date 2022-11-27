@@ -4,13 +4,13 @@
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/XToast/releases/download/8.6/XToast.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/XToast/releases/download/8.8/XToast.apk)
 
 ![](picture/demo_code.png)
 
 ![](picture/dynamic_figure.gif)
 
-#### 本框架意在解决一些极端需求，如果是普通的 Toast 封装推荐使用 [ToastUtils](https://github.com/getActivity/ToastUtils)
+#### 本框架意在解决一些悬浮窗的需求，如果是普通的 Toast 封装推荐使用 [ToastUtils](https://github.com/getActivity/ToastUtils)
 
 #### 集成步骤
 
@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:8.6'
+    implementation 'com.github.getActivity:XToast:8.8'
 }
 ```
 
@@ -178,20 +178,6 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
     public void onActivityDestroyed(Activity activity) {}
 }
 ```
-
-#### 框架亮点（原生 Toast 无法实现的功能）
-
-* 支持自定义 Toast 动画样式
-
-* 支持自定义 Toast 显示时长
-
-* 支持监听 Toast 的显示和销毁
-
-* 支持监听 Toast 中点击事件
-
-* 支持一键开启 Toast 拖拽功能
-
-* 支持 Toast 全局显示
 
 #### 作者的其他开源项目
 

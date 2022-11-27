@@ -12,27 +12,30 @@ import android.content.res.Configuration;
  */
 final class ScreenOrientationMonitor implements ComponentCallbacks {
 
+   /** 当前屏幕的方向 */
    private int mScreenOrientation;
 
+   /** 屏幕旋转回调 */
    private OnScreenOrientationCallback mCallback;
 
-   public ScreenOrientationMonitor(Context context) {
-      mScreenOrientation = context.getResources().getConfiguration().orientation;
-      context.registerComponentCallbacks(this);
+   public ScreenOrientationMonitor(Configuration configuration) {
+      mScreenOrientation = configuration.orientation;
    }
 
    /**
     * 注册监听
     */
-   void register(Context context) {
-      context.registerComponentCallbacks(this);
+   void registerCallback(Context context, OnScreenOrientationCallback callback) {
+      context.getApplicationContext().registerComponentCallbacks(this);
+      mCallback = callback;
    }
 
    /**
     * 取消监听
     */
-   void unregister(Context context) {
-      context.unregisterComponentCallbacks(this);
+   void unregisterCallback(Context context) {
+      context.getApplicationContext().unregisterComponentCallbacks(this);
+      mCallback = null;
    }
 
    @Override
@@ -51,15 +54,16 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
    @Override
    public void onLowMemory() {}
 
-   public void setOnScreenOrientationCallback(OnScreenOrientationCallback callback) {
-      mCallback = callback;
-   }
-
-   public interface OnScreenOrientationCallback {
+   /**
+    * 屏幕方向监听器
+    */
+   interface OnScreenOrientationCallback {
 
       /**
-       * 显示回调
+       * 监听屏幕旋转了
+       *
+       * @param newOrientation         最新的屏幕方向
        */
-      default void onScreenOrientationChange(int orientation) {}
+      default void onScreenOrientationChange(int newOrientation) {}
    }
 }

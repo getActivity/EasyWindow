@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.hjq.xtoast.demo"
         minSdkVersion 16
         targetSdkVersion 31
-        versionCode 86
-        versionName "8.6"
+        versionCode 88
+        versionName "8.8"
     }
 
     // 支持 Java JDK 8
@@ -67,8 +67,8 @@ dependencies {
     implementation 'com.github.getActivity:TitleBar:9.6'
 
     // 吐司框架：https://github.com/getActivity/ToastUtils
-    implementation 'com.github.getActivity:ToastUtils:10.5'
+    implementation 'com.github.getActivity:ToastUtils:11.2'
 
     // 内存泄漏捕捉：https://github.com/square/leakcanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.9.1'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }

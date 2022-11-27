@@ -19,8 +19,6 @@ public abstract class BaseDraggable implements View.OnTouchListener {
 
     private XToast<?> mToast;
     private View mDecorView;
-    private WindowManager mWindowManager;
-    private WindowManager.LayoutParams mWindowParams;
 
     private final Rect mTempRect = new Rect();
 
@@ -30,22 +28,11 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     public void start(XToast<?> toast) {
         mToast = toast;
         mDecorView = toast.getDecorView();
-        mWindowManager = toast.getWindowManager();
-        mWindowParams = toast.getWindowParams();
-
         mDecorView.setOnTouchListener(this);
     }
 
     protected XToast<?> getXToast() {
         return mToast;
-    }
-
-    protected WindowManager getWindowManager() {
-        return mWindowManager;
-    }
-
-    protected WindowManager.LayoutParams getWindowParams() {
-        return mWindowParams;
     }
 
     protected View getDecorView() {
@@ -141,24 +128,19 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 更新 WindowManager 所在的位置
      */
     protected void updateLocation(int x, int y) {
-        // 屏幕默认的重心
+        // 屏幕默认的重心（一定要先设置重心位置为左上角）
         int screenGravity = Gravity.TOP | Gravity.START;
+        WindowManager.LayoutParams params = mToast.getWindowParams();
         // 判断本次移动的位置是否跟当前的窗口位置是否一致
-        if (mWindowParams.gravity == screenGravity && mWindowParams.x == x && mWindowParams.y == y) {
+        if (params.gravity == screenGravity && params.x == x && params.y == y) {
             return;
         }
 
-        mWindowParams.x = x;
-        mWindowParams.y = y;
-        // 一定要先设置重心位置为左上角
-        mWindowParams.gravity = screenGravity;
-        try {
-            mWindowManager.updateViewLayout(mDecorView, mWindowParams);
-        } catch (IllegalArgumentException e) {
-            // 当 WindowManager 已经消失时调用会发生崩溃
-            // IllegalArgumentException: View not attached to window manager
-            e.printStackTrace();
-        }
+        params.x = x;
+        params.y = y;
+        params.gravity = screenGravity;
+
+        mToast.update();
     }
 
     /**
@@ -172,14 +154,27 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * @param upY           手指抬起时的 y 坐标
      */
     protected boolean isTouchMove(float downX, float upX, float downY, float upY) {
-        float minTouchSlop = getScaledTouchSlop();
+        float minTouchSlop = getMinTouchDistance();
         return Math.abs(downX - upX) >= minTouchSlop || Math.abs(downY - upY) >= minTouchSlop;
     }
 
     /**
      * 获取最小触摸距离
      */
-    protected float getScaledTouchSlop() {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, Resources.getSystem().getDisplayMetrics());
+    protected float getMinTouchDistance() {
+        // 疑问一：为什么要使用 1dp 来作为最小触摸距离？
+        //        这是因为用户点击的时候，手指 down 和 up 的坐标不相等，会存在一点误差
+        //        在有些手机上面，误差会比较小，还有一些手机上面，误差会比较大
+        //        经过拿不同的手机测试和验证，这个误差值可以锁定在 1dp 内
+        //        当然我的结论不一定正确，你要是有发现新的问题也可以找我反馈，我会持续优化这个问题
+        // 疑问二：为什么不使用 ViewConfiguration.get(context).getScaledTouchSlop() ？
+        //        这是因为这个 API 获取到的数值太大了，有一定概率会出现误判，同样的手机上面
+        //        用 getScaledTouchSlop 获取到的是 24，而系统 1dp 获取的到是 3，
+        //        两者相差太大，因为 getScaledTouchSlop API 默认获取的是 8dp
+        // 疑问三：为什么要用 Resources.getSystem 来获取，而不是 context.getResources？
+        //        这是因为如果用了 AutoSize 这个框架，上下文中的 1dp 就不是 3dp 了
+        //        使用 Resources.getSystem 能够保证 Resources 对象不被第三方框架篡改
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
+                Resources.getSystem().getDisplayMetrics());
     }
 }

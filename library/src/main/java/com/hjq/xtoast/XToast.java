@@ -44,14 +44,14 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     private Context mContext;
     /** 根布局 */
     private ViewGroup mDecorView;
-    /** 悬浮窗口 */
+    /** 悬浮窗 */
     private WindowManager mWindowManager;
-    /** 窗口参数 */
+    /** 悬浮窗参数 */
     private WindowManager.LayoutParams mWindowParams;
 
     /** 当前是否已经显示 */
     private boolean mShowing;
-    /** 窗口显示时长 */
+    /** 悬浮窗显示时长 */
     private int mDuration;
     /** Toast 生命周期管理 */
     private ActivityLifecycle mLifecycle;
@@ -62,6 +62,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
 
     /** 屏幕旋转监听 */
     private ScreenOrientationMonitor mScreenOrientationMonitor;
+
+    /** 更新任务 */
+    private final Runnable mUpdateRunnable = this::update;
 
     /**
      * 创建一个局部悬浮窗
@@ -112,7 +115,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     }
 
     /**
-     * 设置宽度
+     * 设置悬浮窗宽度
      */
     public X setWidth(int width) {
         mWindowParams.width = width;
@@ -124,12 +127,12 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
                 contentView.setLayoutParams(layoutParams);
             }
         }
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置高度
+     * 设置悬浮窗高度
      */
     public X setHeight(int height) {
         mWindowParams.height = height;
@@ -141,52 +144,39 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
                 contentView.setLayoutParams(layoutParams);
             }
         }
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置窗口重心
+     * 设置悬浮窗显示的重心
      */
     public X setGravity(int gravity) {
         mWindowParams.gravity = gravity;
-        update();
-        return (X) this;
-    }
-
-    /**
-     * 设置窗口方向
-     *
-     * 自适应：{@link ActivityInfo#SCREEN_ORIENTATION_UNSPECIFIED}
-     * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
-     * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
-     */
-    public X setScreenOrientation(int orientation) {
-        mWindowParams.screenOrientation = orientation;
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
      * 设置水平偏移量
      */
-    public X setXOffset(int x) {
-        mWindowParams.x = x;
-        update();
+    public X setXOffset(int px) {
+        mWindowParams.x = px;
+        postUpdate();
         return (X) this;
     }
 
     /**
      * 设置垂直偏移量
      */
-    public X setYOffset(int y) {
-        mWindowParams.y = y;
-        update();
+    public X setYOffset(int px) {
+        mWindowParams.y = px;
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 是否外层可触摸
+     * 设置悬浮窗外层是否可触摸
      */
     public X setOutsideTouchable(boolean touchable) {
         int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
@@ -196,16 +186,18 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         } else {
             clearWindowFlags(flags);
         }
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置窗口背景阴影强度
+     * 设置悬浮窗背景阴影强度
+     *
+     * @param amount        阴影强度值，填写 0 到 1 之间的值
      */
     public X setBackgroundDimAmount(float amount) {
         if (amount < 0 || amount > 1) {
-            throw new IllegalArgumentException("are you ok?");
+            throw new IllegalArgumentException("amount must be a value between 0 and 1");
         }
         mWindowParams.dimAmount = amount;
         int flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
@@ -214,50 +206,50 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         } else {
             clearWindowFlags(flags);
         }
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 是否有这个标志位
+     * 添加窗口标记
+     */
+    public X addWindowFlags(int flags) {
+        mWindowParams.flags |= flags;
+        postUpdate();
+        return (X) this;
+    }
+
+    /**
+     * 移除窗口标记
+     */
+    public X clearWindowFlags(int flags) {
+        mWindowParams.flags &= ~flags;
+        postUpdate();
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口标记
+     */
+    public X setWindowFlags(int flags) {
+        mWindowParams.flags = flags;
+        postUpdate();
+        return (X) this;
+    }
+
+    /**
+     * 是否存在某个窗口标记
      */
     public boolean hasWindowFlags(int flags) {
         return (mWindowParams.flags & flags) != 0;
     }
 
     /**
-     * 添加一个标记位
-     */
-    public X addWindowFlags(int flags) {
-        mWindowParams.flags |= flags;
-        update();
-        return (X) this;
-    }
-
-    /**
-     * 移除一个标记位
-     */
-    public X clearWindowFlags(int flags) {
-        mWindowParams.flags &= ~flags;
-        update();
-        return (X) this;
-    }
-
-    /**
-     * 设置标记位
-     */
-    public X setWindowFlags(int flags) {
-        mWindowParams.flags = flags;
-        update();
-        return (X) this;
-    }
-
-    /**
-     * 设置窗口类型
+     * 设置悬浮窗的显示类型
      */
     public X setWindowType(int type) {
         mWindowParams.type = type;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -266,7 +258,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setAnimStyle(int id) {
         mWindowParams.windowAnimations = id;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -284,25 +276,25 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         mWindowParams.softInputMode = mode;
         // 如果设置了不能触摸，则擦除这个标记，否则会导致无法弹出输入法
         clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置窗口 Token
+     * 设置悬浮窗 Token
      */
     public X setWindowToken(IBinder token) {
         mWindowParams.token = token;
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置窗口透明度
+     * 设置悬浮窗透明度
      */
     public X setWindowAlpha(float alpha) {
         mWindowParams.alpha = alpha;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -311,7 +303,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setVerticalMargin(float verticalMargin) {
         mWindowParams.verticalMargin = verticalMargin;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -320,7 +312,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setHorizontalMargin(float horizontalMargin) {
         mWindowParams.horizontalMargin = horizontalMargin;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -329,7 +321,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setBitmapFormat(int format) {
         mWindowParams.format = format;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -338,7 +330,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setSystemUiVisibility(int systemUiVisibility) {
         mWindowParams.systemUiVisibility = systemUiVisibility;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -347,7 +339,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setVerticalWeight(float verticalWeight) {
         mWindowParams.verticalWeight = verticalWeight;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -357,28 +349,28 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     public X setLayoutInDisplayCutoutMode(int mode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mWindowParams.layoutInDisplayCutoutMode = mode;
-            update();
+            postUpdate();
         }
         return (X) this;
     }
 
     /**
-     * 设置窗口在哪个显示屏上显示
+     * 设置悬浮窗在哪个显示屏上显示
      */
     public X setPreferredDisplayModeId(int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mWindowParams.preferredDisplayModeId = id;
-            update();
+            postUpdate();
         }
         return (X) this;
     }
 
     /**
-     * 设置窗口标题
+     * 设置悬浮窗标题
      */
     public X setWindowTitle(CharSequence title) {
         mWindowParams.setTitle(title);
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -387,7 +379,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setScreenBrightness(float screenBrightness) {
         mWindowParams.screenBrightness = screenBrightness;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -396,41 +388,54 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setButtonBrightness(float buttonBrightness) {
         mWindowParams.buttonBrightness = buttonBrightness;
-        update();
+        postUpdate();
         return (X) this;
     }
 
     /**
-     * 设置窗口的刷新率
+     * 设置悬浮窗的刷新率
      */
     public X setPreferredRefreshRate(float preferredRefreshRate) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mWindowParams.preferredRefreshRate = preferredRefreshRate;
-            update();
+            postUpdate();
         }
         return (X) this;
     }
 
     /**
-     * 设置窗口的颜色模式
+     * 设置悬浮窗的颜色模式
      */
     public X setColorMode(int colorMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mWindowParams.setColorMode(colorMode);
-            update();
+            postUpdate();
         }
         return (X) this;
     }
 
     /**
-     * 设置窗口高斯模糊半径大小（Android 12 才有的）
+     * 设置悬浮窗高斯模糊半径大小（Android 12 才有的）
      */
     public X setBlurBehindRadius(int blurBehindRadius) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             mWindowParams.setBlurBehindRadius(blurBehindRadius);
             addWindowFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-            update();
+            postUpdate();
         }
+        return (X) this;
+    }
+
+    /**
+     * 设置悬浮窗屏幕方向
+     *
+     * 自适应：{@link ActivityInfo#SCREEN_ORIENTATION_UNSPECIFIED}
+     * 横屏：{@link ActivityInfo#SCREEN_ORIENTATION_LANDSCAPE}
+     * 竖屏：{@link ActivityInfo#SCREEN_ORIENTATION_PORTRAIT}
+     */
+    public X setScreenOrientation(int orientation) {
+        mWindowParams.screenOrientation = orientation;
+        postUpdate();
         return (X) this;
     }
 
@@ -439,7 +444,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public X setWindowParams(WindowManager.LayoutParams params) {
         mWindowParams = params;
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -468,10 +473,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         }
 
         if (mScreenOrientationMonitor == null) {
-            mScreenOrientationMonitor = new ScreenOrientationMonitor(mContext);
-            mScreenOrientationMonitor.setOnScreenOrientationCallback(this);
+            mScreenOrientationMonitor = new ScreenOrientationMonitor(mContext.getResources().getConfiguration());
         }
-        mScreenOrientationMonitor.register(mContext);
+        mScreenOrientationMonitor.registerCallback(mContext, this);
 
         return (X) this;
     }
@@ -560,7 +564,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
             }
         }
 
-        update();
+        postUpdate();
         return (X) this;
     }
 
@@ -728,14 +732,31 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     }
 
     /**
-     * 刷新悬浮窗
+     * 延迟更新悬浮窗
+     */
+    public void postUpdate() {
+        if (!isShowing()) {
+            return;
+        }
+        removeCallbacks(mUpdateRunnable);
+        post(mUpdateRunnable);
+    }
+
+    /**
+     * 更新悬浮窗
      */
     public void update() {
         if (!isShowing()) {
             return;
         }
-        // 更新 WindowManger 的显示
-        mWindowManager.updateViewLayout(mDecorView, mWindowParams);
+        try {
+            // 更新 WindowManger 的显示
+            mWindowManager.updateViewLayout(mDecorView, mWindowParams);
+        } catch (IllegalArgumentException e) {
+            // 当 WindowManager 已经消失时调用会发生崩溃
+            // IllegalArgumentException: View not attached to window manager
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -746,7 +767,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
             cancel();
         }
         if (mScreenOrientationMonitor != null) {
-            mScreenOrientationMonitor.unregister(mContext);
+            mScreenOrientationMonitor.unregisterCallback(mContext);
         }
         if (mListener != null) {
             mListener.onRecycler(this);
@@ -1051,14 +1072,14 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      * {@link ScreenOrientationMonitor.OnScreenOrientationCallback}
      */
     @Override
-    public void onScreenOrientationChange(int orientation) {
+    public void onScreenOrientationChange(int newOrientation) {
         if (!isShowing()) {
             return;
         }
         if (mDraggable == null) {
             return;
         }
-        mDraggable.onScreenOrientationChange(orientation);
+        mDraggable.onScreenOrientationChange(newOrientation);
     }
 
     /**

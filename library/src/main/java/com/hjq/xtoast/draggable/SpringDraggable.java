@@ -90,7 +90,8 @@ public class SpringDraggable extends BaseDraggable {
                             rawFinalX = screenWidth;
                         }
                         // 从移动的点回弹到边界上
-                        startHorizontalAnimation(rawMoveX - mViewDownX, rawFinalX  - mViewDownX, rawMoveY - mViewDownY);
+                        startHorizontalAnimation(rawMoveX - mViewDownX,
+                                rawFinalX  - mViewDownX, rawMoveY - mViewDownY);
                         break;
                     case ORIENTATION_VERTICAL:
                         final float rawFinalY;
@@ -104,7 +105,8 @@ public class SpringDraggable extends BaseDraggable {
                             rawFinalY = screenHeight;
                         }
                         // 从移动的点回弹到边界上
-                        startVerticalAnimation(rawMoveX - mViewDownX, rawMoveY - mViewDownY, rawFinalY);
+                        startVerticalAnimation(rawMoveX - mViewDownX,
+                                rawMoveY - mViewDownY, rawFinalY);
                         break;
                     default:
                         break;
@@ -125,14 +127,8 @@ public class SpringDraggable extends BaseDraggable {
      */
     private void startHorizontalAnimation(float startX, float endX, final float y) {
         ValueAnimator animator = ValueAnimator.ofFloat(startX, endX);
-        animator.setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                updateLocation((float) animation.getAnimatedValue(), y);
-            }
-        });
+        animator.setDuration(calculateAnimationDuration(startX, endX));
+        animator.addUpdateListener(animation -> updateLocation((float) animation.getAnimatedValue(), y));
         animator.start();
     }
 
@@ -145,14 +141,26 @@ public class SpringDraggable extends BaseDraggable {
      */
     private void startVerticalAnimation(final float x, float startY, final float endY) {
         ValueAnimator animator = ValueAnimator.ofFloat(startY, endY);
-        animator.setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                updateLocation(x, (float) animation.getAnimatedValue());
-            }
-        });
+        animator.setDuration(calculateAnimationDuration(startY, endY));
+        animator.addUpdateListener(animation -> updateLocation(x, (float) animation.getAnimatedValue()));
         animator.start();
+    }
+
+    /**
+     * 根据距离算出动画的时间
+     *
+     * @param startCoordinate               起始坐标
+     * @param endCoordinate                 结束坐标
+     */
+    private long calculateAnimationDuration(float startCoordinate, float endCoordinate) {
+        // 为什么要根据距离来算出动画的时间？
+        // issue 地址：https://github.com/getActivity/XToast/issues/36
+        // 因为不那么做，如果悬浮球回弹的距离比较短的情况，加上 ValueAnimator 动画更新回调次数比较多的情况下
+        // 会导致自动回弹的时候出现轻微卡顿，但这其实不是卡顿，而是一次滑动的距离太短的导致的
+        long animationDuration = (long) ((Math.abs(endCoordinate - startCoordinate)) / 2f);
+        if (animationDuration > 800) {
+            animationDuration = 800;
+        }
+        return animationDuration;
     }
 }
