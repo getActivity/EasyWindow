@@ -131,6 +131,9 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         // 屏幕默认的重心（一定要先设置重心位置为左上角）
         int screenGravity = Gravity.TOP | Gravity.START;
         WindowManager.LayoutParams params = mToast.getWindowParams();
+        if (params == null) {
+            return;
+        }
         // 判断本次移动的位置是否跟当前的窗口位置是否一致
         if (params.gravity == screenGravity && params.x == x && params.y == y) {
             return;
@@ -170,7 +173,7 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         // 疑问二：为什么不使用 ViewConfiguration.get(context).getScaledTouchSlop() ？
         //        这是因为这个 API 获取到的数值太大了，有一定概率会出现误判，同样的手机上面
         //        用 getScaledTouchSlop 获取到的是 24，而系统 1dp 获取的到是 3，
-        //        两者相差太大，因为 getScaledTouchSlop API 默认获取的是 8dp
+        //        两者相差太大，因为 getScaledTouchSlop API 默认获取的是 8dp * 3 = 24px
         // 疑问三：为什么要用 Resources.getSystem 来获取，而不是 context.getResources？
         //        这是因为如果用了 AutoSize 这个框架，上下文中的 1dp 就不是 3dp 了
         //        使用 Resources.getSystem 能够保证 Resources 对象不被第三方框架篡改

@@ -4,7 +4,7 @@
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/XToast/releases/download/8.8/XToast.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/XToast/releases/download/8.9/XToast.apk)
 
 ![](picture/demo_code.png)
 
@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:8.8'
+    implementation 'com.github.getActivity:XToast:8.9'
 }
 ```
 
@@ -177,6 +177,39 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
     @Override
     public void onActivityDestroyed(Activity activity) {}
 }
+```
+
+#### 框架的 API 介绍
+
+```
+// 设置悬浮窗宽度
+setWidth(int width)
+// 设置悬浮窗高度
+setHeight(int height)
+
+// 设置悬浮窗显示的重心
+setGravity(int gravity)
+// 设置水平偏移量
+setXOffset(int px)
+// 设置垂直偏移量
+setYOffset(int px)
+
+// 设置悬浮窗外层是否可触摸
+setOutsideTouchable(boolean touchable)
+// 设置悬浮窗背景阴影强度
+setBackgroundDimAmount(float amount)
+
+// 添加窗口标记
+addWindowFlags(int flags)
+// 移除窗口标记
+clearWindowFlags(int flags)
+// 设置窗口标记
+setWindowFlags(int flags)
+// 是否存在某个窗口标记
+hasWindowFlags(int flags)
+
+// 设置悬浮窗的显示类型
+setWindowType(int type)
 ```
 
 #### 作者的其他开源项目

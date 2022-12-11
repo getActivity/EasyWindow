@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 88
-        versionName "8.8"
+        versionCode 89
+        versionName "8.9"
     }
 
     // 支持 JDK 1.8
@@ -22,6 +22,10 @@ android {
         }
     }
 }
+
+//dependencies {
+//    compileOnly 'com.android.support:support-annotations:24.0.0'
+//}
 
 afterEvaluate {
     // 排除 BuildConfig.class 和 R.class

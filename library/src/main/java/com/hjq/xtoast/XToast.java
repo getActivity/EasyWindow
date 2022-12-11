@@ -789,28 +789,28 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     }
 
     /**
-     * 获取 WindowManager 对象
+     * 获取 WindowManager 对象（可能为空）
      */
     public WindowManager getWindowManager() {
         return mWindowManager;
     }
 
     /**
-     * 获取 WindowManager 参数集
+     * 获取 WindowManager 参数集（可能为空）
      */
     public WindowManager.LayoutParams getWindowParams() {
         return mWindowParams;
     }
 
     /**
-     * 获取上下文对象
+     * 获取上下文对象（可能为空）
      */
     public Context getContext() {
         return mContext;
     }
 
     /**
-     * 获取根布局
+     * 获取根布局（可能为空）
      */
     public View getDecorView() {
         return mDecorView;
