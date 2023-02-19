@@ -18,7 +18,7 @@ import com.hjq.bar.TitleBar;
 import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.hjq.toast.ToastUtils;
+import com.hjq.toast.Toaster;
 import com.hjq.xtoast.XToast;
 import com.hjq.xtoast.draggable.MovingDraggable;
 import com.hjq.xtoast.draggable.SpringDraggable;
@@ -223,8 +223,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             new XToast<>(this)
                     .setDuration(1000)
-                    // 将 ToastUtils 中的 View 转移给 XToast 来显示
-                    .setContentView(ToastUtils.getStyle().createView(this))
+                    // 将 Toaster 中的 View 转移给 XToast 来显示
+                    .setContentView(Toaster.getStyle().createView(this))
                     .setAnimStyle(R.style.ScaleAnimStyle)
                     .setText(android.R.id.message, "就问你溜不溜")
                     .setGravity(Gravity.BOTTOM)
@@ -248,7 +248,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onClick(XToast<?> toast, ImageView view) {
-                        ToastUtils.show("我被点击了");
+                        Toaster.show("我被点击了");
                         // 点击后跳转到拨打电话界面
                         // Intent intent = new Intent(Intent.ACTION_DIAL);
                         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

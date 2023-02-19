@@ -109,7 +109,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
-                    android:text="搭配 ToastUtils 框架" />
+                    android:text="搭配 Toaster 框架" />
             </LinearLayout>
 
         </FrameLayout>
