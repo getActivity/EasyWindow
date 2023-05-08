@@ -1,4 +1,4 @@
-package com.hjq.xtoast;
+package com.hjq.window;
 
 import android.app.Activity;
 import android.app.Application;
@@ -18,25 +18,27 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hjq.xtoast.draggable.BaseDraggable;
-import com.hjq.xtoast.draggable.MovingDraggable;
+import com.hjq.window.draggable.BaseDraggable;
+import com.hjq.window.draggable.MovingDraggable;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2019/01/04
  *    desc   : 悬浮窗框架
  *    doc    : https://developer.android.google.cn/reference/android/view/WindowManager.html
  *             https://developer.android.google.cn/reference/kotlin/android/view/WindowManager.LayoutParams?hl=en
  */
 @SuppressWarnings({"unchecked", "unused", "UnusedReturnValue"})
-public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationMonitor.OnScreenOrientationCallback {
+public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
+        ScreenOrientationMonitor.OnScreenOrientationCallback {
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
@@ -54,11 +56,11 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     /** 悬浮窗显示时长 */
     private int mDuration;
     /** Toast 生命周期管理 */
-    private ActivityLifecycle mLifecycle;
+    private ActivityWindowLifecycle mLifecycle;
     /** 自定义拖动处理 */
     private BaseDraggable mDraggable;
     /** 吐司显示和取消监听 */
-    private OnLifecycle mListener;
+    private OnWindowLifecycle mListener;
 
     /** 屏幕旋转监听 */
     private ScreenOrientationMonitor mScreenOrientationMonitor;
@@ -69,24 +71,40 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     /**
      * 创建一个局部悬浮窗
      */
-    public XToast(Activity activity) {
+    public EasyWindow(Activity activity) {
         this((Context) activity);
 
-        if ((activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0 ||
-                (activity.getWindow().getDecorView().getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
+        Window window = activity.getWindow();
+        View decorView = window.getDecorView();
+        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
+        if ((params.flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) != 0 ||
+                (decorView.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_FULLSCREEN) != 0) {
             // 如果当前 Activity 是全屏模式，那么需要添加这个标记，否则会导致 WindowManager 在某些机型上移动不到状态栏的位置上
             // 如果不想让状态栏显示的时候把 WindowManager 顶下来，可以添加 FLAG_LAYOUT_IN_SCREEN，但是会导致软键盘无法调整窗口位置
             addWindowFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            // 如果是 Android 9.0，则需要对刘海屏进行适配，否则也会导致 WindowManager 移动不到刘海屏的位置上面
+            setLayoutInDisplayCutoutMode(params.layoutInDisplayCutoutMode);
+        }
+
+        if (params.systemUiVisibility != 0) {
+            setSystemUiVisibility(params.systemUiVisibility);
+        }
+
+        if (decorView.getSystemUiVisibility() != 0) {
+            mDecorView.setSystemUiVisibility(decorView.getSystemUiVisibility());
+        }
+
         // 跟随 Activity 的生命周期
-        mLifecycle = new ActivityLifecycle(this, activity);
+        mLifecycle = new ActivityWindowLifecycle(this, activity);
     }
 
     /**
      * 创建一个全局悬浮窗
      */
-    public XToast(Application application) {
+    public EasyWindow(Application application) {
         this((Context) application);
 
         // 设置成全局的悬浮窗，注意需要先申请悬浮窗权限，推荐使用：https://github.com/getActivity/XXPermissions
@@ -97,7 +115,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         }
     }
 
-    private XToast(Context context) {
+    private EasyWindow(Context context) {
         mContext = context;
         mDecorView = new WindowLayout(context);
         mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
@@ -154,6 +172,11 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     public X setGravity(int gravity) {
         mWindowParams.gravity = gravity;
         postUpdate();
+        post(() -> {
+            if (mDraggable != null) {
+                mDraggable.refreshLocationCoordinate();
+            }
+        });
         return (X) this;
     }
 
@@ -163,6 +186,11 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     public X setXOffset(int px) {
         mWindowParams.x = px;
         postUpdate();
+        post(() -> {
+            if (mDraggable != null) {
+                mDraggable.refreshLocationCoordinate();
+            }
+        });
         return (X) this;
     }
 
@@ -172,6 +200,11 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     public X setYOffset(int px) {
         mWindowParams.y = px;
         postUpdate();
+        post(() -> {
+            if (mDraggable != null) {
+                mDraggable.refreshLocationCoordinate();
+            }
+        });
         return (X) this;
     }
 
@@ -184,7 +217,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         if (touchable) {
             addWindowFlags(flags);
         } else {
-            clearWindowFlags(flags);
+            removeWindowFlags(flags);
         }
         postUpdate();
         return (X) this;
@@ -204,7 +237,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         if (amount != 0) {
             addWindowFlags(flags);
         } else {
-            clearWindowFlags(flags);
+            removeWindowFlags(flags);
         }
         postUpdate();
         return (X) this;
@@ -222,7 +255,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     /**
      * 移除窗口标记
      */
-    public X clearWindowFlags(int flags) {
+    public X removeWindowFlags(int flags) {
         mWindowParams.flags &= ~flags;
         postUpdate();
         return (X) this;
@@ -275,7 +308,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     public X setSoftInputMode(int mode) {
         mWindowParams.softInputMode = mode;
         // 如果设置了不能触摸，则擦除这个标记，否则会导致无法弹出输入法
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         postUpdate();
         return (X) this;
     }
@@ -462,9 +495,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         mDraggable = draggable;
         if (draggable != null) {
             // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
-            clearWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            removeWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
             if (isShowing()) {
                 update();
@@ -495,7 +528,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
     /**
      * 设置生命周期监听
      */
-    public X setOnToastLifecycle(OnLifecycle listener) {
+    public X setOnToastLifecycle(OnWindowLifecycle listener) {
         mListener = listener;
         return (X) this;
     }
@@ -653,9 +686,10 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         }
 
         if (mContext instanceof Activity) {
-            if (((Activity) mContext).isFinishing() ||
+            Activity activity = ((Activity) mContext);
+            if (activity.isFinishing() ||
                     (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 &&
-                            ((Activity) mContext).isDestroyed())) {
+                            activity.isDestroyed())) {
                 return;
             }
         }
@@ -685,7 +719,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
 
             // 回调监听
             if (mListener != null) {
-                mListener.onShow(this);
+                mListener.onWindowShow(this);
             }
 
         } catch (NullPointerException | IllegalStateException |
@@ -720,7 +754,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
 
             // 回调监听
             if (mListener != null) {
-                mListener.onDismiss(this);
+                mListener.onWindowCancel(this);
             }
 
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
@@ -770,7 +804,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
             mScreenOrientationMonitor.unregisterCallback(mContext);
         }
         if (mListener != null) {
-            mListener.onRecycler(this);
+            mListener.onWindowRecycler(this);
         }
         mListener = null;
         mContext = null;
@@ -800,6 +834,13 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
      */
     public WindowManager.LayoutParams getWindowParams() {
         return mWindowParams;
+    }
+
+    /**
+     * 获取当前的拖拽规则对象（可能为空）
+     */
+    public BaseDraggable getDraggable() {
+        return mDraggable;
     }
 
     /**
@@ -1011,9 +1052,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         return setOnClickListener(findViewById(id), listener);
     }
 
-    private X setOnClickListener(View view, XToast.OnClickListener<? extends View> listener) {
+    private X setOnClickListener(View view, EasyWindow.OnClickListener<? extends View> listener) {
         // 如果当前是否设置了不可触摸，如果是就擦除掉
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         view.setClickable(true);
         view.setOnClickListener(new ViewClickWrapper(this, listener));
@@ -1031,9 +1072,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         return setOnLongClickListener(findViewById(id), listener);
     }
 
-    private X setOnLongClickListener(View view, XToast.OnLongClickListener<? extends View> listener) {
+    private X setOnLongClickListener(View view, EasyWindow.OnLongClickListener<? extends View> listener) {
         // 如果当前是否设置了不可触摸，如果是就擦除掉
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         view.setClickable(true);
         view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
@@ -1051,9 +1092,9 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         return setOnTouchListener(findViewById(id), listener);
     }
 
-    private X setOnTouchListener(View view, XToast.OnTouchListener<? extends View> listener) {
+    private X setOnTouchListener(View view, EasyWindow.OnTouchListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
-        clearWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         view.setEnabled(true);
         view.setOnTouchListener(new ViewTouchWrapper(this, listener));
@@ -1079,7 +1120,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         if (mDraggable == null) {
             return;
         }
-        mDraggable.onScreenOrientationChange(newOrientation);
+        mDraggable.onScreenOrientationChange();
     }
 
     /**
@@ -1090,7 +1131,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         /**
          * 点击回调
          */
-        void onClick(XToast<?> toast, V view);
+        void onClick(EasyWindow<?> window, V view);
     }
 
     /**
@@ -1101,7 +1142,7 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         /**
          * 长按回调
          */
-        boolean onLongClick(XToast<?> toast, V view);
+        boolean onLongClick(EasyWindow<?> window, V view);
     }
 
     /**
@@ -1112,27 +1153,27 @@ public class XToast<X extends XToast<?>> implements Runnable, ScreenOrientationM
         /**
          * 触摸回调
          */
-        boolean onTouch(XToast<?> toast, V view, MotionEvent event);
+        boolean onTouch(EasyWindow<?> window, V view, MotionEvent event);
     }
 
     /**
-     * Toast 生命周期监听
+     * 窗口生命周期监听
      */
-    public interface OnLifecycle {
+    public interface OnWindowLifecycle {
 
         /**
          * 显示回调
          */
-        default void onShow(XToast<?> toast) {}
+        default void onWindowShow(EasyWindow<?> window) {}
 
         /**
          * 消失回调
          */
-        default void onDismiss(XToast<?> toast) {}
+        default void onWindowCancel(EasyWindow<?> window) {}
 
         /**
          * 回收回调
          */
-        default void onRecycler(XToast<?> toast) {}
+        default void onWindowRecycler(EasyWindow<?> window) {}
     }
 }

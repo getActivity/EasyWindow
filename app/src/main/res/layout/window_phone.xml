@@ -3,4 +3,4 @@
     android:id="@android:id/icon"
     android:layout_width="60dp"
     android:layout_height="60dp"
-    android:src="@mipmap/ic_float_bg" />
+    android:src="@drawable/ic_float_bg" />

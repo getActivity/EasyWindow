@@ -1,4 +1,4 @@
-package com.hjq.xtoast;
+package com.hjq.window;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,7 +7,7 @@ import android.widget.FrameLayout;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2021/01/04
  *    desc   : 悬浮窗根布局（处理触摸事件冲突）
  */

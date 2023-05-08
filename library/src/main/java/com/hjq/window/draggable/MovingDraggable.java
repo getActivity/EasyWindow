@@ -1,4 +1,4 @@
-package com.hjq.xtoast.draggable;
+package com.hjq.window.draggable;
 
 import android.annotation.SuppressLint;
 import android.view.MotionEvent;
@@ -6,7 +6,7 @@ import android.view.View;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2019/01/04
  *    desc   : 移动拖拽处理实现类
  */
@@ -34,10 +34,19 @@ public class MovingDraggable extends BaseDraggable {
                 float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
                 float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
 
-                // 更新移动的位置
-                updateLocation(rawMoveX - mViewDownX, rawMoveY - mViewDownY);
+                float newX = rawMoveX - mViewDownX;
+                float newY = rawMoveY - mViewDownY;
+                if (newX < 0) {
+                    newX = 0;
+                }
+                if (newY < 0) {
+                    newY = 0;
+                }
 
-                if (!mMoveTouch && isTouchMove(mViewDownX, event.getX(), mViewDownY, event.getY())) {
+                // 更新移动的位置
+                updateLocation(newX, newY);
+
+                if (!mMoveTouch && isFingerMove(mViewDownX, event.getX(), mViewDownY, event.getY())) {
                     // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
                     mMoveTouch = true;
                 }

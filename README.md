@@ -1,10 +1,10 @@
 # 悬浮窗框架
 
-* 项目地址：[Github](https://github.com/getActivity/XToast)
+* 项目地址：[Github](https://github.com/getActivity/EasyWindow)
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/XToast/releases/download/8.9/XToast.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/10.0/EasyWindow.apk)
 
 ![](picture/demo_code.png)
 
@@ -48,8 +48,8 @@ android {
 }
 
 dependencies {
-    // 悬浮窗框架：https://github.com/getActivity/XToast
-    implementation 'com.github.getActivity:XToast:8.9'
+    // 悬浮窗框架：https://github.com/getActivity/EasyWindow
+    implementation 'com.github.getActivity:EasyWindow:10.0'
 }
 ```
 
@@ -60,7 +60,7 @@ dependencies {
 ```java
 // 传入 Activity 对象表示设置成局部的，不需要有悬浮窗权限
 // 传入 Application 对象表示设置成全局的，但需要有悬浮窗权限
-new XToast<>(this)
+new EasyWindow<>(this)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
@@ -74,10 +74,10 @@ new XToast<>(this)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, new XToast.OnClickListener<TextView>() {
+        .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
 
             @Override
-            public void onClick(XToast toast, TextView view) {
+            public void onClick(EasyWindow toast, TextView view) {
                 // 点击这个 View 后消失
                 toast.cancel();
                 // 跳转到某个Activity
@@ -90,7 +90,7 @@ new XToast<>(this)
 * Kotlin 用法（二选一）
 
 ```kotlin
-XToast<XToast<*>>(activity).apply {
+EasyWindow<EasyWindow<*>>(activity).apply {
     setContentView(R.layout.toast_hint)
     // 设置成可拖拽的
     //setDraggable()
@@ -104,7 +104,7 @@ XToast<XToast<*>>(activity).apply {
     //setBackgroundDimAmount(0.5f)
     setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
     setText(android.R.id.message, "点我消失")
-    setOnClickListener(android.R.id.message, XToast.OnClickListener<TextView?> { toast: XToast<*>, view: TextView? ->
+    setOnClickListener(android.R.id.message, EasyWindow.OnClickListener<TextView?> { toast: EasyWindow<*>, view: TextView? ->
         // 点击这个 View 后消失
         toast.cancel()
         // 跳转到某个Activity
@@ -114,7 +114,7 @@ XToast<XToast<*>>(activity).apply {
 ```
 
 ```kotlin
-XToast<XToast<*>>(activity)
+EasyWindow<EasyWindow<*>>(activity)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
@@ -128,7 +128,7 @@ XToast<XToast<*>>(activity)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, XToast.OnClickListener<TextView?> { toast: XToast<*>, view: TextView? ->
+        .setOnClickListener(android.R.id.message, EasyWindow.OnClickListener<TextView?> { toast: EasyWindow<*>, view: TextView? ->
             // 点击这个 View 后消失
             toast.cancel()
             // 跳转到某个Activity
@@ -146,7 +146,7 @@ XToast<XToast<*>>(activity)
 * 我们可以通过 Application 来监听所有 Activity 的生命周期方法，然后在每个 Activity.onCreate 时创建悬浮窗
 
 ```java
-public final class FloatingLifecycle implements Application.ActivityLifecycleCallbacks {
+public final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
 
     static void with(Application application) {
         application.registerActivityLifecycleCallbacks(new FloatingLifecycle());
@@ -154,7 +154,7 @@ public final class FloatingLifecycle implements Application.ActivityLifecycleCal
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        new XToast<>(activity)
+        new EasyWindow<>(activity)
                 .setView(R.layout.xxx)
                 .show();
     }
@@ -202,7 +202,7 @@ setBackgroundDimAmount(float amount)
 // 添加窗口标记
 addWindowFlags(int flags)
 // 移除窗口标记
-clearWindowFlags(int flags)
+removeWindowFlags(int flags)
 // 设置窗口标记
 setWindowFlags(int flags)
 // 是否存在某个窗口标记
@@ -210,6 +210,10 @@ hasWindowFlags(int flags)
 
 // 设置悬浮窗的显示类型
 setWindowType(int type)
+
+// 几乎涵盖了所有 WindowManager 的参数
+// 更多 API 方法请查看 EasyWindow 类的源码
+......
 ```
 
 #### 作者的其他开源项目
@@ -245,6 +249,8 @@ setWindowType(int type)
 * Studio 精品插件：[StudioPlugins](https://github.com/getActivity/StudioPlugins) ![](https://img.shields.io/github/stars/getActivity/StudioPlugins.svg) ![](https://img.shields.io/github/forks/getActivity/StudioPlugins.svg)
 
 * 表情包大集合：[EmojiPackage](https://github.com/getActivity/EmojiPackage) ![](https://img.shields.io/github/stars/getActivity/EmojiPackage.svg) ![](https://img.shields.io/github/forks/getActivity/EmojiPackage.svg)
+
+* AI 资源大汇总：[AiIndex](https://github.com/getActivity/AiIndex) ![](https://img.shields.io/github/stars/getActivity/AiIndex.svg) ![](https://img.shields.io/github/forks/getActivity/AiIndex.svg)
 
 * 省市区 Json 数据：[ProvinceJson](https://github.com/getActivity/ProvinceJson) ![](https://img.shields.io/github/stars/getActivity/ProvinceJson.svg) ![](https://img.shields.io/github/forks/getActivity/ProvinceJson.svg)
 

@@ -16,7 +16,7 @@
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_marginTop="14dp"
-        tools:src="@mipmap/ic_dialog_tip_warning" />
+        tools:src="@drawable/ic_dialog_tip_warning" />
 
     <TextView
         android:id="@android:id/message"

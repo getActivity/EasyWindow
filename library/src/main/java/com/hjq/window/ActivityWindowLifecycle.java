@@ -1,4 +1,4 @@
-package com.hjq.xtoast;
+package com.hjq.window;
 
 import android.app.Activity;
 import android.app.Application;
@@ -7,18 +7,18 @@ import android.os.Bundle;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2019/01/04
  *    desc   : 悬浮窗生命周期管理，防止内存泄露
  */
-final class ActivityLifecycle implements Application.ActivityLifecycleCallbacks {
+final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Activity mActivity;
-    private XToast<?> mToast;
+    private EasyWindow<?> mWindow;
 
-    ActivityLifecycle(XToast<?> toast, Activity activity) {
+    ActivityWindowLifecycle(EasyWindow<?> window, Activity activity) {
         mActivity = activity;
-        mToast = toast;
+        mWindow = window;
     }
 
     /**
@@ -63,10 +63,10 @@ final class ActivityLifecycle implements Application.ActivityLifecycleCallbacks 
     @Override
     public void onActivityPaused(Activity activity) {
         // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
-        if (mActivity != activity || !mActivity.isFinishing() || mToast == null || !mToast.isShowing()) {
+        if (mActivity != activity || !mActivity.isFinishing() || mWindow == null || !mWindow.isShowing()) {
             return;
         }
-        mToast.cancel();
+        mWindow.cancel();
     }
 
     @Override
@@ -83,10 +83,10 @@ final class ActivityLifecycle implements Application.ActivityLifecycleCallbacks 
         // 释放 Activity 的引用
         mActivity = null;
 
-        if (mToast == null) {
+        if (mWindow == null) {
             return;
         }
-        mToast.recycle();
-        mToast = null;
+        mWindow.recycle();
+        mWindow = null;
     }
 }

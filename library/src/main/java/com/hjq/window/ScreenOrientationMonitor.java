@@ -1,4 +1,4 @@
-package com.hjq.xtoast;
+package com.hjq.window;
 
 import android.content.ComponentCallbacks;
 import android.content.Context;
@@ -6,7 +6,7 @@ import android.content.res.Configuration;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2022/10/03
  *    desc   : 屏幕方向旋转监听
  */
@@ -52,7 +52,9 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
    }
 
    @Override
-   public void onLowMemory() {}
+   public void onLowMemory() {
+      // default implementation ignored
+   }
 
    /**
     * 屏幕方向监听器

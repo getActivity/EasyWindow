@@ -1,21 +1,21 @@
-package com.hjq.xtoast;
+package com.hjq.window;
 
 import android.view.View;
 
 /**
  *    author : Android 轮子哥
- *    github : https://github.com/getActivity/XToast
+ *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2021/09/03
  *    desc   : {@link View.OnLongClickListener} 包装类
  */
 @SuppressWarnings("rawtypes")
 final class ViewLongClickWrapper implements View.OnLongClickListener {
 
-    private final XToast<?> mToast;
-    private final XToast.OnLongClickListener mListener;
+    private final EasyWindow<?> mWindow;
+    private final EasyWindow.OnLongClickListener mListener;
 
-    ViewLongClickWrapper(XToast<?> toast, XToast.OnLongClickListener listener) {
-        mToast = toast;
+    ViewLongClickWrapper(EasyWindow<?> window, EasyWindow.OnLongClickListener listener) {
+        mWindow = window;
         mListener = listener;
     }
 
@@ -25,6 +25,6 @@ final class ViewLongClickWrapper implements View.OnLongClickListener {
         if (mListener == null) {
             return false;
         }
-        return mListener.onLongClick(mToast, view);
+        return mListener.onLongClick(mWindow, view);
     }
 }

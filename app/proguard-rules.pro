@@ -1,1 +1,1 @@
--keep class com.hjq.xtoast.** {*;}
+-keep class com.hjq.window.** {*;}
