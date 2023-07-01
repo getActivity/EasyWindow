@@ -5,8 +5,6 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        versionCode 1000
-        versionName "10.0"
     }
 
     // 支持 JDK 1.8
@@ -14,6 +12,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'com.hjq.window'
 
     android.libraryVariants.all { variant ->
         // aar 输出文件名配置
@@ -43,7 +42,7 @@ tasks.withType(Javadoc) {
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    setProperty('archiveClassifier', 'sources')
 }
 
 task javadoc(type: Javadoc) {
@@ -52,7 +51,7 @@ task javadoc(type: Javadoc) {
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    setProperty('archiveClassifier', 'javadoc')
     from javadoc.destinationDir
 }
 

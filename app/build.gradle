@@ -40,6 +40,7 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    namespace 'com.hjq.window.demo'
 
     applicationVariants.all { variant ->
         // apk 输出文件名配置
