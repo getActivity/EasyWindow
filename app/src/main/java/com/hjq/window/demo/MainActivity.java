@@ -49,6 +49,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_draggable).setOnClickListener(this);
         findViewById(R.id.btn_main_global).setOnClickListener(this);
         findViewById(R.id.btn_main_utils).setOnClickListener(this);
+        findViewById(R.id.btn_main_cancel_all).setOnClickListener(this);
 
         TitleBar titleBar = findViewById(R.id.tb_main_bar);
         titleBar.setOnTitleBarListener(new OnTitleBarListener() {
@@ -200,7 +201,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_global) {
 
-            XXPermissions.with(this)
+            XXPermissions.with(MainActivity.this)
                     .permission(Permission.SYSTEM_ALERT_WINDOW)
                     .request(new OnPermissionCallback() {
 
@@ -219,6 +220,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                                     .show();
                         }
                     });
+
+        } else if (viewId == R.id.btn_main_cancel_all) {
+
+            // 关闭当前正在显示的悬浮窗
+            // EasyWindow.cancelAll();
+            // 回收当前正在显示的悬浮窗
+            EasyWindow.recycleAll();
 
         } else if (viewId == R.id.btn_main_utils) {
 

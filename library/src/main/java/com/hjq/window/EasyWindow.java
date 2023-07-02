@@ -28,6 +28,10 @@ import android.widget.TextView;
 import com.hjq.window.draggable.BaseDraggable;
 import com.hjq.window.draggable.MovingDraggable;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/EasyWindow
@@ -42,6 +46,123 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
+    private static final List<EasyWindow<?>> sWindowInstanceSet = new ArrayList<>();
+
+    /**
+     * 取消所有正在显示的悬浮窗
+     */
+    public static synchronized void cancelAll() {
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            easyWindow.cancel();
+        }
+    }
+
+    /**
+     * 取消特定类名的悬浮窗
+     */
+    public static synchronized void cancelByClass(Class<EasyWindow<?>> clazz) {
+        if (clazz == null) {
+            return;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!clazz.equals(easyWindow.getClass())) {
+                continue;
+            }
+            easyWindow.cancel();
+        }
+    }
+
+    /**
+     * 取消特定标记的悬浮窗
+     */
+    public static synchronized void cancelByTag(String tag) {
+        if (tag == null) {
+            return;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!tag.equals(easyWindow.getTag())) {
+                continue;
+            }
+            easyWindow.cancel();
+        }
+    }
+
+    /**
+     * 回收所有正在显示的悬浮窗
+     */
+    public static synchronized void recycleAll() {
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+            // 这里解释一下，为什么要使用迭代器移除，如果不那么做的话
+            // easyWindow.recycle 方法里面会再移除一次
+            // 当前又是一个 while 循环，可能会出现角标越界的情况
+            iterator.remove();
+            easyWindow.recycle();
+        }
+    }
+
+    /**
+     * 回收特定类名的悬浮窗
+     */
+    public static void recycleByClass(Class<EasyWindow<?>> clazz) {
+        if (clazz == null) {
+            return;
+        }
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!clazz.equals(easyWindow.getClass())) {
+                continue;
+            }
+            // 这里解释一下，为什么要使用迭代器移除，如果不那么做的话
+            // easyWindow.recycle 方法里面会再移除一次
+            // 当前又是一个 while 循环，可能会出现角标越界的情况
+            iterator.remove();
+            easyWindow.recycle();
+        }
+    }
+
+    /**
+     * 回收特定标记的悬浮窗
+     */
+    public static void recycleByTag(String tag) {
+        if (tag == null) {
+            return;
+        }
+
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!tag.equals(easyWindow.getTag())) {
+                continue;
+            }
+            // 这里解释一下，为什么要使用迭代器移除，如果不那么做的话
+            // easyWindow.recycle 方法里面会再移除一次
+            // 当前又是一个 while 循环，可能会出现角标越界的情况
+            iterator.remove();
+            easyWindow.recycle();
+        }
+    }
+
     /** 上下文 */
     private Context mContext;
     /** 根布局 */
@@ -55,6 +176,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private boolean mShowing;
     /** 悬浮窗显示时长 */
     private int mDuration;
+    /** 悬浮窗标记 */
+    private String mTag;
     /** Toast 生命周期管理 */
     private ActivityWindowLifecycle mLifecycle;
     /** 自定义拖动处理 */
@@ -99,6 +222,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
         // 跟随 Activity 的生命周期
         mLifecycle = new ActivityWindowLifecycle(this, activity);
+        // 注册 Activity 生命周期监听
+        mLifecycle.register();
     }
 
     /**
@@ -130,6 +255,17 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
         mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+
+        // 将当前实例添加到静态集合中
+        sWindowInstanceSet.add(this);
+    }
+
+    /**
+     * 设置悬浮窗口标记
+     */
+    public X setTag(String tag) {
+        mTag = tag;
+        return (X) this;
     }
 
     /**
@@ -712,11 +848,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
                 mDraggable.start(this);
             }
 
-            // 注册 Activity 生命周期
-            if (mLifecycle != null) {
-                mLifecycle.register();
-            }
-
             // 回调监听
             if (mListener != null) {
                 mListener.onWindowShow(this);
@@ -739,11 +870,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         }
 
         try {
-
-            // 反注册 Activity 生命周期
-            if (mLifecycle != null) {
-                mLifecycle.unregister();
-            }
 
             // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
             // java.lang.IllegalArgumentException: View not attached to window manager
@@ -804,7 +930,11 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mScreenOrientationMonitor.unregisterCallback(mContext);
         }
         if (mListener != null) {
-            mListener.onWindowRecycler(this);
+            mListener.onWindowRecycle(this);
+        }
+        // 反注册 Activity 生命周期
+        if (mLifecycle != null) {
+            mLifecycle.unregister();
         }
         mListener = null;
         mContext = null;
@@ -813,6 +943,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams = null;
         mLifecycle = null;
         mDraggable = null;
+        mScreenOrientationMonitor = null;
+        // 将当前实例从静态集合中移除
+        sWindowInstanceSet.remove(this);
     }
 
     /**
@@ -998,11 +1131,12 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         return (X) this;
     }
 
-    /**
-     * 获取 Handler
-     */
     public Handler getHandler() {
         return HANDLER;
+    }
+
+    public String getTag() {
+        return mTag;
     }
 
     /**
@@ -1174,6 +1308,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         /**
          * 回收回调
          */
-        default void onWindowRecycler(EasyWindow<?> window) {}
+        default void onWindowRecycle(EasyWindow<?> window) {}
     }
 }

@@ -84,15 +84,19 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 刷新当前 View 在屏幕的坐标信息
      */
     public void refreshLocationCoordinate() {
+        View decorView = getDecorView();
+        if (decorView == null) {
+            return;
+        }
         // 这里为什么要这么写，因为发现了鸿蒙手机在进行屏幕旋转的时候
         // 回调 onConfigurationChanged 方法的时候获取到这些参数已经变化了
         // 所以需要提前记录下来，避免后续进行坐标计算的时候出现问题
-        getDecorView().getWindowVisibleDisplayFrame(mTempRect);
+        decorView.getWindowVisibleDisplayFrame(mTempRect);
         mCurrentWindowWidth = mTempRect.right - mTempRect.left;
         mCurrentWindowHeight = mTempRect.bottom - mTempRect.top;
 
         int[] location = new int[2];
-        getDecorView().getLocationOnScreen(location);
+        decorView.getLocationOnScreen(location);
         mCurrentViewOnScreenX = location[0];
         mCurrentViewOnScreenY = location[1];
 

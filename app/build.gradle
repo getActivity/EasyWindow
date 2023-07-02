@@ -6,9 +6,9 @@ android {
     defaultConfig {
         applicationId "com.hjq.window.demo"
         minSdkVersion 16
-        targetSdkVersion 31
-        versionCode 1000
-        versionName "10.0"
+        targetSdkVersion 33
+        versionCode 1002
+        versionName "10.2"
     }
 
     // 支持 Java JDK 8
@@ -61,14 +61,14 @@ dependencies {
     implementation 'com.google.android.material:material:1.4.0'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.github.getActivity:XXPermissions:18.0'
+    implementation 'com.github.getActivity:XXPermissions:18.2'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.github.getActivity:TitleBar:10.3'
+    implementation 'com.github.getActivity:TitleBar:10.5'
 
     // 吐司框架：https://github.com/getActivity/Toaster
-    implementation 'com.github.getActivity:Toaster:12.2'
+    implementation 'com.github.getActivity:Toaster:12.3'
 
     // 内存泄漏捕捉：https://github.com/square/leakcanary
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
 }

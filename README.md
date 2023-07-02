@@ -4,7 +4,7 @@
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/10.0/EasyWindow.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/10.2/EasyWindow.apk)
 
 ![](picture/demo_code.png)
 
@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/EasyWindow
-    implementation 'com.github.getActivity:EasyWindow:10.0'
+    implementation 'com.github.getActivity:EasyWindow:10.2'
 }
 ```
 
@@ -181,6 +181,8 @@ public final class ActivityWindowLifecycle implements Application.ActivityLifecy
 
 #### 框架的 API 介绍
 
+* 对象方法
+
 ```
 // 设置悬浮窗宽度
 setWidth(int width)
@@ -214,6 +216,28 @@ setWindowType(int type)
 // 几乎涵盖了所有 WindowManager 的参数
 // 更多 API 方法请查看 EasyWindow 类的源码
 ......
+```
+
+* 静态方法
+
+```
+// 取消所有正在显示的悬浮窗
+EasyWindow.cancelAll()
+
+// 取消特定类名的悬浮窗
+EasyWindow.cancelByClass(Class<EasyWindow<?>> clazz)
+
+// 取消特定标记的悬浮窗
+EasyWindow.cancelByTag(String tag)
+
+// 回收所有正在显示的悬浮窗
+EasyWindow.recycleAll()
+
+// 回收特定类名的悬浮窗
+EasyWindow.recycleByClass(Class<EasyWindow<?>> clazz)
+
+// 回收特定标记的悬浮窗
+EasyWindow.recycleByTag(String tag)
 ```
 
 #### 作者的其他开源项目
@@ -262,11 +286,21 @@ setWindowType(int type)
 
 #### Android 技术 Q 群：10047167
 
-#### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:
+#### 如果您觉得我的开源库帮你节省了大量的开发时间，请扫描下方的二维码随意打赏，要是能打赏个 10.24 :monkey_face:就太:thumbsup:了。您的支持将鼓励我继续创作:octocat:（[点击查看捐赠列表](https://github.com/getActivity/Donate)）
 
 ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_ali.png) ![](https://raw.githubusercontent.com/getActivity/Donate/master/picture/pay_wechat.png)
 
-#### [点击查看捐赠列表](https://github.com/getActivity/Donate)
+#### 广告区
+
+* 我现在任腾讯云服务器推广大使，大家如果有购买服务器的需求，可以通过下面的链接购买
+
+[![](https://upload-dianshi-1255598498.file.myqcloud.com/upload/nodir/345X200-9ae456f58874df499adf7c331c02cb0fed12b81d.jpg)](https://curl.qcloud.com/A6cYskvv)
+
+[【腾讯云】云服务器、云数据库、COS、CDN、短信等云产品特惠热卖中](https://curl.qcloud.com/A6cYskvv)
+
+[![](https://upload-dianshi-1255598498.file.myqcloud.com/345-200-b28f7dee9552f4241ea6a543f15a9798049701d4.jpg)](https://curl.qcloud.com/up4fQsdn)
+
+[【腾讯云】中小企业福利专场，多款刚需产品，满足企业通用场景需求](https://curl.qcloud.com/up4fQsdn)
 
 ## License
 
