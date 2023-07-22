@@ -4,7 +4,7 @@
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/10.2/EasyWindow.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/10.3/EasyWindow.apk)
 
 ![](picture/demo_code.png)
 
@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/EasyWindow
-    implementation 'com.github.getActivity:EasyWindow:10.2'
+    implementation 'com.github.getActivity:EasyWindow:10.3'
 }
 ```
 
@@ -60,7 +60,7 @@ dependencies {
 ```java
 // 传入 Activity 对象表示设置成局部的，不需要有悬浮窗权限
 // 传入 Application 对象表示设置成全局的，但需要有悬浮窗权限
-new EasyWindow<>(this)
+EasyWindow.with(this)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
@@ -90,7 +90,7 @@ new EasyWindow<>(this)
 * Kotlin 用法（二选一）
 
 ```kotlin
-EasyWindow<EasyWindow<*>>(activity).apply {
+EasyWindow.with(activity).apply {
     setContentView(R.layout.toast_hint)
     // 设置成可拖拽的
     //setDraggable()
@@ -114,7 +114,7 @@ EasyWindow<EasyWindow<*>>(activity).apply {
 ```
 
 ```kotlin
-EasyWindow<EasyWindow<*>>(activity)
+EasyWindow.with(activity)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
         //.setDraggable()
@@ -154,7 +154,7 @@ public final class ActivityWindowLifecycle implements Application.ActivityLifecy
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        new EasyWindow<>(activity)
+        EasyWindow.with(activity)
                 .setView(R.layout.xxx)
                 .show();
     }
@@ -240,6 +240,14 @@ EasyWindow.recycleByClass(Class<EasyWindow<?>> clazz)
 EasyWindow.recycleByTag(String tag)
 ```
 
+#### 框架混淆规则
+
+* 在混淆规则文件 `proguard-rules.pro` 中加入
+
+```text
+-keep class com.hjq.window.** {*;}
+```
+
 #### 作者的其他开源项目
 
 * 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject) ![](https://img.shields.io/github/stars/getActivity/AndroidProject.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidProject.svg)
@@ -254,13 +262,17 @@ EasyWindow.recycleByTag(String tag)
 
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar) ![](https://img.shields.io/github/stars/getActivity/TitleBar.svg) ![](https://img.shields.io/github/forks/getActivity/TitleBar.svg)
 
-* Shape 框架：[ShapeView](https://github.com/getActivity/ShapeView) ![](https://img.shields.io/github/stars/getActivity/ShapeView.svg) ![](https://img.shields.io/github/forks/getActivity/ShapeView.svg)
+* ShapeView 框架：[ShapeView](https://github.com/getActivity/ShapeView) ![](https://img.shields.io/github/stars/getActivity/ShapeView.svg) ![](https://img.shields.io/github/forks/getActivity/ShapeView.svg)
+
+* ShapeDrawable 框架：[ShapeDrawable](https://github.com/getActivity/ShapeDrawable) ![](https://img.shields.io/github/stars/getActivity/ShapeDrawable.svg) ![](https://img.shields.io/github/forks/getActivity/ShapeDrawable.svg)
 
 * 语种切换框架：[MultiLanguages](https://github.com/getActivity/MultiLanguages) ![](https://img.shields.io/github/stars/getActivity/MultiLanguages.svg) ![](https://img.shields.io/github/forks/getActivity/MultiLanguages.svg)
 
 * Gson 解析容错：[GsonFactory](https://github.com/getActivity/GsonFactory) ![](https://img.shields.io/github/stars/getActivity/GsonFactory.svg) ![](https://img.shields.io/github/forks/getActivity/GsonFactory.svg)
 
 * 日志查看框架：[Logcat](https://github.com/getActivity/Logcat) ![](https://img.shields.io/github/stars/getActivity/Logcat.svg) ![](https://img.shields.io/github/forks/getActivity/Logcat.svg)
+
+* 嵌套滚动布局框架：[NestedScrollLayout](https://github.com/getActivity/NestedScrollLayout) ![](https://img.shields.io/github/stars/getActivity/NestedScrollLayout.svg) ![](https://img.shields.io/github/forks/getActivity/NestedScrollLayout.svg)
 
 * Android 版本适配：[AndroidVersionAdapter](https://github.com/getActivity/AndroidVersionAdapter) ![](https://img.shields.io/github/stars/getActivity/AndroidVersionAdapter.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidVersionAdapter.svg)
 

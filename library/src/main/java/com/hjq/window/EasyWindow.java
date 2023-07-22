@@ -49,6 +49,22 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private static final List<EasyWindow<?>> sWindowInstanceSet = new ArrayList<>();
 
     /**
+     * 基于 Activity 创建一个 EasyWindow 实例
+     */
+    @SuppressWarnings("rawtypes")
+    public static EasyWindow with(Activity activity) {
+        return new EasyWindow(activity);
+    }
+
+    /**
+     * 基于全局创建一个 EasyWindow 实例，需要悬浮窗权限
+     */
+    @SuppressWarnings("rawtypes")
+    public static EasyWindow with(Application application) {
+        return new EasyWindow(application);
+    }
+
+    /**
      * 取消所有正在显示的悬浮窗
      */
     public static synchronized void cancelAll() {

@@ -63,11 +63,17 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
+    public void onBackPressed() {
+        // 在某些手机上面无法通过返回键销毁当前 Activity 对象，从而无法触发 LeakCanary 回收对象
+        finish();
+    }
+
+    @Override
     public void onClick(View v) {
         int viewId = v.getId();
         if (viewId == R.id.btn_main_anim) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setDuration(1000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.TopAnimStyle)
@@ -77,7 +83,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_duration) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setDuration(1000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
@@ -87,7 +93,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_overlay) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
@@ -107,7 +113,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_lifecycle) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setDuration(3000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
@@ -129,7 +135,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_click) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
@@ -151,7 +157,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_view) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.RightAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
@@ -168,7 +174,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_input) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setContentView(R.layout.window_input)
                     .setAnimStyle(R.style.BottomAnimStyle)
                     .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -183,7 +189,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_draggable) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
@@ -212,7 +218,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
-                            new EasyWindow<>(MainActivity.this)
+                            EasyWindow.with(MainActivity.this)
                                     .setDuration(1000)
                                     .setContentView(R.layout.window_hint)
                                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_error)
@@ -230,7 +236,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_utils) {
 
-            new EasyWindow<>(this)
+            EasyWindow.with(this)
                     .setDuration(1000)
                     // 将 Toaster 中的 View 转移给 EasyWindow 来显示
                     .setContentView(Toaster.getStyle().createView(this))
@@ -247,7 +253,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
      */
     public static void showGlobalWindow(Application application) {
         // 传入 Application 表示这个是一个全局的 Toast
-        new EasyWindow<>(application)
+        EasyWindow.with(application)
                 .setContentView(R.layout.window_phone)
                 .setGravity(Gravity.END | Gravity.BOTTOM)
                 .setYOffset(200)

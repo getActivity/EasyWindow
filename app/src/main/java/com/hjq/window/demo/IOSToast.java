@@ -15,7 +15,7 @@ public final class IOSToast {
     private static final int TIME = 3000;
 
     public static void showSucceed(Activity activity, CharSequence text) {
-        new EasyWindow<>(activity)
+        EasyWindow.with(activity)
                 .setDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
@@ -25,7 +25,7 @@ public final class IOSToast {
     }
 
     public static void showFail(Activity activity, CharSequence text) {
-        new EasyWindow<>(activity)
+        EasyWindow.with(activity)
                 .setDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Activity)
@@ -35,7 +35,7 @@ public final class IOSToast {
     }
 
     public static void showWarn(Activity activity, CharSequence text) {
-        new EasyWindow<>(activity)
+        EasyWindow.with(activity)
                 .setDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Dialog)
