@@ -14,11 +14,11 @@ import android.os.Bundle;
 final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
 
     private Activity mActivity;
-    private EasyWindow<?> mWindow;
+    private EasyWindow<?> mEasyWindow;
 
-    ActivityWindowLifecycle(EasyWindow<?> window, Activity activity) {
+    ActivityWindowLifecycle(EasyWindow<?> easyWindow, Activity activity) {
         mActivity = activity;
-        mWindow = window;
+        mEasyWindow = easyWindow;
     }
 
     /**
@@ -63,10 +63,10 @@ final class ActivityWindowLifecycle implements Application.ActivityLifecycleCall
     @Override
     public void onActivityPaused(Activity activity) {
         // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
-        if (mActivity != activity || !mActivity.isFinishing() || mWindow == null || !mWindow.isShowing()) {
+        if (mActivity != activity || !mActivity.isFinishing() || mEasyWindow == null || !mEasyWindow.isShowing()) {
             return;
         }
-        mWindow.cancel();
+        mEasyWindow.cancel();
     }
 
     @Override
@@ -83,10 +83,10 @@ final class ActivityWindowLifecycle implements Application.ActivityLifecycleCall
         // 释放 Activity 的引用
         mActivity = null;
 
-        if (mWindow == null) {
+        if (mEasyWindow == null) {
             return;
         }
-        mWindow.recycle();
-        mWindow = null;
+        mEasyWindow.recycle();
+        mEasyWindow = null;
     }
 }

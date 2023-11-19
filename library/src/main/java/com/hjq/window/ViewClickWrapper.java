@@ -11,20 +11,20 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewClickWrapper implements View.OnClickListener {
 
-    private final EasyWindow<?> mWindow;
+    private final EasyWindow<?> mEasyWindow;
     private final EasyWindow.OnClickListener mListener;
 
-    ViewClickWrapper(EasyWindow<?> window, EasyWindow.OnClickListener listener) {
-        mWindow = window;
+    ViewClickWrapper(EasyWindow<?> easyWindow, EasyWindow.OnClickListener listener) {
+        mEasyWindow = easyWindow;
         mListener = listener;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final void onClick(View view) {
+    public void onClick(View view) {
         if (mListener == null) {
             return;
         }
-        mListener.onClick(mWindow, view);
+        mListener.onClick(mEasyWindow, view);
     }
 }

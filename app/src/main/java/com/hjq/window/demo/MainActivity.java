@@ -9,10 +9,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -22,8 +20,7 @@ import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
 import com.hjq.window.draggable.MovingDraggable;
-import com.hjq.window.draggable.SpringDraggable;
-
+import com.hjq.window.draggable.SpringBackDraggable;
 import java.util.List;
 
 /**
@@ -105,8 +102,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
 
                         @Override
-                        public void onClick(EasyWindow<?> window, TextView view) {
-                            window.cancel();
+                        public void onClick(EasyWindow<?> easyWindow, TextView view) {
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -119,15 +116,15 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
                     .setText(android.R.id.message, "请注意下方 Snackbar")
-                    .setOnToastLifecycle(new EasyWindow.OnWindowLifecycle() {
+                    .setOnWindowLifecycle(new EasyWindow.OnWindowLifecycle() {
 
                         @Override
-                        public void onWindowShow(EasyWindow<?> window) {
+                        public void onWindowShow(EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "显示回调", Snackbar.LENGTH_SHORT).show();
                         }
 
                         @Override
-                        public void onWindowCancel(EasyWindow<?> window) {
+                        public void onWindowCancel(EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
                         }
                     })
@@ -143,12 +140,12 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> window, TextView view) {
+                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
                             view.setText("不错，很听话");
-                            window.postDelayed(new Runnable() {
+                            easyWindow.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    window.cancel();
+                                    easyWindow.cancel();
                                 }
                             }, 1000);
                         }
@@ -166,8 +163,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> window, TextView view) {
-                            window.cancel();
+                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
+                            easyWindow.cancel();
                         }
                     })
                     .showAsDropDown(v, Gravity.BOTTOM);
@@ -181,8 +178,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(R.id.tv_window_close, new EasyWindow.OnClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> window, TextView view) {
-                            window.cancel();
+                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -199,8 +196,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
 
                         @Override
-                        public void onClick(EasyWindow<?> window, TextView view) {
-                            window.cancel();
+                        public void onClick(EasyWindow<?> easyWindow, TextView view) {
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -213,7 +210,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
-                            showGlobalWindow(getApplication());
+                            // 这里最好要做一下延迟显示，因为在某些手机（华为鸿蒙 3.0）上面立即显示会导致显示效果有一些瑕疵
+                            runOnUiThread(() -> showGlobalWindow(getApplication()));
                         }
 
                         @Override
@@ -252,17 +250,19 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
      * 显示全局弹窗
      */
     public static void showGlobalWindow(Application application) {
+        SpringBackDraggable springBackDraggable = new SpringBackDraggable(SpringBackDraggable.ORIENTATION_HORIZONTAL);
+        springBackDraggable.setAllowMoveToScreenNotch(false);
         // 传入 Application 表示这个是一个全局的 Toast
         EasyWindow.with(application)
                 .setContentView(R.layout.window_phone)
                 .setGravity(Gravity.END | Gravity.BOTTOM)
                 .setYOffset(200)
                 // 设置指定的拖拽规则
-                .setDraggable(new SpringDraggable(SpringDraggable.ORIENTATION_HORIZONTAL))
+                .setDraggable(springBackDraggable)
                 .setOnClickListener(android.R.id.icon, new EasyWindow.OnClickListener<ImageView>() {
 
                     @Override
-                    public void onClick(EasyWindow<?> window, ImageView view) {
+                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
                         Toaster.show("我被点击了");
                         // 点击后跳转到拨打电话界面
                         // Intent intent = new Intent(Intent.ACTION_DIAL);

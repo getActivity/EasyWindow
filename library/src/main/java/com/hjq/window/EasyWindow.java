@@ -24,10 +24,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.hjq.window.draggable.BaseDraggable;
 import com.hjq.window.draggable.MovingDraggable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -195,11 +193,11 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /** 悬浮窗标记 */
     private String mTag;
     /** Toast 生命周期管理 */
-    private ActivityWindowLifecycle mLifecycle;
+    private ActivityWindowLifecycle mActivityWindowLifecycle;
     /** 自定义拖动处理 */
     private BaseDraggable mDraggable;
     /** 吐司显示和取消监听 */
-    private OnWindowLifecycle mListener;
+    private OnWindowLifecycle mOnWindowLifecycle;
 
     /** 屏幕旋转监听 */
     private ScreenOrientationMonitor mScreenOrientationMonitor;
@@ -237,9 +235,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         }
 
         // 跟随 Activity 的生命周期
-        mLifecycle = new ActivityWindowLifecycle(this, activity);
+        mActivityWindowLifecycle = new ActivityWindowLifecycle(this, activity);
         // 注册 Activity 生命周期监听
-        mLifecycle.register();
+        mActivityWindowLifecycle.register();
     }
 
     /**
@@ -680,8 +678,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置生命周期监听
      */
-    public X setOnToastLifecycle(OnWindowLifecycle listener) {
-        mListener = listener;
+    public X setOnWindowLifecycle(OnWindowLifecycle listener) {
+        mOnWindowLifecycle = listener;
         return (X) this;
     }
 
@@ -865,8 +863,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             }
 
             // 回调监听
-            if (mListener != null) {
-                mListener.onWindowShow(this);
+            if (mOnWindowLifecycle != null) {
+                mOnWindowLifecycle.onWindowShow(this);
             }
 
         } catch (NullPointerException | IllegalStateException |
@@ -895,8 +893,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             removeCallbacks(this);
 
             // 回调监听
-            if (mListener != null) {
-                mListener.onWindowCancel(this);
+            if (mOnWindowLifecycle != null) {
+                mOnWindowLifecycle.onWindowCancel(this);
             }
 
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
@@ -928,6 +926,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         try {
             // 更新 WindowManger 的显示
             mWindowManager.updateViewLayout(mDecorView, mWindowParams);
+            if (mOnWindowLifecycle == null) {
+                return;
+            }
+            mOnWindowLifecycle.onWindowUpdate(this);
         } catch (IllegalArgumentException e) {
             // 当 WindowManager 已经消失时调用会发生崩溃
             // IllegalArgumentException: View not attached to window manager
@@ -945,23 +947,43 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         if (mScreenOrientationMonitor != null) {
             mScreenOrientationMonitor.unregisterCallback(mContext);
         }
-        if (mListener != null) {
-            mListener.onWindowRecycle(this);
+        if (mOnWindowLifecycle != null) {
+            mOnWindowLifecycle.onWindowRecycle(this);
         }
         // 反注册 Activity 生命周期
-        if (mLifecycle != null) {
-            mLifecycle.unregister();
+        if (mActivityWindowLifecycle != null) {
+            mActivityWindowLifecycle.unregister();
         }
-        mListener = null;
+        mOnWindowLifecycle = null;
         mContext = null;
         mDecorView = null;
         mWindowManager = null;
         mWindowParams = null;
-        mLifecycle = null;
+        mActivityWindowLifecycle = null;
         mDraggable = null;
         mScreenOrientationMonitor = null;
         // 将当前实例从静态集合中移除
         sWindowInstanceSet.remove(this);
+    }
+
+    /**
+     * 获取窗口可见性
+     */
+    public int getWindowVisibility() {
+        return mDecorView.getVisibility();
+    }
+
+    /**
+     * 设置窗口是否可见
+     */
+    public void setWindowVisibility(int visibility) {
+        if (getWindowVisibility() == visibility) {
+            return;
+        }
+        mDecorView.setVisibility(visibility);
+        if (mOnWindowLifecycle != null) {
+            mOnWindowLifecycle.onWindowVisibilityChanged(this, visibility);
+        }
     }
 
     /**
@@ -1014,6 +1036,20 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             return null;
         }
         return mDecorView.getChildAt(0);
+    }
+
+    /**
+     * 获取当前窗口 View 宽度
+     */
+    public int getViewWidth() {
+        return getDecorView().getWidth();
+    }
+
+    /**
+     * 获取当前窗口 View 高度
+     */
+    public int getViewHeight() {
+        return getDecorView().getHeight();
     }
 
     /**
@@ -1281,7 +1317,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         /**
          * 点击回调
          */
-        void onClick(EasyWindow<?> window, V view);
+        void onClick(EasyWindow<?> easyWindow, V view);
     }
 
     /**
@@ -1292,7 +1328,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         /**
          * 长按回调
          */
-        boolean onLongClick(EasyWindow<?> window, V view);
+        boolean onLongClick(EasyWindow<?> easyWindow, V view);
     }
 
     /**
@@ -1303,7 +1339,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         /**
          * 触摸回调
          */
-        boolean onTouch(EasyWindow<?> window, V view, MotionEvent event);
+        boolean onTouch(EasyWindow<?> easyWindow, V view, MotionEvent event);
     }
 
     /**
@@ -1312,18 +1348,28 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public interface OnWindowLifecycle {
 
         /**
-         * 显示回调
+         * 窗口显示回调
          */
-        default void onWindowShow(EasyWindow<?> window) {}
+        default void onWindowShow(EasyWindow<?> easyWindow) {}
 
         /**
-         * 消失回调
+         * 窗口更新回调
          */
-        default void onWindowCancel(EasyWindow<?> window) {}
+        default void onWindowUpdate(EasyWindow<?> easyWindow) {}
 
         /**
-         * 回收回调
+         * 窗口消失回调
          */
-        default void onWindowRecycle(EasyWindow<?> window) {}
+        default void onWindowCancel(EasyWindow<?> easyWindow) {}
+
+        /**
+         * 窗口回收回调
+         */
+        default void onWindowRecycle(EasyWindow<?> easyWindow) {}
+
+        /**
+         * 窗口可见性发生变化
+         */
+        default void onWindowVisibilityChanged(EasyWindow<?> easyWindow, int visibility) {}
     }
 }

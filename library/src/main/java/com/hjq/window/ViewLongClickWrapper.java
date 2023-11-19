@@ -11,20 +11,20 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewLongClickWrapper implements View.OnLongClickListener {
 
-    private final EasyWindow<?> mWindow;
+    private final EasyWindow<?> mEasyWindow;
     private final EasyWindow.OnLongClickListener mListener;
 
-    ViewLongClickWrapper(EasyWindow<?> window, EasyWindow.OnLongClickListener listener) {
-        mWindow = window;
+    ViewLongClickWrapper(EasyWindow<?> easyWindow, EasyWindow.OnLongClickListener listener) {
+        mEasyWindow = easyWindow;
         mListener = listener;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final boolean onLongClick(View view) {
+    public boolean onLongClick(View view) {
         if (mListener == null) {
             return false;
         }
-        return mListener.onLongClick(mWindow, view);
+        return mListener.onLongClick(mEasyWindow, view);
     }
 }

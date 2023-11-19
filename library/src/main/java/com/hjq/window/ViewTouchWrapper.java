@@ -13,11 +13,11 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewTouchWrapper implements View.OnTouchListener {
 
-    private final EasyWindow<?> mWindow;
+    private final EasyWindow<?> mEasyWindow;
     private final EasyWindow.OnTouchListener mListener;
 
-    ViewTouchWrapper(EasyWindow<?> window, EasyWindow.OnTouchListener listener) {
-        mWindow = window;
+    ViewTouchWrapper(EasyWindow<?> easyWindow, EasyWindow.OnTouchListener listener) {
+        mEasyWindow = easyWindow;
         mListener = listener;
     }
 
@@ -28,6 +28,6 @@ final class ViewTouchWrapper implements View.OnTouchListener {
         if (mListener == null) {
             return false;
         }
-        return mListener.onTouch(mWindow, view, event);
+        return mListener.onTouch(mEasyWindow, view, event);
     }
 }
