@@ -10,6 +10,7 @@ import android.util.TypedValue;
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnLayoutChangeListener;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
@@ -136,6 +137,8 @@ public abstract class BaseDraggable implements View.OnTouchListener {
             return;
         }
 
+        // Log.i(getClass().getSimpleName(), "刷新当前 Window 信息");
+
         // 这里为什么要这么写，因为发现了鸿蒙手机在进行屏幕旋转的时候
         // 回调 onConfigurationChanged 方法的时候获取到这些参数已经变化了
         // 所以需要提前记录下来，避免后续进行坐标计算的时候出现问题
@@ -145,6 +148,14 @@ public abstract class BaseDraggable implements View.OnTouchListener {
 
         mCurrentWindowInvisibleWidth = mTempRect.left;
         mCurrentWindowInvisibleHeight = mTempRect.top;
+
+        /*
+        Log.i(getClass().getSimpleName(),
+            "CurrentWindowWidth = " + mCurrentWindowWidth +
+            "，CurrentWindowHeight = " + mCurrentWindowHeight +
+            "，CurrentWindowInvisibleWidth = " + mCurrentWindowInvisibleWidth +
+            "，CurrentWindowInvisibleHeight = " + mCurrentWindowInvisibleHeight);
+         */
     }
 
     /**
@@ -163,9 +174,11 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     }
 
     /**
-     * 屏幕方向发生了变化
+     * 屏幕方向发生了改变
      */
     public void onScreenOrientationChange() {
+        // Log.i(getClass().getSimpleName(), "屏幕方向发生了改变");
+
         long refreshDelayMillis = 100;
 
         if (!isFollowScreenRotationChanges()) {
@@ -178,6 +191,8 @@ public abstract class BaseDraggable implements View.OnTouchListener {
 
         int viewWidth = getDecorView().getWidth();
         int viewHeight = getDecorView().getHeight();
+
+        // Log.i(getClass().getSimpleName(), "当前 ViewWidth = " + viewWidth + "，ViewHeight = " + viewHeight);
 
         int startX = mCurrentViewOnScreenX - mCurrentWindowInvisibleWidth;
         int startY = mCurrentViewOnScreenY - mCurrentWindowInvisibleHeight;
@@ -207,15 +222,30 @@ public abstract class BaseDraggable implements View.OnTouchListener {
             percentY = centerY / mCurrentWindowHeight;
         }
 
-        getEasyWindow().postDelayed(() -> {
-            // 先刷新当前窗口信息
-            refreshWindowInfo();
-            int x = Math.max((int) (mCurrentWindowWidth * percentX - viewWidth / 2f), 0);
-            int y = Math.max((int) (mCurrentWindowHeight * percentY - viewWidth / 2f), 0);
-            updateLocation(x, y);
-            // 需要注意，这里需要延迟执行，否则会有问题
-            getEasyWindow().post(this::onScreenRotateInfluenceCoordinateChangeFinish);
-        }, refreshDelayMillis);
+        View decorView = getDecorView();
+        if (decorView == null) {
+            return;
+        }
+
+        // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
+        // 修复在竖屏状态下，先锁屏，再旋转到横屏，后进行解锁，出现的 View.getWindowVisibleDisplayFrame 计算有问题的 Bug
+        // 这是因为屏幕在旋转的时候，视图正处于改变状态，此时通过 View 获取窗口可视区域是有问题，会获取到旧的可视区域
+        // 解决方案是监听一下 View 布局变化监听，在收到回调的时候再去获取 View 获取窗口可视区域
+        decorView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                view.removeOnLayoutChangeListener(this);
+                view.postDelayed(() -> {
+                    // 先刷新当前窗口信息
+                    refreshWindowInfo();
+                    int x = Math.max((int) (mCurrentWindowWidth * percentX - viewWidth / 2f), 0);
+                    int y = Math.max((int) (mCurrentWindowHeight * percentY - viewWidth / 2f), 0);
+                    updateLocation(x, y);
+                    // 需要注意，这里需要延迟执行，否则会有问题
+                    view.post(() -> onScreenRotateInfluenceCoordinateChangeFinish());
+                }, refreshDelayMillis);
+            }
+        });
     }
 
     /**
