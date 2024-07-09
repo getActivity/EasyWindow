@@ -77,7 +77,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 取消特定类名的悬浮窗
      */
-    public static synchronized void cancelByClass(Class<EasyWindow<?>> clazz) {
+    public static synchronized void cancelByClass(Class<? extends EasyWindow<?>> clazz) {
         if (clazz == null) {
             return;
         }
@@ -131,7 +131,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 回收特定类名的悬浮窗
      */
-    public static void recycleByClass(Class<EasyWindow<?>> clazz) {
+    public static synchronized void recycleByClass(Class<? extends EasyWindow<?>> clazz) {
         if (clazz == null) {
             return;
         }
@@ -155,7 +155,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 回收特定标记的悬浮窗
      */
-    public static void recycleByTag(String tag) {
+    public static synchronized void recycleByTag(String tag) {
         if (tag == null) {
             return;
         }
@@ -175,6 +175,71 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             iterator.remove();
             easyWindow.recycle();
         }
+    }
+
+    /**
+     * 判断当前是否有悬浮窗正在显示
+     */
+    public static synchronized boolean existShowing() {
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+
+            if (easyWindow.isShowing()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断当前是否有特定类名的悬浮窗正在显示
+     */
+    public static synchronized boolean existShowingByClass(Class<? extends EasyWindow<?>> clazz) {
+        if (clazz == null) {
+            return false;
+        }
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!clazz.equals(easyWindow.getClass())) {
+                continue;
+            }
+            if (easyWindow.isShowing()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断当前是否有特定标记的悬浮窗正在显示
+     */
+    public static synchronized boolean existShowingByTag(String tag) {
+        if (tag == null) {
+            return false;
+        }
+
+        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        while (iterator.hasNext()) {
+            EasyWindow<?> easyWindow = iterator.next();
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!tag.equals(easyWindow.getTag())) {
+                continue;
+            }
+            if (easyWindow.isShowing()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 上下文 */
@@ -269,7 +334,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
         mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-
         // 将当前实例添加到静态集合中
         sWindowInstanceSet.add(this);
     }
