@@ -222,31 +222,49 @@ setWindowType(int type)
 
 ```java
 // 取消所有正在显示的悬浮窗
-EasyWindow.cancelAll()
+EasyWindow.cancelAllWindow()
 
 // 取消特定类名的悬浮窗
-EasyWindow.cancelByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.cancelWindowByClass(Class<? extends EasyWindow<?>> clazz)
 
 // 取消特定标记的悬浮窗
-EasyWindow.cancelByTag(String tag)
+EasyWindow.cancelWindowByTag(String tag)
+
+// 显示所有已取消但未回收的悬浮窗
+EasyWindow.showAllWindow()
+
+// 显示特定类名已取消但未回收的悬浮窗
+EasyWindow.showWindowByClass(Class<? extends EasyWindow<?>> clazz)
+
+// 显示特定标记已取消但未回收的悬浮窗
+EasyWindow.showWindowByTag(String tag)
 
 // 回收所有正在显示的悬浮窗
-EasyWindow.recycleAll()
+EasyWindow.recycleAllWindow()
 
 // 回收特定类名的悬浮窗
-EasyWindow.recycleByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.recycleWindowByClass(Class<? extends EasyWindow<?>> clazz)
 
 // 回收特定标记的悬浮窗
-EasyWindow.recycleByTag(String tag)
+EasyWindow.recycleWindowByTag(String tag)
 
 // 判断当前是否有悬浮窗正在显示
-EasyWindow.existShowing()
+EasyWindow.existAnyWindowShowing()
 
 // 判断当前是否有特定类名的悬浮窗正在显示
-EasyWindow.existShowingByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.existWindowShowingByClass(Class<? extends EasyWindow<?>> clazz)
 
 // 判断当前是否有特定标记的悬浮窗正在显示
-EasyWindow.existShowingByTag(String tag)
+EasyWindow.existWindowShowingByTag(String tag)
+
+// 获取所有的悬浮窗
+EasyWindow.getAllWindowInstance()
+
+// 获取特定类名的悬浮窗
+EasyWindow.getWindowInstanceByClass(Class<? extends EasyWindow<?>> clazz)
+
+// 获取特定标记的悬浮窗
+EasyWindow.getWindowInstanceByTag(String tag)
 ```
 
 #### 框架混淆规则

@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.accessibilityservice.AccessibilityService;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -9,10 +10,13 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -63,9 +67,22 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
+     * 创建一个无障碍 EasyWindow 实例
+     *
+     * API 22 及以上版本需要开启无障碍功能，API 22 以下需要有悬浮窗权限
+     * 备注：由于悬浮窗是 Android 6.0 版本才出现的，目前有两种解决方案（任选其一即可）：
+     * 1. 直接不判断和申请悬浮窗权限，在 Android 6.0 是不会出现崩溃的，顶多悬浮窗不展示
+     * 2. 可以考虑使用 XXPermissions 判断和申请悬浮窗权限，里面兼容了大部分国产旧系统的悬浮窗权限判断和申请
+     */
+    @SuppressWarnings("rawtypes")
+    public static EasyWindow with(AccessibilityService service) {
+        return new EasyWindow(service);
+    }
+
+    /**
      * 取消所有正在显示的悬浮窗
      */
-    public static synchronized void cancelAll() {
+    public static synchronized void cancelAllWindow() {
         for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
             if (easyWindow == null) {
                 continue;
@@ -77,7 +94,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 取消特定类名的悬浮窗
      */
-    public static synchronized void cancelByClass(Class<? extends EasyWindow<?>> clazz) {
+    public static synchronized void cancelWindowByClass(Class<? extends EasyWindow<?>> clazz) {
         if (clazz == null) {
             return;
         }
@@ -95,7 +112,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 取消特定标记的悬浮窗
      */
-    public static synchronized void cancelByTag(String tag) {
+    public static synchronized void cancelWindowByTag(String tag) {
         if (tag == null) {
             return;
         }
@@ -111,9 +128,57 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
+     * 显示所有已取消但未回收的悬浮窗
+     */
+    public static synchronized void showAllWindow() {
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            easyWindow.show();
+        }
+    }
+
+    /**
+     * 显示特定类名已取消但未回收的悬浮窗
+     */
+    public static synchronized void showWindowByClass(Class<? extends EasyWindow<?>> clazz) {
+        if (clazz == null) {
+            return;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!clazz.equals(easyWindow.getClass())) {
+                continue;
+            }
+            easyWindow.show();
+        }
+    }
+
+    /**
+     * 显示特定标记已取消但未回收的悬浮窗
+     */
+    public static synchronized void showWindowByTag(String tag) {
+        if (tag == null) {
+            return;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!tag.equals(easyWindow.getTag())) {
+                continue;
+            }
+            easyWindow.show();
+        }
+    }
+
+    /**
      * 回收所有正在显示的悬浮窗
      */
-    public static synchronized void recycleAll() {
+    public static synchronized void recycleAllWindow() {
         Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
         while (iterator.hasNext()) {
             EasyWindow<?> easyWindow = iterator.next();
@@ -131,7 +196,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 回收特定类名的悬浮窗
      */
-    public static synchronized void recycleByClass(Class<? extends EasyWindow<?>> clazz) {
+    public static synchronized void recycleWindowByClass(Class<? extends EasyWindow<?>> clazz) {
         if (clazz == null) {
             return;
         }
@@ -155,7 +220,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 回收特定标记的悬浮窗
      */
-    public static synchronized void recycleByTag(String tag) {
+    public static synchronized void recycleWindowByTag(String tag) {
         if (tag == null) {
             return;
         }
@@ -180,7 +245,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 判断当前是否有悬浮窗正在显示
      */
-    public static synchronized boolean existShowing() {
+    public static synchronized boolean existAnyWindowShowing() {
         Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
         while (iterator.hasNext()) {
             EasyWindow<?> easyWindow = iterator.next();
@@ -198,7 +263,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 判断当前是否有特定类名的悬浮窗正在显示
      */
-    public static synchronized boolean existShowingByClass(Class<? extends EasyWindow<?>> clazz) {
+    public static synchronized boolean existWindowShowingByClass(Class<? extends EasyWindow<?>> clazz) {
         if (clazz == null) {
             return false;
         }
@@ -221,7 +286,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 判断当前是否有特定标记的悬浮窗正在显示
      */
-    public static synchronized boolean existShowingByTag(String tag) {
+    public static synchronized boolean existWindowShowingByTag(String tag) {
         if (tag == null) {
             return false;
         }
@@ -242,6 +307,51 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         return false;
     }
 
+    /**
+     * 获取所有的悬浮窗
+     */
+    public static synchronized List<EasyWindow<?>> getAllWindowInstance() {
+        return sWindowInstanceSet;
+    }
+
+    /**
+     * 获取特定类名的悬浮窗
+     */
+    public static synchronized <X extends EasyWindow<?>> X getWindowInstanceByClass(Class<X> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!clazz.equals(easyWindow.getClass())) {
+                continue;
+            }
+            return (X) easyWindow;
+        }
+        return null;
+    }
+
+    /**
+     * 获取特定标记的悬浮窗
+     */
+    public static synchronized EasyWindow<?> getWindowInstanceByTag(String tag) {
+        if (tag == null) {
+            return null;
+        }
+        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+            if (easyWindow == null) {
+                continue;
+            }
+            if (!tag.equals(easyWindow.getTag())) {
+                continue;
+            }
+            return easyWindow;
+        }
+        return null;
+    }
+
     /** 上下文 */
     private Context mContext;
     /** 根布局 */
@@ -257,7 +367,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private int mDuration;
     /** 悬浮窗标记 */
     private String mTag;
-    /** Toast 生命周期管理 */
+    /** 窗口生命周期管理 */
     private ActivityWindowLifecycle mActivityWindowLifecycle;
     /** 自定义拖动处理 */
     private BaseDraggable mDraggable;
@@ -314,6 +424,19 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 设置成全局的悬浮窗，注意需要先申请悬浮窗权限，推荐使用：https://github.com/getActivity/XXPermissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setWindowType(WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY);
+        } else {
+            setWindowType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
+    }
+
+    /**
+     * 创建一个无障碍悬浮窗
+     */
+    public EasyWindow(AccessibilityService service) {
+        this((Context) service);
+
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP_MR1) {
+            setWindowType(WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY);
         } else {
             setWindowType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
@@ -740,6 +863,14 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
+     * 指定 WindowManager 对象
+     */
+    public X setWindowManager(WindowManager windowManager) {
+        mWindowManager = windowManager;
+        return (X) this;
+    }
+
+    /**
      * 设置生命周期监听
      */
     public X setOnWindowLifecycle(OnWindowLifecycle listener) {
@@ -1141,49 +1272,52 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置可见状态
      */
-    public X setVisibility(int id, int visibility) {
-        findViewById(id).setVisibility(visibility);
+    public X setVisibility(int viewId, int visibility) {
+        View view = findViewById(viewId);
+        if (view != null) {
+            view.setVisibility(visibility);
+        }
         return (X) this;
     }
 
     /**
      * 设置文本
      */
-    public X setText(int id) {
-        return setText(android.R.id.message, id);
-    }
-
     public X setText(int viewId, int stringId) {
         return setText(viewId, mContext.getResources().getString(stringId));
     }
 
-    public X setText(CharSequence text) {
-        return setText(android.R.id.message, text);
-    }
-
-    public X setText(int id, CharSequence text) {
-        ((TextView) findViewById(id)).setText(text);
+    public X setText(int viewId, CharSequence text) {
+        TextView textView = findViewById(viewId);
+        if (textView != null) {
+            textView.setText(text);
+        }
         return (X) this;
     }
 
     /**
      * 设置字体颜色
      */
-    public X setTextColor(int id, int color) {
-        ((TextView) findViewById(id)).setTextColor(color);
+    public X setTextColor(int viewId, int textColor) {
+        TextView textView = findViewById(viewId);
+        if (textView != null) {
+            textView.setTextColor(textColor);
+        }
         return (X) this;
     }
 
     /**
      * 设置字体大小
      */
-    public X setTextSize(int id, float size) {
-        ((TextView) findViewById(id)).setTextSize(size);
-        return (X) this;
+    public X setTextSize(int viewId, float textSize) {
+        return setTextSize(viewId, TypedValue.COMPLEX_UNIT_SP, textSize);
     }
 
-    public X setTextSize(int id, int unit, float size) {
-        ((TextView) findViewById(id)).setTextSize(unit, size);
+    public X setTextSize(int viewId, int unit, float textSize) {
+        TextView textView = findViewById(viewId);
+        if (textView != null) {
+            textView.setTextSize(unit, textSize);
+        }
         return (X) this;
     }
 
@@ -1194,37 +1328,46 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         return setHint(viewId, mContext.getResources().getString(stringId));
     }
 
-    public X setHint(int id, CharSequence text) {
-        ((TextView) findViewById(id)).setHint(text);
+    public X setHint(int viewId, CharSequence text) {
+        TextView textView = findViewById(viewId);
+        if (textView != null) {
+            textView.setHint(text);
+        }
         return (X) this;
     }
 
     /**
      * 设置提示文本颜色
      */
-    public X setHintColor(int id, int color) {
-        ((TextView) findViewById(id)).setHintTextColor(color);
+    public X setHintColor(int viewId, int hintTextColor) {
+        TextView textView = findViewById(viewId);
+        if (textView != null) {
+            textView.setHintTextColor(hintTextColor);
+        }
         return (X) this;
     }
 
     /**
      * 设置背景
      */
-    public X setBackground(int viewId, int drawableId) {
+    public X setBackground(int viewId, int backgroundDrawableId) {
         Drawable drawable;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawable = mContext.getDrawable(drawableId);
+            drawable = mContext.getDrawable(backgroundDrawableId);
         } else {
-            drawable = mContext.getResources().getDrawable(drawableId);
+            drawable = mContext.getResources().getDrawable(backgroundDrawableId);
         }
         return setBackground(viewId, drawable);
     }
 
-    public X setBackground(int id, Drawable drawable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            findViewById(id).setBackground(drawable);
-        } else {
-            findViewById(id).setBackgroundDrawable(drawable);
+    public X setBackground(int viewId, Drawable backgroundDrawable) {
+        View view = findViewById(viewId);
+        if (view != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                view.setBackground(backgroundDrawable);
+            } else {
+                view.setBackgroundDrawable(backgroundDrawable);
+            }
         }
         return (X) this;
     }
@@ -1232,18 +1375,21 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置图片
      */
-    public X setImageDrawable(int viewId, int drawableId) {
+    public X setImageDrawable(int viewId, int imageDrawableId) {
         Drawable drawable;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawable = mContext.getDrawable(drawableId);
+            drawable = mContext.getDrawable(imageDrawableId);
         } else {
-            drawable = mContext.getResources().getDrawable(drawableId);
+            drawable = mContext.getResources().getDrawable(imageDrawableId);
         }
         return setImageDrawable(viewId, drawable);
     }
 
-    public X setImageDrawable(int viewId, Drawable drawable) {
-        ((ImageView) findViewById(viewId)).setImageDrawable(drawable);
+    public X setImageDrawable(int viewId, Drawable imageDrawable) {
+        ImageView imageView = findViewById(viewId);
+        if (imageView != null) {
+            imageView.setImageDrawable(imageDrawable);
+        }
         return (X) this;
     }
 
@@ -1306,8 +1452,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        view.setClickable(true);
-        view.setOnClickListener(new ViewClickWrapper(this, listener));
+        if (view != null) {
+            view.setClickable(true);
+            view.setOnClickListener(new ViewClickWrapper(this, listener));
+        }
         return (X) this;
     }
 
@@ -1326,8 +1474,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        view.setClickable(true);
-        view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
+        if (view != null) {
+            view.setClickable(true);
+            view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
+        }
         return (X) this;
     }
 
@@ -1346,8 +1496,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-        view.setEnabled(true);
-        view.setOnTouchListener(new ViewTouchWrapper(this, listener));
+        if (view != null) {
+            view.setEnabled(true);
+            view.setOnTouchListener(new ViewTouchWrapper(this, listener));
+        }
         return (X) this;
     }
 

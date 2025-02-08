@@ -230,7 +230,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             // 关闭当前正在显示的悬浮窗
             // EasyWindow.cancelAll();
             // 回收当前正在显示的悬浮窗
-            EasyWindow.recycleAll();
+            EasyWindow.recycleAllWindow();
 
         } else if (viewId == R.id.btn_main_utils) {
 
