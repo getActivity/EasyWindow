@@ -66,8 +66,14 @@ public class SpringBackDraggable extends BaseDraggable {
                 float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
                 float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
 
-                float newX = Math.max(rawMoveX - mViewDownX, 0);
-                float newY = Math.max(rawMoveY - mViewDownY, 0);
+                float newX = rawMoveX - mViewDownX;
+                float newY = rawMoveY - mViewDownY;
+
+                // 判断当前是否支持移动到屏幕外
+                if (!isSupportMoveOffScreen()) {
+                    newX = Math.max(newX, 0);
+                    newY = Math.max(newY, 0);
+                }
 
                 // 更新移动的位置
                 updateLocation(newX, newY);
@@ -95,7 +101,7 @@ public class SpringBackDraggable extends BaseDraggable {
             default:
                 break;
         }
-        return false;
+        return mTouchMoving;
     }
 
     /**
@@ -284,6 +290,7 @@ public class SpringBackDraggable extends BaseDraggable {
     /**
      * 当前是否处于触摸移动状态
      */
+    @Override
     public boolean isTouchMoving() {
         return mTouchMoving;
     }
@@ -293,11 +300,11 @@ public class SpringBackDraggable extends BaseDraggable {
         /**
          * 回弹动画开始执行
          */
-        void onSpringBackAnimationStart(EasyWindow<?> easyWindow, Animator animator);
+        default void onSpringBackAnimationStart(EasyWindow<?> easyWindow, Animator animator) {}
 
         /**
          * 回弹动画结束执行
          */
-        void onSpringBackAnimationEnd(EasyWindow<?> easyWindow, Animator animator);
+        default void onSpringBackAnimationEnd(EasyWindow<?> easyWindow, Animator animator) {}
     }
 }

@@ -34,8 +34,14 @@ public class MovingDraggable extends BaseDraggable {
                 float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
                 float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
 
-                float newX = Math.max(rawMoveX - mViewDownX, 0);
-                float newY = Math.max(rawMoveY - mViewDownY, 0);
+                float newX = rawMoveX - mViewDownX;
+                float newY = rawMoveY - mViewDownY;
+
+                // 判断当前是否支持移动到屏幕外
+                if (!isSupportMoveOffScreen()) {
+                    newX = Math.max(newX, 0);
+                    newY = Math.max(newY, 0);
+                }
 
                 // 更新移动的位置
                 updateLocation(newX, newY);
@@ -62,12 +68,13 @@ public class MovingDraggable extends BaseDraggable {
             default:
                 break;
         }
-        return false;
+        return mTouchMoving;
     }
 
     /**
      * 当前是否处于触摸移动状态
      */
+    @Override
     public boolean isTouchMoving() {
         return mTouchMoving;
     }

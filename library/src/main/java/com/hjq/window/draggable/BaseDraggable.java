@@ -11,9 +11,11 @@ import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
+import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import com.hjq.window.EasyWindow;
 
 /**
@@ -22,7 +24,7 @@ import com.hjq.window.EasyWindow;
  *    time   : 2019/01/04
  *    desc   : 拖拽抽象类
  */
-public abstract class BaseDraggable implements View.OnTouchListener {
+public abstract class BaseDraggable implements OnTouchListener {
 
     private EasyWindow<?> mEasyWindow;
     private View mDecorView;
@@ -43,7 +45,12 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     private int mCurrentWindowInvisibleHeight;
 
     /**
-     * Toast 显示后回调这个类
+     * 判断当前是否处于触摸移动状态
+     */
+    public abstract boolean isTouchMoving();
+
+    /**
+     * 窗口显示后回调这个方法
      */
     @SuppressLint("ClickableViewAccessibility")
     public void start(EasyWindow<?> easyWindow) {
@@ -132,7 +139,21 @@ public abstract class BaseDraggable implements View.OnTouchListener {
      * 刷新当前 Window 信息
      */
     public void refreshWindowInfo() {
-        View decorView = getDecorView();
+        Context context = mEasyWindow.getContext();
+        if (context == null) {
+            return;
+        }
+
+        View decorView = null;
+
+        if (context instanceof Activity) {
+            decorView = ((Activity) context).getWindow().getDecorView();
+        }
+
+        if (decorView == null) {
+            decorView = getDecorView();
+        }
+
         if (decorView == null) {
             return;
         }
@@ -146,8 +167,8 @@ public abstract class BaseDraggable implements View.OnTouchListener {
         mCurrentWindowWidth = mTempRect.right - mTempRect.left;
         mCurrentWindowHeight = mTempRect.bottom - mTempRect.top;
 
-        mCurrentWindowInvisibleWidth = mTempRect.left;
-        mCurrentWindowInvisibleHeight = mTempRect.top;
+        mCurrentWindowInvisibleWidth = Math.max(mTempRect.left, 0);
+        mCurrentWindowInvisibleHeight = Math.max(mTempRect.top, 0);
 
         /*
         Log.i(getClass().getSimpleName(),
@@ -420,6 +441,13 @@ public abstract class BaseDraggable implements View.OnTouchListener {
     protected boolean isFingerMove(float downX, float upX, float downY, float upY) {
         float minTouchSlop = getMinTouchDistance();
         return Math.abs(downX - upX) >= minTouchSlop || Math.abs(downY - upY) >= minTouchSlop;
+    }
+
+    /**
+     * 判断当前悬浮窗是否可以移动到屏幕之外的地方
+     */
+    protected boolean isSupportMoveOffScreen() {
+        return mEasyWindow.hasWindowFlags(LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     /**
