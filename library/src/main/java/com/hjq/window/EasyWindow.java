@@ -1248,9 +1248,12 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
-     * 根据 ViewId 获取 View
+     * 根据 ViewId 获取 View（返回可能为空）
      */
     public <V extends View> V findViewById(int id) {
+        if (mDecorView == null) {
+            return null;
+        }
         return mDecorView.findViewById(id);
     }
 
