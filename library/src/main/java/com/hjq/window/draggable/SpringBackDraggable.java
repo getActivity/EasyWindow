@@ -53,7 +53,7 @@ public class SpringBackDraggable extends BaseDraggable {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    public boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）

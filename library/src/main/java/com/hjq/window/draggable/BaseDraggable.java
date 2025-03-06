@@ -9,6 +9,7 @@ import android.os.Build;
 import android.util.TypedValue;
 import android.view.DisplayCutout;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 import android.view.View.OnTouchListener;
@@ -62,6 +63,30 @@ public abstract class BaseDraggable implements OnTouchListener {
             refreshLocationCoordinate();
         });
     }
+
+    @Override
+    public final boolean onTouch(View v, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            // 在按下的时候先更新一下窗口信息和坐标信息，否则点击可能会出现坐标偏移的问题
+            // 全局的悬浮窗在非全屏的页面创建，跳转到全屏的页面展示就会导致坐标偏移
+            // 这是因为在跳转到全屏的悬浮窗的时候没有更新当前 Window 信息导致的
+            // 目前能想到比较好的办法就是在悬浮窗移动前之前先更新 Window 信息和 View 坐标
+            // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
+            refreshWindowInfo();
+            refreshLocationCoordinate();
+        }
+        return onDragWindow(mEasyWindow, mDecorView, event);
+    }
+
+    /**
+     * 窗口拖拽回调方法
+     *
+     * @param easyWindow        当前窗口对象
+     * @param decorView         当前窗口视图
+     * @param event             当前触摸事件
+     * @return                  根据返回值决定是否拦截该事件
+     */
+    public abstract boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event);
 
     public EasyWindow<?> getEasyWindow() {
         return mEasyWindow;
