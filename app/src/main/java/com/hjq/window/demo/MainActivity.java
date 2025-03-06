@@ -272,6 +272,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                     }
                 })
+                .setOnLongClickListener(android.R.id.icon, new EasyWindow.OnLongClickListener<View>() {
+                    @Override
+                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                        Toaster.show("我被长按了");
+                        return false;
+                    }
+                })
                 .show();
     }
 }
