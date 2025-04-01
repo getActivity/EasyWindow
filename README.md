@@ -267,14 +267,6 @@ EasyWindow.getWindowInstanceByClass(Class<? extends EasyWindow<?>> clazz)
 EasyWindow.getWindowInstanceByTag(String tag)
 ```
 
-#### 框架混淆规则
-
-* 在混淆规则文件 `proguard-rules.pro` 中加入
-
-```text
--keep class com.hjq.window.** {*;}
-```
-
 #### 作者的其他开源项目
 
 * 安卓技术中台：[AndroidProject](https://github.com/getActivity/AndroidProject) ![](https://img.shields.io/github/stars/getActivity/AndroidProject.svg) ![](https://img.shields.io/github/forks/getActivity/AndroidProject.svg)
