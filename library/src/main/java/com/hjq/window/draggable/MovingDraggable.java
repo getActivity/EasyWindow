@@ -3,6 +3,7 @@ package com.hjq.window.draggable;
 import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import com.hjq.window.EasyWindow;
 
 /**
@@ -20,9 +21,17 @@ public class MovingDraggable extends BaseDraggable {
     /** 触摸移动标记 */
     private boolean mTouchMoving;
 
+    /** 拖拽生效阈值 */
+    private int mTouchSlop;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event) {
+        // 初始化系统拖拽阈值
+        if (mTouchSlop == 0) {
+            mTouchSlop = ViewConfiguration.get(decorView.getContext()).getScaledTouchSlop();
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）
@@ -31,34 +40,43 @@ public class MovingDraggable extends BaseDraggable {
                 mTouchMoving = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-                // 记录移动的位置（相对屏幕的坐标）
-                float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
-                float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
-
-                float newX = rawMoveX - mViewDownX;
-                float newY = rawMoveY - mViewDownY;
-
-                // 判断当前是否支持移动到屏幕外
-                if (!isSupportMoveOffScreen()) {
-                    newX = Math.max(newX, 0);
-                    newY = Math.max(newY, 0);
+                // 拖拽阈值判断逻辑
+                if (!mTouchMoving) {
+                    float dx = Math.abs(event.getX() - mViewDownX);
+                    float dy = Math.abs(event.getY() - mViewDownY);
+                    if (dx > mTouchSlop || dy > mTouchSlop) {
+                        mTouchMoving = true;
+                        dispatchStartDraggingCallback();
+                    }
                 }
 
-                // 更新移动的位置
-                updateLocation(newX, newY);
-
                 if (mTouchMoving) {
+                    // 记录移动的位置（相对屏幕的坐标）
+                    float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
+                    float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
+
+                    float newX = rawMoveX - mViewDownX;
+                    float newY = rawMoveY - mViewDownY;
+
+                    // 判断当前是否支持移动到屏幕外
+                    if (!isSupportMoveOffScreen()) {
+                        newX = Math.max(newX, 0);
+                        newY = Math.max(newY, 0);
+                    }
+
+                    // 更新移动的位置
+                    updateLocation(newX, newY);
+
                     dispatchExecuteDraggingCallback();
-                } else if (isFingerMove(mViewDownX, event.getX(), mViewDownY, event.getY())) {
-                    // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
-                    mTouchMoving = true;
-                    dispatchStartDraggingCallback();
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (mTouchMoving) {
                     dispatchStopDraggingCallback();
+                } else {
+                    // 未达阈值触发点击（新增）
+                    decorView.performClick();
                 }
                 try {
                     return mTouchMoving;
