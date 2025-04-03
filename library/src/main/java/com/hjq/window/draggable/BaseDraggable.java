@@ -469,13 +469,6 @@ public abstract class BaseDraggable implements OnTouchListener {
     }
 
     /**
-     * 判断当前悬浮窗是否可以移动到屏幕之外的地方
-     */
-    protected boolean isSupportMoveOffScreen() {
-        return mEasyWindow.hasWindowFlags(LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-    }
-
-    /**
      * 获取最小触摸距离
      */
     protected float getMinTouchDistance() {
@@ -493,6 +486,13 @@ public abstract class BaseDraggable implements OnTouchListener {
         //        使用 Resources.getSystem 能够保证 Resources 对象 dp 计算规则不被第三方框架篡改
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
                 Resources.getSystem().getDisplayMetrics());
+    }
+
+    /**
+     * 判断当前悬浮窗是否可以移动到屏幕之外的地方
+     */
+    protected boolean isSupportMoveOffScreen() {
+        return mEasyWindow.hasWindowFlags(LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     /**
