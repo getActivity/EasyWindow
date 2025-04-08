@@ -4,9 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -45,6 +50,9 @@ public abstract class BaseDraggable implements OnTouchListener {
     private int mCurrentWindowInvisibleWidth;
     private int mCurrentWindowInvisibleHeight;
 
+    /** 当前屏幕物理尺寸 */
+    private double mPhysicalScreenSize;
+
     /**
      * 判断当前是否处于触摸移动状态
      */
@@ -60,6 +68,7 @@ public abstract class BaseDraggable implements OnTouchListener {
         mDecorView.setOnTouchListener(this);
         mDecorView.post(() -> {
             refreshWindowInfo();
+            refreshPhysicalScreenSize();
             refreshLocationCoordinate();
         });
     }
@@ -73,6 +82,7 @@ public abstract class BaseDraggable implements OnTouchListener {
             // 目前能想到比较好的办法就是在悬浮窗移动前之前先更新 Window 信息和 View 坐标
             // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
             refreshWindowInfo();
+            refreshPhysicalScreenSize();
             refreshLocationCoordinate();
         }
         return onDragWindow(mEasyWindow, mDecorView, event);
@@ -205,6 +215,38 @@ public abstract class BaseDraggable implements OnTouchListener {
     }
 
     /**
+     * 刷新当前设备的物理屏幕尺寸
+     */
+    public void refreshPhysicalScreenSize() {
+        WindowManager windowManager = mEasyWindow.getWindowManager();
+        if (windowManager == null) {
+            return;
+        }
+        Display defaultDisplay = windowManager.getDefaultDisplay();
+        if (defaultDisplay == null) {
+            return;
+        }
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        defaultDisplay.getMetrics(metrics);
+
+        float screenWidthInInches;
+        float screenHeightInInches;
+        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN_MR1) {
+            Point point = new Point();
+            defaultDisplay.getRealSize(point);
+            screenWidthInInches = point.x / metrics.xdpi;
+            screenHeightInInches = point.y / metrics.ydpi;
+        } else {
+            screenWidthInInches = metrics.widthPixels / metrics.xdpi;
+            screenHeightInInches = metrics.heightPixels / metrics.ydpi;
+        }
+
+        // 勾股定理：直角三角形的两条直角边的平方和等于斜边的平方
+        mPhysicalScreenSize = Math.sqrt(Math.pow(screenWidthInInches, 2) + Math.pow(screenHeightInInches, 2));
+    }
+
+    /**
      * 刷新当前 View 在屏幕的坐标信息
      */
     public void refreshLocationCoordinate() {
@@ -230,6 +272,7 @@ public abstract class BaseDraggable implements OnTouchListener {
         if (!isFollowScreenRotationChanges()) {
             getEasyWindow().postDelayed(() -> {
                 refreshWindowInfo();
+                refreshPhysicalScreenSize();
                 refreshLocationCoordinate();
             }, refreshDelayMillis);
             return;
@@ -284,6 +327,8 @@ public abstract class BaseDraggable implements OnTouchListener {
                 view.postDelayed(() -> {
                     // 先刷新当前窗口信息
                     refreshWindowInfo();
+                    // 刷新屏幕物理尺寸
+                    refreshPhysicalScreenSize();
                     int x = Math.max((int) (mCurrentWindowWidth * percentX - viewWidth / 2f), 0);
                     int y = Math.max((int) (mCurrentWindowHeight * percentY - viewWidth / 2f), 0);
                     updateLocation(x, y);
@@ -299,6 +344,7 @@ public abstract class BaseDraggable implements OnTouchListener {
      */
     protected void onScreenRotateInfluenceCoordinateChangeFinish() {
         refreshWindowInfo();
+        refreshPhysicalScreenSize();
         refreshLocationCoordinate();
     }
 
@@ -484,8 +530,26 @@ public abstract class BaseDraggable implements OnTouchListener {
         // 疑问三：为什么要用 Resources.getSystem 来获取，而不是 context.getResources？
         //        这是因为如果用了 AutoSize 这个框架，上下文中的 1dp 就不是 3px 了
         //        使用 Resources.getSystem 能够保证 Resources 对象 dp 计算规则不被第三方框架篡改
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1,
-                Resources.getSystem().getDisplayMetrics());
+        // 疑问四：为什么用物理屏幕尺寸来算出最小触摸距离呢？
+        //        这是因为在大号的物理屏幕尺寸上面，单击悬浮窗的误差就不止 1dp，可能是更大的值，所以需要更大的值来兼容
+        //        Github issue：https://github.com/getActivity/EasyWindow/pull/79
+        double physicalScreenSize = getPhysicalScreenSize();
+        int dpValue;
+        if (physicalScreenSize > 0) {
+            // 市面上的平板最大尺寸不超过 15 英寸
+            dpValue = (int) Math.ceil(physicalScreenSize / 15);
+        } else {
+            dpValue = 1;
+        }
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue,
+            Resources.getSystem().getDisplayMetrics());
+    }
+
+    /**
+     * 获取物理的屏幕尺寸
+     */
+    protected double getPhysicalScreenSize() {
+        return mPhysicalScreenSize;
     }
 
     /**
