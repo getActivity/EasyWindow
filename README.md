@@ -4,7 +4,7 @@
 
 * 博客地址：[悬浮窗需求终结者](https://www.jianshu.com/p/247d705b87b6)
 
-* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/11.2/EasyWindow.apk)
+* 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/11.3/EasyWindow.apk)
 
 ![](picture/demo_code.png)
 
@@ -49,7 +49,7 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/EasyWindow
-    implementation 'com.github.getActivity:EasyWindow:11.2'
+    implementation 'com.github.getActivity:EasyWindow:11.3'
 }
 ```
 
