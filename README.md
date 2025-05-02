@@ -74,7 +74,7 @@ EasyWindow.with(this)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
+        .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
             @Override
             public void onClick(EasyWindow<?> easyWindow, TextView view) {
@@ -104,7 +104,7 @@ EasyWindow.with(activity).apply {
     //setBackgroundDimAmount(0.5f)
     setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
     setText(android.R.id.message, "点我消失")
-    setOnClickListener(android.R.id.message, EasyWindow.OnClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
+    setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
         // 点击这个 View 后消失
         easyWindow.cancel()
         // 跳转到某个Activity
@@ -128,7 +128,7 @@ EasyWindow.with(activity)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, EasyWindow.OnClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
+        .setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
             // 点击这个 View 后消失
             easyWindow.cancel()
             // 跳转到某个Activity

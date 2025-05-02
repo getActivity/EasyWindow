@@ -21,8 +21,9 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
-import com.hjq.window.EasyWindow.OnClickListener;
-import com.hjq.window.EasyWindow.OnWindowLifecycle;
+import com.hjq.window.OnViewClickListener;
+import com.hjq.window.OnViewLongClickListener;
+import com.hjq.window.OnWindowLifecycle;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOutsideTouchable(false)
                     // 设置窗口背景阴影强度
                     .setBackgroundDimAmount(0.5f)
-                    .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
+                    .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(EasyWindow<?> easyWindow, TextView view) {
@@ -122,7 +123,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
                     .setText(android.R.id.message, "请注意下方 Snackbar")
-                    .setOnWindowLifecycle(new EasyWindow.OnWindowLifecycle() {
+                    .setOnWindowLifecycle(new OnWindowLifecycle() {
 
                         @Override
                         public void onWindowShow(EasyWindow<?> easyWindow) {
@@ -143,7 +144,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setText(android.R.id.message, "点我点我点我")
-                    .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
+                    .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final EasyWindow<?> easyWindow, TextView view) {
@@ -166,7 +167,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setDuration(2000)
                     .setText(android.R.id.message, "位置算得准不准")
-                    .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
+                    .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final EasyWindow<?> easyWindow, TextView view) {
@@ -181,7 +182,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_input)
                     .setAnimStyle(R.style.BottomAnimStyle)
                     .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-                    .setOnClickListener(R.id.tv_window_close, new EasyWindow.OnClickListener<TextView>() {
+                    .setOnClickListener(R.id.tv_window_close, new OnViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final EasyWindow<?> easyWindow, TextView view) {
@@ -197,14 +198,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setDraggable(new MovingDraggable())
-                .setOnClickListener(R.id.iv_window_list_close, new OnClickListener<ImageView>() {
+                .setOnClickListener(R.id.iv_window_list_close, new OnViewClickListener<ImageView>() {
 
                     @Override
                     public void onClick(EasyWindow<?> easyWindow, ImageView view) {
                         easyWindow.cancel();
                     }
                 })
-                .setOnLongClickListener(R.id.iv_window_list_close, new EasyWindow.OnLongClickListener<View>() {
+                .setOnLongClickListener(R.id.iv_window_list_close, new OnViewLongClickListener<View>() {
                     @Override
                     public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
                         Toaster.show("关闭按钮被长按了");
@@ -237,7 +238,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setText(android.R.id.message, "点我消失")
                     // 设置成可拖拽的
                     .setDraggable(new MovingDraggable())
-                    .setOnClickListener(android.R.id.message, new EasyWindow.OnClickListener<TextView>() {
+                    .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(EasyWindow<?> easyWindow, TextView view) {
@@ -303,7 +304,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setYOffset(200)
                 // 设置指定的拖拽规则
                 .setDraggable(springBackDraggable)
-                .setOnClickListener(android.R.id.icon, new EasyWindow.OnClickListener<ImageView>() {
+                .setOnClickListener(android.R.id.icon, new OnViewClickListener<ImageView>() {
 
                     @Override
                     public void onClick(EasyWindow<?> easyWindow, ImageView view) {
@@ -316,7 +317,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                     }
                 })
-                .setOnLongClickListener(android.R.id.icon, new EasyWindow.OnLongClickListener<View>() {
+                .setOnLongClickListener(android.R.id.icon, new OnViewLongClickListener<View>() {
                     @Override
                     public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
                         Toaster.show("我被长按了");

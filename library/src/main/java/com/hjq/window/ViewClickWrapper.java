@@ -12,9 +12,9 @@ import android.view.View;
 final class ViewClickWrapper implements View.OnClickListener {
 
     private final EasyWindow<?> mEasyWindow;
-    private final EasyWindow.OnClickListener mListener;
+    private final OnViewClickListener mListener;
 
-    ViewClickWrapper(EasyWindow<?> easyWindow, EasyWindow.OnClickListener listener) {
+    ViewClickWrapper(EasyWindow<?> easyWindow, OnViewClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }

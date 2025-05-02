@@ -3,6 +3,7 @@ package com.hjq.window;
 import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
+import com.hjq.window.EasyWindow.OnViewTouchListener;
 
 /**
  *    author : Android 轮子哥
@@ -14,9 +15,9 @@ import android.view.View;
 final class ViewTouchWrapper implements View.OnTouchListener {
 
     private final EasyWindow<?> mEasyWindow;
-    private final EasyWindow.OnTouchListener mListener;
+    private final OnViewTouchListener mListener;
 
-    ViewTouchWrapper(EasyWindow<?> easyWindow, EasyWindow.OnTouchListener listener) {
+    ViewTouchWrapper(EasyWindow<?> easyWindow, OnViewTouchListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }

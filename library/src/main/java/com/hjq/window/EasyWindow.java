@@ -19,7 +19,6 @@ import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -1443,15 +1442,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置点击事件
      */
-    public X setOnClickListener(OnClickListener<? extends View> listener) {
+    public X setOnClickListener(OnViewClickListener<? extends View> listener) {
         return setOnClickListener(mDecorView, listener);
     }
 
-    public X setOnClickListener(int id, OnClickListener<? extends View> listener) {
+    public X setOnClickListener(int id, OnViewClickListener<? extends View> listener) {
         return setOnClickListener(findViewById(id), listener);
     }
 
-    private X setOnClickListener(View view, EasyWindow.OnClickListener<? extends View> listener) {
+    private X setOnClickListener(View view, OnViewClickListener<? extends View> listener) {
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -1465,15 +1464,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置长按事件
      */
-    public X setOnLongClickListener(OnLongClickListener<? extends View> listener) {
+    public X setOnLongClickListener(OnViewLongClickListener<? extends View> listener) {
         return setOnLongClickListener(mDecorView, listener);
     }
 
-    public X setOnLongClickListener(int id, OnLongClickListener<? extends View> listener) {
+    public X setOnLongClickListener(int id, OnViewLongClickListener<? extends View> listener) {
         return setOnLongClickListener(findViewById(id), listener);
     }
 
-    private X setOnLongClickListener(View view, EasyWindow.OnLongClickListener<? extends View> listener) {
+    private X setOnLongClickListener(View view, OnViewLongClickListener<? extends View> listener) {
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -1487,15 +1486,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置触摸事件
      */
-    public X setOnTouchListener(OnTouchListener<? extends View> listener) {
+    public X setOnTouchListener(OnViewTouchListener<? extends View> listener) {
         return setOnTouchListener(mDecorView, listener);
     }
 
-    public X setOnTouchListener(int id, OnTouchListener<? extends View> listener) {
+    public X setOnTouchListener(int id, OnViewTouchListener<? extends View> listener) {
         return setOnTouchListener(findViewById(id), listener);
     }
 
-    private X setOnTouchListener(View view, EasyWindow.OnTouchListener<? extends View> listener) {
+    private X setOnTouchListener(View view, OnViewTouchListener<? extends View> listener) {
         // 当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
@@ -1526,69 +1525,5 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             return;
         }
         mDraggable.onScreenOrientationChange();
-    }
-
-    /**
-     * View 的点击事件监听
-     */
-    public interface OnClickListener<V extends View> {
-
-        /**
-         * 点击回调
-         */
-        void onClick(EasyWindow<?> easyWindow, V view);
-    }
-
-    /**
-     * View 的长按事件监听
-     */
-    public interface OnLongClickListener<V extends View> {
-
-        /**
-         * 长按回调
-         */
-        boolean onLongClick(EasyWindow<?> easyWindow, V view);
-    }
-
-    /**
-     * View 的触摸事件监听
-     */
-    public interface OnTouchListener<V extends View> {
-
-        /**
-         * 触摸回调
-         */
-        boolean onTouch(EasyWindow<?> easyWindow, V view, MotionEvent event);
-    }
-
-    /**
-     * 窗口生命周期监听
-     */
-    public interface OnWindowLifecycle {
-
-        /**
-         * 窗口显示回调
-         */
-        default void onWindowShow(EasyWindow<?> easyWindow) {}
-
-        /**
-         * 窗口更新回调
-         */
-        default void onWindowUpdate(EasyWindow<?> easyWindow) {}
-
-        /**
-         * 窗口消失回调
-         */
-        default void onWindowCancel(EasyWindow<?> easyWindow) {}
-
-        /**
-         * 窗口回收回调
-         */
-        default void onWindowRecycle(EasyWindow<?> easyWindow) {}
-
-        /**
-         * 窗口可见性发生变化
-         */
-        default void onWindowVisibilityChanged(EasyWindow<?> easyWindow, int visibility) {}
     }
 }

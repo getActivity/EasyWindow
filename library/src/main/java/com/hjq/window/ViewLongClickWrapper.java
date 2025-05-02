@@ -1,6 +1,7 @@
 package com.hjq.window;
 
 import android.view.View;
+import com.hjq.window.EasyWindow.OnViewLongClickListener;
 
 /**
  *    author : Android 轮子哥
@@ -12,9 +13,9 @@ import android.view.View;
 final class ViewLongClickWrapper implements View.OnLongClickListener {
 
     private final EasyWindow<?> mEasyWindow;
-    private final EasyWindow.OnLongClickListener mListener;
+    private final OnViewLongClickListener mListener;
 
-    ViewLongClickWrapper(EasyWindow<?> easyWindow, EasyWindow.OnLongClickListener listener) {
+    ViewLongClickWrapper(EasyWindow<?> easyWindow, OnViewLongClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }
