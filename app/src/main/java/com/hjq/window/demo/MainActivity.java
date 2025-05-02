@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
@@ -19,8 +21,11 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
+import com.hjq.window.EasyWindow.OnClickListener;
+import com.hjq.window.EasyWindow.OnWindowLifecycle;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +48,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_click).setOnClickListener(this);
         findViewById(R.id.btn_main_view).setOnClickListener(this);
         findViewById(R.id.btn_main_input).setOnClickListener(this);
+        findViewById(R.id.btn_main_list).setOnClickListener(this);
         findViewById(R.id.btn_main_draggable).setOnClickListener(this);
         findViewById(R.id.btn_main_global).setOnClickListener(this);
         findViewById(R.id.btn_main_utils).setOnClickListener(this);
@@ -183,6 +189,44 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         }
                     })
                     .show();
+
+        } else if (viewId == R.id.btn_main_list) {
+
+            EasyWindow.with(this)
+                .setContentView(R.layout.window_list)
+                .setAnimStyle(R.style.IOSAnimStyle)
+                // 设置成可拖拽的
+                .setDraggable(new MovingDraggable())
+                .setOnClickListener(R.id.iv_window_list_close, new OnClickListener<ImageView>() {
+
+                    @Override
+                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
+                        easyWindow.cancel();
+                    }
+                })
+                .setOnLongClickListener(R.id.iv_window_list_close, new EasyWindow.OnLongClickListener<View>() {
+                    @Override
+                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                        Toaster.show("关闭按钮被长按了");
+                        return false;
+                    }
+                })
+                .setOnWindowLifecycle(new OnWindowLifecycle() {
+                    @Override
+                    public void onWindowShow(EasyWindow<?> easyWindow) {
+                        RecyclerView recyclerView = easyWindow.findViewById(R.id.rv_window_list_view);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(easyWindow.getContext()));
+
+                        List<String> dataList = new ArrayList<>();
+                        for (int i = 1; i <= 20; i++) {
+                            dataList.add("我是条目 " + i);
+                        }
+
+                        DemoAdapter adapter = new DemoAdapter(dataList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                })
+                .show();
 
         } else if (viewId == R.id.btn_main_draggable) {
 

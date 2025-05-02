@@ -1219,7 +1219,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 获取根布局（可能为空）
      */
-    public View getDecorView() {
+    public ViewGroup getDecorView() {
         return mDecorView;
     }
 

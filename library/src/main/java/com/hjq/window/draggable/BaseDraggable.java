@@ -18,10 +18,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnLayoutChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
+import android.webkit.WebView;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 import com.hjq.window.EasyWindow;
 
 /**
@@ -33,7 +38,7 @@ import com.hjq.window.EasyWindow;
 public abstract class BaseDraggable implements OnTouchListener {
 
     private EasyWindow<?> mEasyWindow;
-    private View mDecorView;
+    private ViewGroup mDecorView;
 
     /** 是否允许移动到挖孔屏区域 */
     private boolean mAllowMoveToScreenNotch = true;
@@ -52,6 +57,9 @@ public abstract class BaseDraggable implements OnTouchListener {
 
     /** 当前屏幕物理尺寸 */
     private double mPhysicalScreenSize;
+
+    /** 需要消费触摸事件的 View（可能为空） */
+    private View mConsumeTouchView;
 
     /**
      * 判断当前是否处于触摸移动状态
@@ -75,16 +83,37 @@ public abstract class BaseDraggable implements OnTouchListener {
 
     @Override
     public final boolean onTouch(View v, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // 在按下的时候先更新一下窗口信息和坐标信息，否则点击可能会出现坐标偏移的问题
-            // 全局的悬浮窗在非全屏的页面创建，跳转到全屏的页面展示就会导致坐标偏移
-            // 这是因为在跳转到全屏的悬浮窗的时候没有更新当前 Window 信息导致的
-            // 目前能想到比较好的办法就是在悬浮窗移动前之前先更新 Window 信息和 View 坐标
-            // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
-            refreshWindowInfo();
-            refreshPhysicalScreenSize();
-            refreshLocationCoordinate();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // 在按下的时候先更新一下窗口信息和坐标信息，否则点击可能会出现坐标偏移的问题
+                // 全局的悬浮窗在非全屏的页面创建，跳转到全屏的页面展示就会导致坐标偏移
+                // 这是因为在跳转到全屏的悬浮窗的时候没有更新当前 Window 信息导致的
+                // 目前能想到比较好的办法就是在悬浮窗移动前之前先更新 Window 信息和 View 坐标
+                // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
+                refreshWindowInfo();
+                refreshPhysicalScreenSize();
+                refreshLocationCoordinate();
+
+                mConsumeTouchView = null;
+                View consumeTouchEventView = findNeedConsumeTouchView(event, mDecorView);
+                if (consumeTouchEventView != null && consumeTouchEventView.dispatchTouchEvent(event)) {
+                    mConsumeTouchView = consumeTouchEventView;
+                    return true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (mConsumeTouchView != null) {
+                    mConsumeTouchView = null;
+                    return true;
+                }
+            default:
+                if (mConsumeTouchView != null) {
+                    return mConsumeTouchView.dispatchTouchEvent(event);
+                }
+                break;
         }
+
         return onDragWindow(mEasyWindow, mDecorView, event);
     }
 
@@ -543,6 +572,67 @@ public abstract class BaseDraggable implements OnTouchListener {
         }
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dpValue,
             Resources.getSystem().getDisplayMetrics());
+    }
+
+    /**
+     * 寻找需要消费触摸事件的 View
+     */
+    protected View findNeedConsumeTouchView(MotionEvent event, ViewGroup viewGroup) {
+        int childCount = viewGroup.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+
+            View childView = viewGroup.getChildAt(i);
+            int[] location = new int[2];
+            childView.getLocationOnScreen(location);
+            int left = location[0];
+            int top = location[1];
+            int right = left + childView.getWidth();
+            int bottom = top + childView.getHeight();
+
+            float x = event.getRawX();
+            float y = event.getRawY();
+
+            // 判断触摸位置是否在这个 View 内
+            if (x >= left && x <= right && y >= top && y <= bottom) {
+                if (isViewNeedConsumeTouchEvent(childView)) {
+                    return childView;
+                } else if (childView instanceof ViewGroup) {
+                    return findNeedConsumeTouchView(event, (ViewGroup) childView);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 判断 View 是否需要消费当前触摸事件
+     */
+    protected boolean isViewNeedConsumeTouchEvent(View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && view instanceof ViewGroup && view.isScrollContainer()) {
+            return true;
+        }
+
+        if (view instanceof WebView || view instanceof ScrollView || view instanceof ListView || view instanceof SeekBar) {
+            return true;
+        }
+
+        Class<? extends View> viewClass = view.getClass();
+
+        try {
+            // NestedScrollingChild 的子类有：RecyclerView、NestedScrollView、SwipeRefreshLayout 等等
+            if (viewClass.isAssignableFrom(Class.forName("androidx.core.view.NestedScrollingChild")) ||
+                viewClass.isAssignableFrom(Class.forName("android.support.v4.view.NestedScrollingChild"))) {
+                return true;
+            }
+
+            if (viewClass.isAssignableFrom(Class.forName("androidx.viewpager.widget.ViewPager")) ||
+                viewClass.isAssignableFrom(Class.forName("android.support.v4.view.ViewPager"))) {
+                return true;
+            }
+
+        } catch (ClassNotFoundException ignored) {}
+
+        return false;
     }
 
     /**
