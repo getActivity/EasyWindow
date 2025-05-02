@@ -3,7 +3,6 @@ package com.hjq.window;
 import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
-import com.hjq.window.EasyWindow.OnViewTouchListener;
 
 /**
  *    author : Android 轮子哥

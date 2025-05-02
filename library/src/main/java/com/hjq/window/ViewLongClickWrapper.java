@@ -1,7 +1,6 @@
 package com.hjq.window;
 
 import android.view.View;
-import com.hjq.window.EasyWindow.OnViewLongClickListener;
 
 /**
  *    author : Android 轮子哥
