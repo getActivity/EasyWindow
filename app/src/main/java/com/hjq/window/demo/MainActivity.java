@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
+import com.hjq.window.OnLayoutInflateListener;
 import com.hjq.window.OnViewClickListener;
 import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
@@ -72,6 +74,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         finish();
     }
 
+    /** @noinspection unchecked*/
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
@@ -194,7 +197,21 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_list) {
 
             EasyWindow.with(this)
-                .setContentView(R.layout.window_list)
+                .setContentView(R.layout.window_list, new OnLayoutInflateListener() {
+                    @Override
+                    public void onLayoutInflateFinished(EasyWindow<?> easyWindow, View view, int layoutId, ViewGroup parentView) {
+                        RecyclerView recyclerView = view.findViewById(R.id.rv_window_list_view);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+                        List<String> dataList = new ArrayList<>();
+                        for (int i = 1; i <= 20; i++) {
+                            dataList.add("我是条目 " + i);
+                        }
+
+                        DemoAdapter adapter = new DemoAdapter(dataList);
+                        recyclerView.setAdapter(adapter);
+                    }
+                })
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setDraggable(new MovingDraggable())
@@ -210,21 +227,6 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
                         Toaster.show("关闭按钮被长按了");
                         return false;
-                    }
-                })
-                .setOnWindowLifecycle(new OnWindowLifecycle() {
-                    @Override
-                    public void onWindowShow(EasyWindow<?> easyWindow) {
-                        RecyclerView recyclerView = easyWindow.findViewById(R.id.rv_window_list_view);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(easyWindow.getContext()));
-
-                        List<String> dataList = new ArrayList<>();
-                        for (int i = 1; i <= 20; i++) {
-                            dataList.add("我是条目 " + i);
-                        }
-
-                        DemoAdapter adapter = new DemoAdapter(dataList);
-                        recyclerView.setAdapter(adapter);
                     }
                 })
                 .show();
@@ -293,6 +295,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
     /**
      * 显示全局弹窗
+     * @noinspection unchecked
      */
     public static void showGlobalWindow(Application application) {
         SpringBackDraggable springBackDraggable = new SpringBackDraggable(SpringBackDraggable.ORIENTATION_HORIZONTAL);
@@ -317,9 +320,9 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                     }
                 })
-                .setOnLongClickListener(android.R.id.icon, new OnViewLongClickListener<View>() {
+                .setOnLongClickListener(android.R.id.icon, new OnViewLongClickListener<ImageView>() {
                     @Override
-                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                    public boolean onLongClick(EasyWindow<?> easyWindow, ImageView view) {
                         Toaster.show("我被长按了");
                         return false;
                     }

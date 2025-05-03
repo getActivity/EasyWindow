@@ -889,7 +889,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * 设置内容布局
      */
     public X setContentView(int id) {
-        return setContentView(LayoutInflater.from(mContext).inflate(id, mDecorView, false));
+        return setContentView(id, null);
+    }
+
+    public X setContentView(int layoutId, OnLayoutInflateListener listener) {
+        View view = LayoutInflater.from(mContext).inflate(layoutId, mDecorView, false);
+        if (listener != null) {
+            listener.onLayoutInflateFinished(this, view, layoutId, mDecorView);
+        }
+        return setContentView(view);
     }
 
     public X setContentView(View view) {
