@@ -104,8 +104,12 @@ public abstract class BaseDraggable implements OnTouchListener {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (mConsumeTouchView != null) {
-                    mConsumeTouchView = null;
-                    return true;
+                    try {
+                        return mConsumeTouchView.dispatchTouchEvent(event);
+                    } finally {
+                        // 释放/置空对象
+                        mConsumeTouchView = null;
+                    }
                 }
             default:
                 if (mConsumeTouchView != null) {
