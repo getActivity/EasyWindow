@@ -3,11 +3,15 @@ package com.hjq.window.demo;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -26,6 +30,7 @@ import com.hjq.window.OnLayoutInflateListener;
 import com.hjq.window.OnViewClickListener;
 import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
+import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
 import java.util.ArrayList;
@@ -51,6 +56,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_click).setOnClickListener(this);
         findViewById(R.id.btn_main_view).setOnClickListener(this);
         findViewById(R.id.btn_main_input).setOnClickListener(this);
+        findViewById(R.id.btn_main_web).setOnClickListener(this);
         findViewById(R.id.btn_main_list).setOnClickListener(this);
         findViewById(R.id.btn_main_draggable).setOnClickListener(this);
         findViewById(R.id.btn_main_global).setOnClickListener(this);
@@ -194,6 +200,66 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     })
                     .show();
 
+        } else if (viewId == R.id.btn_main_web) {
+
+            EasyWindow.with(this)
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                .setContentView(R.layout.window_web, new OnLayoutInflateListener() {
+
+                    @Override
+                    public void onLayoutInflateFinished(EasyWindow<?> easyWindow, View view, int layoutId, ViewGroup parentView) {
+                        WebView webView = view.findViewById(R.id.wv_window_web_content);
+                        WebSettings settings = webView.getSettings();
+                        // 允许文件访问
+                        settings.setAllowFileAccess(true);
+                        // 允许网页定位
+                        settings.setGeolocationEnabled(true);
+                        // 允许保存密码
+                        //settings.setSavePassword(true);
+                        // 开启 JavaScript
+                        settings.setJavaScriptEnabled(true);
+                        // 允许网页弹对话框
+                        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+                        // 加快网页加载完成的速度，等页面完成再加载图片
+                        settings.setLoadsImagesAutomatically(true);
+                        // 本地 DOM 存储（解决加载某些网页出现白板现象）
+                        settings.setDomStorageEnabled(true);
+                        // 解决 Android 5.0 上 WebView 默认不允许加载 Http 与 Https 混合内容
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+                        }
+
+                        webView.setWebViewClient(new WebViewClient() {
+
+                            @Override
+                            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                                view.loadUrl(url);
+                                return true;
+                            }
+                        });
+
+                        webView.loadUrl("https://github.com/getActivity/EasyWindow");
+                    }
+                })
+                .setAnimStyle(R.style.IOSAnimStyle)
+                // 设置成可拖拽的
+                .setDraggable(new MovingDraggable())
+                .setOnClickListener(R.id.iv_window_web_close, new OnViewClickListener<ImageView>() {
+
+                    @Override
+                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
+                        easyWindow.cancel();
+                    }
+                })
+                .setOnLongClickListener(R.id.iv_window_web_close, new OnViewLongClickListener<View>() {
+                    @Override
+                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                        Toaster.show("关闭按钮被长按了");
+                        return false;
+                    }
+                })
+                .show();
+
         } else if (viewId == R.id.btn_main_list) {
 
             EasyWindow.with(this)
@@ -209,6 +275,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         }
 
                         DemoAdapter adapter = new DemoAdapter(dataList);
+                        adapter.setOnItemClickListener(new OnItemClickListener() {
+
+                            @Override
+                            public void onItemClick(View itemView, int position) {
+                                Toaster.show("点击了条目" + (position +  1));
+                            }
+                        });
                         recyclerView.setAdapter(adapter);
                     }
                 })

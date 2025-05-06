@@ -4,6 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:layout_margin="100dp"
     android:background="@drawable/dialog_toast_bg"
     android:gravity="center"
     android:minWidth="120dp"
@@ -11,17 +12,16 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/iv_window_list_close"
+        android:id="@+id/iv_window_web_close"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_gravity="end"
         android:layout_margin="15dp"
         android:src="@drawable/ic_close" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_window_list_view"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        tools:listitem="@layout/window_list_item" />
+    <WebView
+        android:id="@+id/wv_window_web_content"
+        android:layout_width="280dp"
+        android:layout_height="400dp" />
 
 </LinearLayout>
