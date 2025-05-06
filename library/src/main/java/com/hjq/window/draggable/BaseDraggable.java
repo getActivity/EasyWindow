@@ -96,15 +96,19 @@ public abstract class BaseDraggable implements OnTouchListener {
 
                 mConsumeTouchView = null;
                 View consumeTouchEventView = findNeedConsumeTouchView(event, mDecorView);
-                if (consumeTouchEventView != null && consumeTouchEventView.dispatchTouchEvent(event)) {
-                    mConsumeTouchView = consumeTouchEventView;
-                    return true;
+                if (consumeTouchEventView != null) {
+                    offsetMotionEventLocation(event, v, consumeTouchEventView);
+                    if (consumeTouchEventView.dispatchTouchEvent(event)) {
+                        mConsumeTouchView = consumeTouchEventView;
+                        return true;
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (mConsumeTouchView != null) {
                     try {
+                        offsetMotionEventLocation(event, v, mConsumeTouchView);
                         return mConsumeTouchView.dispatchTouchEvent(event);
                     } finally {
                         // 释放/置空对象
@@ -113,12 +117,26 @@ public abstract class BaseDraggable implements OnTouchListener {
                 }
             default:
                 if (mConsumeTouchView != null) {
+                    offsetMotionEventLocation(event, v, mConsumeTouchView);
                     return mConsumeTouchView.dispatchTouchEvent(event);
                 }
                 break;
         }
 
         return onDragWindow(mEasyWindow, mDecorView, event);
+    }
+
+    /**
+     * 偏移触摸事件坐标，这样子 View 能接受到正确的坐标
+     *
+     * @param event                 触摸事件
+     * @param parentView            父 View
+     * @param childView             子 View（同时也是被触摸的 View）
+     */
+    private void offsetMotionEventLocation(MotionEvent event, View parentView, View childView) {
+        final int offsetX = parentView.getScrollX() - childView.getLeft();
+        final int offsetY = parentView.getScrollY() - childView.getTop();
+        event.offsetLocation(offsetX, offsetY);
     }
 
     /**
