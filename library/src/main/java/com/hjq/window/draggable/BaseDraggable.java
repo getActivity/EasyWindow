@@ -9,6 +9,11 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.support.v4.view.NestedScrollingChild;
+import android.support.v4.view.NestedScrollingParent;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -631,30 +636,53 @@ public abstract class BaseDraggable implements OnTouchListener {
      */
     protected boolean isViewNeedConsumeTouchEvent(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && view instanceof ViewGroup && view.isScrollContainer()) {
-            return true;
+            return canTouchByView(view);
         }
 
         if (view instanceof WebView || view instanceof ScrollView || view instanceof ListView || view instanceof SeekBar) {
-            return true;
+            return canTouchByView(view);
+        }
+
+        // NestedScrollingChild 的子类有：RecyclerView、NestedScrollView、SwipeRefreshLayout 等等
+        if (view instanceof NestedScrollingChild || view instanceof NestedScrollingParent || view instanceof ViewPager) {
+            return canTouchByView(view);
         }
 
         Class<? extends View> viewClass = view.getClass();
-
         try {
-            // NestedScrollingChild 的子类有：RecyclerView、NestedScrollView、SwipeRefreshLayout 等等
-            if (viewClass.isAssignableFrom(Class.forName("androidx.core.view.NestedScrollingChild")) ||
-                viewClass.isAssignableFrom(Class.forName("android.support.v4.view.NestedScrollingChild"))) {
-                return true;
+            if (viewClass.isAssignableFrom(Class.forName("androidx.viewpager2.widget.ViewPager2"))) {
+                return canTouchByView(view);
             }
-
-            if (viewClass.isAssignableFrom(Class.forName("androidx.viewpager.widget.ViewPager")) ||
-                viewClass.isAssignableFrom(Class.forName("android.support.v4.view.ViewPager"))) {
-                return true;
-            }
-
         } catch (ClassNotFoundException ignored) {}
 
         return false;
+    }
+
+    /**
+     * 判断 View 是否能被触摸
+     */
+    protected boolean canTouchByView(View view) {
+        if (view instanceof RecyclerView && !canScrollByRecyclerView(((RecyclerView) view))) {
+            // 如果这个 RecyclerView 禁止了触摸事件，就不要启动触摸事件
+            return false;
+        }
+
+        // 这个 View 必须是启用状态，才认为有可能传递触摸事件
+        return view.isEnabled();
+    }
+
+    /**
+     * 判断 RecyclerView 是否能被触摸
+     */
+    protected boolean canScrollByRecyclerView(RecyclerView recyclerView) {
+        LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager == null) {
+            // 如果没有设置 LayoutManager，则默认不需要触摸事件
+            return false;
+        }
+
+        // 当前这个 LayoutManager 必须开启垂直滚动或者水平滚动
+        return layoutManager.canScrollVertically() || layoutManager.canScrollHorizontally();
     }
 
     /**
