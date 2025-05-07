@@ -18,7 +18,7 @@
         android:layout_margin="15dp"
         android:src="@drawable/ic_close" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_window_list_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"

@@ -49,8 +49,17 @@ android {
 
 dependencies {
     // 悬浮窗框架：https://github.com/getActivity/EasyWindow
-    implementation 'com.github.getActivity:EasyWindow:11.5'
+    implementation 'com.github.getActivity:EasyWindow:11.6'
 }
+```
+
+#### AndroidX 兼容
+
+* 如果项目是基于 **AndroidX** 包，请在项目 `gradle.properties` 文件中加入
+
+```text
+# 表示将第三方库迁移到 AndroidX
+android.enableJetifier = true
 ```
 
 #### 使用案例

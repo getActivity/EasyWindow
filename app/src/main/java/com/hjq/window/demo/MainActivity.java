@@ -5,6 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +19,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.snackbar.Snackbar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.permissions.OnPermissionCallback;
@@ -31,6 +31,7 @@ import com.hjq.window.OnViewClickListener;
 import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
+import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
 import java.util.ArrayList;
@@ -279,7 +280,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                             @Override
                             public void onItemClick(View itemView, int position) {
-                                Toaster.show("点击了条目" + (position +  1));
+                                Toaster.show("条目 " + (position +  1) + " 被点击了");
+                            }
+                        });
+                        adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(View itemView, int position) {
+                                Toaster.show("条目 " + (position +  1) + " 被长按了");
+                                return false;
                             }
                         });
                         recyclerView.setAdapter(adapter);
