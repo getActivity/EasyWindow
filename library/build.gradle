@@ -23,6 +23,11 @@ android {
     }
 }
 
+dependencies {
+    // noinspection GradleCompatible
+    implementation 'com.android.support:design:26.0.0'
+}
+
 afterEvaluate {
     // 排除 BuildConfig.class 和 R.class
     generateReleaseBuildConfig.enabled = false
