@@ -92,8 +92,8 @@ public class SpringBackDraggable extends BaseDraggable {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (mTouchMoving) {
-                    dispatchSpringBackViewToScreenEdge(event.getRawX(), event.getRawY());
                     dispatchStopDraggingCallback();
+                    dispatchSpringBackViewToScreenEdge(event.getRawX(), event.getRawY());
                 }
                 try {
                     return mTouchMoving;
