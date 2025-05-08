@@ -9,6 +9,8 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewPager;
@@ -42,15 +44,19 @@ import com.hjq.window.EasyWindow;
  */
 public abstract class BaseDraggable implements OnTouchListener {
 
+    @Nullable
     private EasyWindow<?> mEasyWindow;
+    @Nullable
     private ViewGroup mDecorView;
 
     /** 是否允许移动到挖孔屏区域 */
     private boolean mAllowMoveToScreenNotch = true;
 
-    /** 拖拽回调监听 */
+    /** 拖拽回调监听对象（可能为空） */
+    @Nullable
     private DraggingCallback mDraggingCallback;
 
+    @NonNull
     private final Rect mTempRect = new Rect();
 
     private int mCurrentWindowWidth;
@@ -63,7 +69,8 @@ public abstract class BaseDraggable implements OnTouchListener {
     /** 当前屏幕物理尺寸 */
     private double mPhysicalScreenSize;
 
-    /** 需要消费触摸事件的 View（可能为空） */
+    /** 需要消费触摸事件的 View（可能为空）*/
+    @Nullable
     private View mConsumeTouchView;
 
     /**
@@ -75,9 +82,12 @@ public abstract class BaseDraggable implements OnTouchListener {
      * 窗口显示后回调这个方法
      */
     @SuppressLint("ClickableViewAccessibility")
-    public void start(EasyWindow<?> easyWindow) {
+    public void start(@NonNull EasyWindow<?> easyWindow) {
         mEasyWindow = easyWindow;
         mDecorView = easyWindow.getDecorView();
+        if (mDecorView == null) {
+            return;
+        }
         mDecorView.setOnTouchListener(this);
         mDecorView.post(() -> {
             refreshWindowInfo();
@@ -86,8 +96,22 @@ public abstract class BaseDraggable implements OnTouchListener {
         });
     }
 
+    /**
+     * 窗口回收后回调这个方法
+     */
+    public void recycle() {
+        mEasyWindow = null;
+        if (mDecorView != null) {
+            mDecorView.setOnTouchListener(null);
+            mDecorView = null;
+        }
+    }
+
     @Override
     public final boolean onTouch(View v, MotionEvent event) {
+        if (mEasyWindow == null || mDecorView == null) {
+            return false;
+        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 在按下的时候先更新一下窗口信息和坐标信息，否则点击可能会出现坐标偏移的问题
@@ -152,8 +176,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      * @param event             当前触摸事件
      * @return                  根据返回值决定是否拦截该事件
      */
-    public abstract boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event);
+    public abstract boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull View decorView, @NonNull MotionEvent event);
 
+    @Nullable
     public EasyWindow<?> getEasyWindow() {
         return mEasyWindow;
     }
@@ -188,6 +213,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      * 获取当前 View 的宽度
      */
     public int getViewWidth() {
+        if (mEasyWindow == null) {
+            return 0;
+        }
         return mEasyWindow.getViewWidth();
     }
 
@@ -195,6 +223,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      * 获取当前 View 的高度
      */
     public int getViewHeight() {
+        if (mEasyWindow == null) {
+            return 0;
+        }
         return mEasyWindow.getViewHeight();
     }
 
@@ -230,6 +261,10 @@ public abstract class BaseDraggable implements OnTouchListener {
      * 刷新当前 Window 信息
      */
     public void refreshWindowInfo() {
+        if (mEasyWindow == null) {
+            return;
+        }
+
         Context context = mEasyWindow.getContext();
         if (context == null) {
             return;
@@ -273,11 +308,13 @@ public abstract class BaseDraggable implements OnTouchListener {
     /**
      * 刷新当前设备的物理屏幕尺寸
      */
+    @SuppressWarnings("deprecation")
     public void refreshPhysicalScreenSize() {
-        WindowManager windowManager = mEasyWindow.getWindowManager();
-        if (windowManager == null) {
+        if (mEasyWindow == null) {
             return;
         }
+
+        WindowManager windowManager = mEasyWindow.getWindowManager();
         Display defaultDisplay = windowManager.getDefaultDisplay();
         if (defaultDisplay == null) {
             return;
@@ -326,11 +363,14 @@ public abstract class BaseDraggable implements OnTouchListener {
         long refreshDelayMillis = 100;
 
         if (!isFollowScreenRotationChanges()) {
-            getEasyWindow().postDelayed(() -> {
-                refreshWindowInfo();
-                refreshPhysicalScreenSize();
-                refreshLocationCoordinate();
-            }, refreshDelayMillis);
+            EasyWindow<?> easyWindow = getEasyWindow();
+            if (easyWindow != null) {
+                easyWindow.postDelayed(() -> {
+                    refreshWindowInfo();
+                    refreshPhysicalScreenSize();
+                    refreshLocationCoordinate();
+                }, refreshDelayMillis);
+            }
             return;
         }
 
@@ -444,8 +484,8 @@ public abstract class BaseDraggable implements OnTouchListener {
             return;
         }
 
-        int viewWidth = mEasyWindow.getViewWidth();
-        int viewHeight = mEasyWindow.getViewHeight();
+        int viewWidth = getViewWidth();
+        int viewHeight = getViewHeight();
 
         int windowWidth = getWindowWidth();
         int windowHeight = getWindowHeight();
@@ -477,10 +517,10 @@ public abstract class BaseDraggable implements OnTouchListener {
     }
 
     public void updateWindowCoordinate(int x, int y) {
-        WindowManager.LayoutParams params = mEasyWindow.getWindowParams();
-        if (params == null) {
+        if (mEasyWindow == null) {
             return;
         }
+        WindowManager.LayoutParams params = mEasyWindow.getWindowParams();
 
         // 屏幕默认的重心（一定要先设置重心位置为左上角）
         int screenGravity = Gravity.TOP | Gravity.START;
@@ -498,7 +538,14 @@ public abstract class BaseDraggable implements OnTouchListener {
         refreshLocationCoordinate();
     }
 
+    /**
+     * 获取当前屏幕安全区域
+     */
+    @Nullable
     public Rect getSafeInsetRect() {
+        if (mEasyWindow == null) {
+            return null;
+        }
         Context context = mEasyWindow.getContext();
         Window window;
         if (!(context instanceof Activity)) {
@@ -514,8 +561,9 @@ public abstract class BaseDraggable implements OnTouchListener {
     }
 
     /**
-     * 获取屏幕安全区域位置（返回的对象可能为空）
+     * 根据 Window 对象获取屏幕安全区域位置（返回的对象可能为空）
      */
+    @Nullable
     public static Rect getSafeInsetRect(Window window) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return null;
@@ -602,8 +650,9 @@ public abstract class BaseDraggable implements OnTouchListener {
     }
 
     /**
-     * 寻找需要消费触摸事件的 View
+     * 寻找需要消费触摸事件的 View（可能为空）
      */
+    @Nullable
     protected View findNeedConsumeTouchView(MotionEvent event, ViewGroup viewGroup) {
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -634,7 +683,7 @@ public abstract class BaseDraggable implements OnTouchListener {
     /**
      * 判断 View 是否需要消费当前触摸事件
      */
-    protected boolean isViewNeedConsumeTouchEvent(View view) {
+    protected boolean isViewNeedConsumeTouchEvent(@NonNull View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && view instanceof ViewGroup && view.isScrollContainer()) {
             return canTouchByView(view);
         }
@@ -653,7 +702,9 @@ public abstract class BaseDraggable implements OnTouchListener {
             if (viewClass.isAssignableFrom(Class.forName("androidx.viewpager2.widget.ViewPager2"))) {
                 return canTouchByView(view);
             }
-        } catch (ClassNotFoundException ignored) {}
+        } catch (ClassNotFoundException ignored) {
+            // default implementation ignored
+        }
 
         return false;
     }
@@ -661,7 +712,7 @@ public abstract class BaseDraggable implements OnTouchListener {
     /**
      * 判断 View 是否能被触摸
      */
-    protected boolean canTouchByView(View view) {
+    protected boolean canTouchByView(@NonNull View view) {
         if (view instanceof RecyclerView && !canScrollByRecyclerView(((RecyclerView) view))) {
             // 如果这个 RecyclerView 禁止了触摸事件，就不要启动触摸事件
             return false;
@@ -674,7 +725,7 @@ public abstract class BaseDraggable implements OnTouchListener {
     /**
      * 判断 RecyclerView 是否能被触摸
      */
-    protected boolean canScrollByRecyclerView(RecyclerView recyclerView) {
+    protected boolean canScrollByRecyclerView(@NonNull RecyclerView recyclerView) {
         LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager == null) {
             // 如果没有设置 LayoutManager，则默认不需要触摸事件
@@ -696,6 +747,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      * 判断当前悬浮窗是否可以移动到屏幕之外的地方
      */
     protected boolean isSupportMoveOffScreen() {
+        if (mEasyWindow == null) {
+            return false;
+        }
         return mEasyWindow.hasWindowFlags(LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
@@ -711,6 +765,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      */
     protected void dispatchStartDraggingCallback() {
         // Log.i(getClass().getSimpleName(), "开始拖拽");
+        if (mEasyWindow == null) {
+            return;
+        }
         if (mDraggingCallback == null) {
             return;
         }
@@ -722,6 +779,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      */
     protected void dispatchExecuteDraggingCallback() {
         // Log.i(getClass().getSimpleName(), "拖拽中");
+        if (mEasyWindow == null) {
+            return;
+        }
         if (mDraggingCallback == null) {
             return;
         }
@@ -733,6 +793,9 @@ public abstract class BaseDraggable implements OnTouchListener {
      */
     protected void dispatchStopDraggingCallback() {
         // Log.i(getClass().getSimpleName(), "停止拖拽");
+        if (mEasyWindow == null) {
+            return;
+        }
         if (mDraggingCallback == null) {
             return;
         }
@@ -744,16 +807,16 @@ public abstract class BaseDraggable implements OnTouchListener {
         /**
          * 开始拖拽
          */
-        default void onStartDragging(EasyWindow<?> easyWindow) {}
+        default void onStartDragging(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
          * 执行拖拽中
          */
-        default void onExecuteDragging(EasyWindow<?> easyWindow) {}
+        default void onExecuteDragging(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
          * 停止拖拽
          */
-        default void onStopDragging(EasyWindow<?> easyWindow) {}
+        default void onStopDragging(@NonNull EasyWindow<?> easyWindow) {}
     }
 }

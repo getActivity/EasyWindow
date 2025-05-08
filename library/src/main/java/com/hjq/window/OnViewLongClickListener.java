@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -13,5 +14,5 @@ public interface OnViewLongClickListener<V extends View> {
     /**
      * 长按回调
      */
-    boolean onLongClick(EasyWindow<?> easyWindow, V view);
+    boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull V view);
 }

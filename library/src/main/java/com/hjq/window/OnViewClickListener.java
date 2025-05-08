@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -13,5 +14,5 @@ public interface OnViewClickListener<V extends View> {
     /**
      * 点击回调
      */
-    void onClick(EasyWindow<?> easyWindow, V view);
+    void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull V view);
 }

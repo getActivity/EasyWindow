@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -11,10 +12,12 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewLongClickWrapper implements View.OnLongClickListener {
 
+    @NonNull
     private final EasyWindow<?> mEasyWindow;
+    @NonNull
     private final OnViewLongClickListener mListener;
 
-    ViewLongClickWrapper(EasyWindow<?> easyWindow, OnViewLongClickListener listener) {
+    ViewLongClickWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewLongClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }
@@ -22,9 +25,6 @@ final class ViewLongClickWrapper implements View.OnLongClickListener {
     @SuppressWarnings("unchecked")
     @Override
     public boolean onLongClick(View view) {
-        if (mListener == null) {
-            return false;
-        }
         return mListener.onLongClick(mEasyWindow, view);
     }
 }

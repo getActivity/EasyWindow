@@ -3,6 +3,8 @@ package com.hjq.window;
 import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  *    author : Android 轮子哥
@@ -16,30 +18,47 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
    private int mScreenOrientation;
 
    /** 屏幕旋转回调 */
+   @Nullable
    private OnScreenOrientationCallback mCallback;
 
-   public ScreenOrientationMonitor(Configuration configuration) {
-      mScreenOrientation = configuration.orientation;
+   public ScreenOrientationMonitor(int screenOrientation) {
+      mScreenOrientation = screenOrientation;
    }
 
    /**
     * 注册监听
     */
-   void registerCallback(Context context, OnScreenOrientationCallback callback) {
-      context.getApplicationContext().registerComponentCallbacks(this);
+   void registerCallback(@Nullable Context context, @Nullable OnScreenOrientationCallback callback) {
+      if (context == null) {
+         return;
+      }
+      if (callback == null) {
+         unregisterCallback(context);
+         return;
+      }
+      Context applicationContext = context.getApplicationContext();
+      if (applicationContext != null) {
+         applicationContext.registerComponentCallbacks(this);
+      }
       mCallback = callback;
    }
 
    /**
     * 取消监听
     */
-   void unregisterCallback(Context context) {
-      context.getApplicationContext().unregisterComponentCallbacks(this);
+   void unregisterCallback(@Nullable Context context) {
+      if (context == null) {
+          return;
+      }
+      Context applicationContext = context.getApplicationContext();
+      if (applicationContext != null) {
+         applicationContext.unregisterComponentCallbacks(this);
+      }
       mCallback = null;
    }
 
    @Override
-   public void onConfigurationChanged(Configuration newConfig) {
+   public void onConfigurationChanged(@NonNull Configuration newConfig) {
       if (mScreenOrientation == newConfig.orientation) {
          return;
       }

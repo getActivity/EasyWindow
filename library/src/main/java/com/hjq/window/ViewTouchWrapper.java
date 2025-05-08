@@ -1,6 +1,7 @@
 package com.hjq.window;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -13,10 +14,12 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewTouchWrapper implements View.OnTouchListener {
 
+    @NonNull
     private final EasyWindow<?> mEasyWindow;
+    @NonNull
     private final OnViewTouchListener mListener;
 
-    ViewTouchWrapper(EasyWindow<?> easyWindow, OnViewTouchListener listener) {
+    ViewTouchWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewTouchListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }
@@ -25,9 +28,6 @@ final class ViewTouchWrapper implements View.OnTouchListener {
     @SuppressWarnings("unchecked")
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        if (mListener == null) {
-            return false;
-        }
         return mListener.onTouch(mEasyWindow, view, event);
     }
 }

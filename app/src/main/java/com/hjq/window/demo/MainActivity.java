@@ -1,15 +1,18 @@
 package com.hjq.window.demo;
 
+import android.animation.Animator;
 import android.app.Application;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +35,10 @@ import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
+import com.hjq.window.draggable.BaseDraggable.DraggingCallback;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
+import com.hjq.window.draggable.SpringBackDraggable.SpringBackAnimCallback;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +49,8 @@ import java.util.List;
  *    desc   : Demo 使用案例
  */
 public final class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private static final String TAG = "EasyWindow";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +126,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
-                        public void onClick(EasyWindow<?> easyWindow, TextView view) {
+                        public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                             easyWindow.cancel();
                         }
                     })
@@ -136,12 +143,12 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnWindowLifecycle(new OnWindowLifecycle() {
 
                         @Override
-                        public void onWindowShow(EasyWindow<?> easyWindow) {
+                        public void onWindowShow(@NonNull EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "显示回调", Snackbar.LENGTH_SHORT).show();
                         }
 
                         @Override
-                        public void onWindowCancel(EasyWindow<?> easyWindow) {
+                        public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
                         }
                     })
@@ -157,7 +164,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
+                        public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                             view.setText("不错，很听话");
                             easyWindow.postDelayed(new Runnable() {
                                 @Override
@@ -180,7 +187,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
+                        public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                             easyWindow.cancel();
                         }
                     })
@@ -195,7 +202,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(R.id.tv_window_close, new OnViewClickListener<TextView>() {
 
                         @Override
-                        public void onClick(final EasyWindow<?> easyWindow, TextView view) {
+                        public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                             easyWindow.cancel();
                         }
                     })
@@ -208,7 +215,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setContentView(R.layout.window_web, new OnLayoutInflateListener() {
 
                     @Override
-                    public void onLayoutInflateFinished(EasyWindow<?> easyWindow, View view, int layoutId, ViewGroup parentView) {
+                    public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
                         WebView webView = view.findViewById(R.id.wv_window_web_content);
                         WebSettings settings = webView.getSettings();
                         // 允许文件访问
@@ -248,13 +255,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setOnClickListener(R.id.iv_window_web_close, new OnViewClickListener<ImageView>() {
 
                     @Override
-                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
+                    public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         easyWindow.cancel();
                     }
                 })
                 .setOnLongClickListener(R.id.iv_window_web_close, new OnViewLongClickListener<View>() {
                     @Override
-                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                    public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
                         return false;
                     }
@@ -266,7 +273,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                 .setContentView(R.layout.window_list, new OnLayoutInflateListener() {
                     @Override
-                    public void onLayoutInflateFinished(EasyWindow<?> easyWindow, View view, int layoutId, ViewGroup parentView) {
+                    public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
                         RecyclerView recyclerView = view.findViewById(R.id.rv_window_list_view);
                         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
@@ -299,13 +306,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setOnClickListener(R.id.iv_window_list_close, new OnViewClickListener<ImageView>() {
 
                     @Override
-                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
+                    public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         easyWindow.cancel();
                     }
                 })
                 .setOnLongClickListener(R.id.iv_window_list_close, new OnViewLongClickListener<View>() {
                     @Override
-                    public boolean onLongClick(EasyWindow<?> easyWindow, View view) {
+                    public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
                         return false;
                     }
@@ -324,7 +331,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
-                        public void onClick(EasyWindow<?> easyWindow, TextView view) {
+                        public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                             easyWindow.cancel();
                         }
                     })
@@ -381,6 +388,35 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
     public static void showGlobalWindow(Application application) {
         SpringBackDraggable springBackDraggable = new SpringBackDraggable(SpringBackDraggable.ORIENTATION_HORIZONTAL);
         springBackDraggable.setAllowMoveToScreenNotch(false);
+        springBackDraggable.setSpringBackAnimCallback(new SpringBackAnimCallback() {
+
+            @Override
+            public void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
+                Log.i(TAG, "onSpringBackAnimationStart");
+            }
+
+            @Override
+            public void onSpringBackAnimationEnd(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
+                Log.i(TAG, "onSpringBackAnimationEnd");
+            }
+        });
+        springBackDraggable.setDraggingCallback(new DraggingCallback() {
+
+            @Override
+            public void onStartDragging(@NonNull EasyWindow<?> easyWindow) {
+                Log.i(TAG, "onStartDragging");
+            }
+
+            @Override
+            public void onExecuteDragging(@NonNull EasyWindow<?> easyWindow) {
+                Log.i(TAG, "onExecuteDragging");
+            }
+
+            @Override
+            public void onStopDragging(@NonNull EasyWindow<?> easyWindow) {
+                Log.i(TAG, "onStopDragging");
+            }
+        });
         // 传入 Application 表示这个是一个全局的 Toast
         EasyWindow.with(application)
                 .setContentView(R.layout.window_phone)
@@ -391,7 +427,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setOnClickListener(android.R.id.icon, new OnViewClickListener<ImageView>() {
 
                     @Override
-                    public void onClick(EasyWindow<?> easyWindow, ImageView view) {
+                    public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         Toaster.show("我被点击了");
                         // 点击后跳转到拨打电话界面
                         // Intent intent = new Intent(Intent.ACTION_DIAL);
@@ -403,7 +439,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 })
                 .setOnLongClickListener(android.R.id.icon, new OnViewLongClickListener<ImageView>() {
                     @Override
-                    public boolean onLongClick(EasyWindow<?> easyWindow, ImageView view) {
+                    public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         Toaster.show("我被长按了");
                         return false;
                     }

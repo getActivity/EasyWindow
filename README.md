@@ -86,7 +86,7 @@ EasyWindow.with(this)
         .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
             @Override
-            public void onClick(EasyWindow<?> easyWindow, TextView view) {
+            public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
                 // 点击这个 View 后消失
                 easyWindow.cancel();
                 // 跳转到某个Activity
@@ -113,7 +113,7 @@ EasyWindow.with(activity).apply {
     //setBackgroundDimAmount(0.5f)
     setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
     setText(android.R.id.message, "点我消失")
-    setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
+    setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
         // 点击这个 View 后消失
         easyWindow.cancel()
         // 跳转到某个Activity
@@ -137,7 +137,7 @@ EasyWindow.with(activity)
         //.setBackgroundDimAmount(0.5f)
         .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView? ->
+        .setOnClickListener(android.R.id.message, OnViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
             // 点击这个 View 后消失
             easyWindow.cancel()
             // 跳转到某个Activity
@@ -234,46 +234,46 @@ setWindowType(int type)
 EasyWindow.cancelAllWindow()
 
 // 取消特定类名的悬浮窗
-EasyWindow.cancelWindowByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.cancelWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
 
 // 取消特定标记的悬浮窗
-EasyWindow.cancelWindowByTag(String tag)
+EasyWindow.cancelWindowByTag(@Nullable String tag)
 
 // 显示所有已取消但未回收的悬浮窗
 EasyWindow.showAllWindow()
 
 // 显示特定类名已取消但未回收的悬浮窗
-EasyWindow.showWindowByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.showWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
 
 // 显示特定标记已取消但未回收的悬浮窗
-EasyWindow.showWindowByTag(String tag)
+EasyWindow.showWindowByTag(@Nullable String tag)
 
 // 回收所有正在显示的悬浮窗
 EasyWindow.recycleAllWindow()
 
 // 回收特定类名的悬浮窗
-EasyWindow.recycleWindowByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.recycleWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
 
 // 回收特定标记的悬浮窗
-EasyWindow.recycleWindowByTag(String tag)
+EasyWindow.recycleWindowByTag(@Nullable String tag)
 
 // 判断当前是否有悬浮窗正在显示
 EasyWindow.existAnyWindowShowing()
 
 // 判断当前是否有特定类名的悬浮窗正在显示
-EasyWindow.existWindowShowingByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.existWindowShowingByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
 
 // 判断当前是否有特定标记的悬浮窗正在显示
-EasyWindow.existWindowShowingByTag(String tag)
+EasyWindow.existWindowShowingByTag(@Nullable String tag)
 
 // 获取所有的悬浮窗
 EasyWindow.getAllWindowInstance()
 
 // 获取特定类名的悬浮窗
-EasyWindow.getWindowInstanceByClass(Class<? extends EasyWindow<?>> clazz)
+EasyWindow.getWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
 
 // 获取特定标记的悬浮窗
-EasyWindow.getWindowInstanceByTag(String tag)
+EasyWindow.getWindowInstanceByTag(@Nullable String tag)
 ```
 
 #### 作者的其他开源项目

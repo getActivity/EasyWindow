@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -11,10 +12,12 @@ import android.view.View;
 @SuppressWarnings("rawtypes")
 final class ViewClickWrapper implements View.OnClickListener {
 
+    @NonNull
     private final EasyWindow<?> mEasyWindow;
+    @NonNull
     private final OnViewClickListener mListener;
 
-    ViewClickWrapper(EasyWindow<?> easyWindow, OnViewClickListener listener) {
+    ViewClickWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }
@@ -22,9 +25,6 @@ final class ViewClickWrapper implements View.OnClickListener {
     @SuppressWarnings("unchecked")
     @Override
     public void onClick(View view) {
-        if (mListener == null) {
-            return;
-        }
         mListener.onClick(mEasyWindow, view);
     }
 }

@@ -1,5 +1,6 @@
 package com.hjq.window;
 
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -14,5 +15,5 @@ public interface OnViewTouchListener<V extends View> {
     /**
      * 触摸回调
      */
-    boolean onTouch(EasyWindow<?> easyWindow, V view, MotionEvent event);
+    boolean onTouch(@NonNull EasyWindow<?> easyWindow, @NonNull V view, @NonNull MotionEvent event);
 }

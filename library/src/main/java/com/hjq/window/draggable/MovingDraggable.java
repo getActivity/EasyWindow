@@ -1,6 +1,7 @@
 package com.hjq.window.draggable;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 import com.hjq.window.EasyWindow;
@@ -22,7 +23,7 @@ public class MovingDraggable extends BaseDraggable {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event) {
+    public boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull View decorView, @NonNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）

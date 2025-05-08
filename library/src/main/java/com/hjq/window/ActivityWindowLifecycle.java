@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  *    author : Android 轮子哥
@@ -13,10 +15,12 @@ import android.os.Bundle;
  */
 final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
 
+    @Nullable
     private Activity mActivity;
+    @Nullable
     private EasyWindow<?> mEasyWindow;
 
-    ActivityWindowLifecycle(EasyWindow<?> easyWindow, Activity activity) {
+    ActivityWindowLifecycle(@NonNull EasyWindow<?> easyWindow, @NonNull Activity activity) {
         mActivity = activity;
         mEasyWindow = easyWindow;
     }
@@ -52,16 +56,22 @@ final class ActivityWindowLifecycle implements Application.ActivityLifecycleCall
     }
 
     @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+    public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
+        // default implementation ignored
+    }
 
     @Override
-    public void onActivityStarted(Activity activity) {}
+    public void onActivityStarted(@NonNull Activity activity) {
+        // default implementation ignored
+    }
 
     @Override
-    public void onActivityResumed(Activity activity) {}
+    public void onActivityResumed(@NonNull Activity activity) {
+        // default implementation ignored
+    }
 
     @Override
-    public void onActivityPaused(Activity activity) {
+    public void onActivityPaused(@NonNull Activity activity) {
         // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
         if (mActivity != activity || !mActivity.isFinishing() || mEasyWindow == null || !mEasyWindow.isShowing()) {
             return;
@@ -70,13 +80,17 @@ final class ActivityWindowLifecycle implements Application.ActivityLifecycleCall
     }
 
     @Override
-    public void onActivityStopped(Activity activity) {}
+    public void onActivityStopped(@NonNull Activity activity) {
+        // default implementation ignored
+    }
 
     @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+        // default implementation ignored
+    }
 
     @Override
-    public void onActivityDestroyed(Activity activity) {
+    public void onActivityDestroyed(@NonNull Activity activity) {
         if (mActivity != activity) {
             return;
         }

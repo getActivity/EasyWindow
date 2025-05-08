@@ -5,6 +5,8 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -34,6 +36,7 @@ public class SpringBackDraggable extends BaseDraggable {
     private boolean mTouchMoving;
 
     /** 拖拽回弹动画监听 */
+    @Nullable
     private SpringBackAnimCallback mSpringBackAnimCallback;
 
     public SpringBackDraggable() {
@@ -53,7 +56,7 @@ public class SpringBackDraggable extends BaseDraggable {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onDragWindow(EasyWindow<?> easyWindow, View decorView, MotionEvent event) {
+    public boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull View decorView, @NonNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）
@@ -229,12 +232,12 @@ public class SpringBackDraggable extends BaseDraggable {
         valueAnimator.addListener(new AnimatorListenerAdapter() {
 
             @Override
-            public void onAnimationStart(Animator animator) {
+            public void onAnimationStart(@NonNull Animator animator) {
                 dispatchSpringBackAnimationStartCallback(animator);
             }
 
             @Override
-            public void onAnimationEnd(Animator animator) {
+            public void onAnimationEnd(@NonNull Animator animator) {
                 dispatchSpringBackAnimationEndCallback(animator);
             }
         });
@@ -268,23 +271,31 @@ public class SpringBackDraggable extends BaseDraggable {
     /**
      * 派发拖拽回弹动画开始回调
      */
-    protected void dispatchSpringBackAnimationStartCallback(Animator animator) {
+    protected void dispatchSpringBackAnimationStartCallback(@NonNull Animator animator) {
         // Log.i(getClass().getSimpleName(), "开始拖拽回弹动画");
+        EasyWindow<?> easyWindow = getEasyWindow();
+        if (easyWindow == null) {
+            return;
+        }
         if (mSpringBackAnimCallback == null) {
             return;
         }
-        mSpringBackAnimCallback.onSpringBackAnimationStart(getEasyWindow(), animator);
+        mSpringBackAnimCallback.onSpringBackAnimationStart(easyWindow, animator);
     }
 
     /**
      * 派发拖拽回弹动画结束回调
      */
-    protected void dispatchSpringBackAnimationEndCallback(Animator animator) {
+    protected void dispatchSpringBackAnimationEndCallback(@NonNull Animator animator) {
         // Log.i(getClass().getSimpleName(), "结束拖拽回弹动画");
+        EasyWindow<?> easyWindow = getEasyWindow();
+        if (easyWindow == null) {
+            return;
+        }
         if (mSpringBackAnimCallback == null) {
             return;
         }
-        mSpringBackAnimCallback.onSpringBackAnimationEnd(getEasyWindow(), animator);
+        mSpringBackAnimCallback.onSpringBackAnimationEnd(easyWindow, animator);
     }
 
     /**
@@ -300,11 +311,11 @@ public class SpringBackDraggable extends BaseDraggable {
         /**
          * 回弹动画开始执行
          */
-        default void onSpringBackAnimationStart(EasyWindow<?> easyWindow, Animator animator) {}
+        default void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {}
 
         /**
          * 回弹动画结束执行
          */
-        default void onSpringBackAnimationEnd(EasyWindow<?> easyWindow, Animator animator) {}
+        default void onSpringBackAnimationEnd(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {}
     }
 }
