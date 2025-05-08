@@ -54,7 +54,7 @@ public abstract class BaseDraggable implements OnTouchListener {
 
     /** 拖拽回调监听对象（可能为空） */
     @Nullable
-    private DraggingCallback mDraggingCallback;
+    private OnWindowDraggingListener mWindowDraggingListener;
 
     @NonNull
     private final Rect mTempRect = new Rect();
@@ -756,8 +756,8 @@ public abstract class BaseDraggable implements OnTouchListener {
     /**
      * 设置拖拽回调
      */
-    public void setDraggingCallback(DraggingCallback callback) {
-        mDraggingCallback = callback;
+    public void setWindowDraggingListener(OnWindowDraggingListener callback) {
+        mWindowDraggingListener = callback;
     }
 
     /**
@@ -768,10 +768,10 @@ public abstract class BaseDraggable implements OnTouchListener {
         if (mEasyWindow == null) {
             return;
         }
-        if (mDraggingCallback == null) {
+        if (mWindowDraggingListener == null) {
             return;
         }
-        mDraggingCallback.onStartDragging(mEasyWindow);
+        mWindowDraggingListener.onWindowDraggingStart(mEasyWindow);
     }
 
     /**
@@ -782,10 +782,10 @@ public abstract class BaseDraggable implements OnTouchListener {
         if (mEasyWindow == null) {
             return;
         }
-        if (mDraggingCallback == null) {
+        if (mWindowDraggingListener == null) {
             return;
         }
-        mDraggingCallback.onExecuteDragging(mEasyWindow);
+        mWindowDraggingListener.onWindowDraggingNow(mEasyWindow);
     }
 
     /**
@@ -796,27 +796,27 @@ public abstract class BaseDraggable implements OnTouchListener {
         if (mEasyWindow == null) {
             return;
         }
-        if (mDraggingCallback == null) {
+        if (mWindowDraggingListener == null) {
             return;
         }
-        mDraggingCallback.onStopDragging(mEasyWindow);
+        mWindowDraggingListener.onWindowDraggingStop(mEasyWindow);
     }
 
-    public interface DraggingCallback {
+    public interface OnWindowDraggingListener {
 
         /**
          * 开始拖拽
          */
-        default void onStartDragging(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
          * 执行拖拽中
          */
-        default void onExecuteDragging(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingNow(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
          * 停止拖拽
          */
-        default void onStopDragging(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {}
     }
 }

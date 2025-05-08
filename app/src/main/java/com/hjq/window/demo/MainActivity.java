@@ -35,7 +35,7 @@ import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
-import com.hjq.window.draggable.BaseDraggable.DraggingCallback;
+import com.hjq.window.draggable.BaseDraggable.OnWindowDraggingListener;
 import com.hjq.window.draggable.MovingDraggable;
 import com.hjq.window.draggable.SpringBackDraggable;
 import com.hjq.window.draggable.SpringBackDraggable.SpringBackAnimCallback;
@@ -400,20 +400,20 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 Log.i(TAG, "onSpringBackAnimationEnd");
             }
         });
-        springBackDraggable.setDraggingCallback(new DraggingCallback() {
+        springBackDraggable.setWindowDraggingListener(new OnWindowDraggingListener() {
 
             @Override
-            public void onStartDragging(@NonNull EasyWindow<?> easyWindow) {
+            public void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {
                 Log.i(TAG, "onStartDragging");
             }
 
             @Override
-            public void onExecuteDragging(@NonNull EasyWindow<?> easyWindow) {
+            public void onWindowDraggingNow(@NonNull EasyWindow<?> easyWindow) {
                 Log.i(TAG, "onExecuteDragging");
             }
 
             @Override
-            public void onStopDragging(@NonNull EasyWindow<?> easyWindow) {
+            public void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {
                 Log.i(TAG, "onStopDragging");
             }
         });
