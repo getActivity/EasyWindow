@@ -29,7 +29,7 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
-import com.hjq.window.OnLayoutInflateListener;
+import com.hjq.window.OnWindowLayoutInflateListener;
 import com.hjq.window.OnViewClickListener;
 import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
@@ -212,7 +212,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                 .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-                .setContentView(R.layout.window_web, new OnLayoutInflateListener() {
+                .setContentView(R.layout.window_web, new OnWindowLayoutInflateListener() {
 
                     @Override
                     public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
@@ -271,7 +271,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_list) {
 
             EasyWindow.with(this)
-                .setContentView(R.layout.window_list, new OnLayoutInflateListener() {
+                .setContentView(R.layout.window_list, new OnWindowLayoutInflateListener() {
                     @Override
                     public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
                         RecyclerView recyclerView = view.findViewById(R.id.rv_window_list_view);

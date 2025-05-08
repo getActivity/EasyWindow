@@ -10,9 +10,9 @@ import android.view.ViewGroup;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2025/05/03
- *    desc   : 布局填充回调
+ *    desc   : 窗口布局填充回调
  */
-public interface OnLayoutInflateListener {
+public interface OnWindowLayoutInflateListener {
 
     /**
      * 布局填充完成回调

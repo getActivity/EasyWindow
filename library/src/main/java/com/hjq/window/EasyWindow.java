@@ -982,7 +982,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         return setContentView(layoutId, null);
     }
 
-    public X setContentView(@LayoutRes int layoutId, @Nullable OnLayoutInflateListener listener) {
+    public X setContentView(@LayoutRes int layoutId, @Nullable OnWindowLayoutInflateListener listener) {
         if (mContext == null || mDecorView == null) {
             return (X) this;
         }
