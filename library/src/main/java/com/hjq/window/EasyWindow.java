@@ -988,7 +988,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         }
         View view = LayoutInflater.from(mContext).inflate(layoutId, mDecorView, false);
         if (listener != null) {
-            listener.onLayoutInflateFinished(this, view, layoutId, mDecorView);
+            listener.onWindowLayoutInflateFinished(this, view, layoutId, mDecorView);
         }
         return setContentView(view);
     }

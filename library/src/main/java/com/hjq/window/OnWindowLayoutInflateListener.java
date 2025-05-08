@@ -22,5 +22,5 @@ public interface OnWindowLayoutInflateListener {
      * @param layoutId          布局 id
      * @param parentView        填充布局所用父布局对象
      */
-    void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, @LayoutRes int layoutId, @NonNull ViewGroup parentView);
+    void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, @LayoutRes int layoutId, @NonNull ViewGroup parentView);
 }

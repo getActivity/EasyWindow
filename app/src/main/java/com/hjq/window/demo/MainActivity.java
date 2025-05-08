@@ -215,7 +215,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setContentView(R.layout.window_web, new OnWindowLayoutInflateListener() {
 
                     @Override
-                    public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
+                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
                         WebView webView = view.findViewById(R.id.wv_window_web_content);
                         WebSettings settings = webView.getSettings();
                         // 允许文件访问
@@ -273,7 +273,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                 .setContentView(R.layout.window_list, new OnWindowLayoutInflateListener() {
                     @Override
-                    public void onLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
+                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
                         RecyclerView recyclerView = view.findViewById(R.id.rv_window_list_view);
                         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
