@@ -9,7 +9,7 @@ import android.view.View;
  *    time   : 2025/05/03
  *    desc   : 窗口生命周期监听
  */
-public interface OnWindowLifecycle {
+public interface OnWindowLifecycleCallback {
 
     /**
      * 窗口显示回调

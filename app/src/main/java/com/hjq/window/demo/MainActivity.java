@@ -32,7 +32,7 @@ import com.hjq.window.EasyWindow;
 import com.hjq.window.OnWindowLayoutInflateListener;
 import com.hjq.window.OnViewClickListener;
 import com.hjq.window.OnViewLongClickListener;
-import com.hjq.window.OnWindowLifecycle;
+import com.hjq.window.OnWindowLifecycleCallback;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
 import com.hjq.window.draggable.AbstractWindowDraggableRule.OnWindowDraggingListener;
@@ -140,7 +140,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
                     .setText(android.R.id.message, "请注意下方 Snackbar")
-                    .setOnWindowLifecycle(new OnWindowLifecycle() {
+                    .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
 
                         @Override
                         public void onWindowShow(@NonNull EasyWindow<?> easyWindow) {

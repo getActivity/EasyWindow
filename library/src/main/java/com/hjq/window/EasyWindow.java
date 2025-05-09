@@ -408,9 +408,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /** 自定义拖动处理 */
     @Nullable
     private AbstractWindowDraggableRule mWindowDraggableRule;
-    /** 吐司显示和取消监听 */
+    /** 窗口生命周期回调 */
     @Nullable
-    private OnWindowLifecycle mOnWindowLifecycle;
+    private OnWindowLifecycleCallback mOnWindowLifecycleCallback;
 
     /** 屏幕旋转监听 */
     @Nullable
@@ -960,10 +960,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
-     * 设置生命周期监听
+     * 设置窗口生命周期回调
      */
-    public X setOnWindowLifecycle(@Nullable OnWindowLifecycle listener) {
-        mOnWindowLifecycle = listener;
+    public X setOnWindowLifecycleCallback(@Nullable OnWindowLifecycleCallback callback) {
+        mOnWindowLifecycleCallback = callback;
         return (X) this;
     }
 
@@ -1170,8 +1170,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             }
 
             // 回调监听
-            if (mOnWindowLifecycle != null) {
-                mOnWindowLifecycle.onWindowShow(this);
+            if (mOnWindowLifecycleCallback != null) {
+                mOnWindowLifecycleCallback.onWindowShow(this);
             }
 
         } catch (NullPointerException | IllegalStateException |
@@ -1200,8 +1200,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             removeCallbacks(this);
 
             // 回调监听
-            if (mOnWindowLifecycle != null) {
-                mOnWindowLifecycle.onWindowCancel(this);
+            if (mOnWindowLifecycleCallback != null) {
+                mOnWindowLifecycleCallback.onWindowCancel(this);
             }
 
         } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
@@ -1233,10 +1233,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         try {
             // 更新 WindowManger 的显示
             mWindowManager.updateViewLayout(mDecorView, mWindowParams);
-            if (mOnWindowLifecycle == null) {
+            if (mOnWindowLifecycleCallback == null) {
                 return;
             }
-            mOnWindowLifecycle.onWindowUpdate(this);
+            mOnWindowLifecycleCallback.onWindowUpdate(this);
         } catch (IllegalArgumentException e) {
             // 当 WindowManager 已经消失时调用会发生崩溃
             // IllegalArgumentException: View not attached to window manager
@@ -1255,9 +1255,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mScreenOrientationMonitor.unregisterCallback(mContext);
             mScreenOrientationMonitor = null;
         }
-        if (mOnWindowLifecycle != null) {
-            mOnWindowLifecycle.onWindowRecycle(this);
-            mOnWindowLifecycle = null;
+        if (mOnWindowLifecycleCallback != null) {
+            mOnWindowLifecycleCallback.onWindowRecycle(this);
+            mOnWindowLifecycleCallback = null;
         }
         if (mWindowLifecycleControl != null) {
             mWindowLifecycleControl.unregister();
@@ -1299,8 +1299,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             return (X) this;
         }
         mDecorView.setVisibility(visibility);
-        if (mOnWindowLifecycle != null) {
-            mOnWindowLifecycle.onWindowVisibilityChanged(this, visibility);
+        if (mOnWindowLifecycleCallback != null) {
+            mOnWindowLifecycleCallback.onWindowVisibilityChanged(this, visibility);
         }
         return (X) this;
     }
