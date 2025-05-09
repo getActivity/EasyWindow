@@ -72,7 +72,7 @@ android.enableJetifier = true
 EasyWindow.with(this)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
-        //.setDraggable()
+        //.setWindowDraggableRule()
         // 设置显示时长
         .setDuration(1000)
         // 设置动画样式
@@ -102,7 +102,7 @@ EasyWindow.with(this)
 EasyWindow.with(activity).apply {
     setContentView(R.layout.toast_hint)
     // 设置成可拖拽的
-    //setDraggable()
+    //setWindowDraggableRule()
     // 设置显示时长
     setDuration(1000)
     // 设置动画样式
@@ -126,7 +126,7 @@ EasyWindow.with(activity).apply {
 EasyWindow.with(activity)
         .setContentView(R.layout.toast_hint)
         // 设置成可拖拽的
-        //.setDraggable()
+        //.setWindowDraggableRule()
         // 设置显示时长
         .setDuration(1000)
         // 设置动画样式

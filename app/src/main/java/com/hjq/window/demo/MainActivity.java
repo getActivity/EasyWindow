@@ -35,10 +35,10 @@ import com.hjq.window.OnViewLongClickListener;
 import com.hjq.window.OnWindowLifecycle;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
-import com.hjq.window.draggable.BaseDraggable.OnWindowDraggingListener;
-import com.hjq.window.draggable.MovingDraggable;
-import com.hjq.window.draggable.SpringBackDraggable;
-import com.hjq.window.draggable.SpringBackDraggable.SpringBackAnimCallback;
+import com.hjq.window.draggable.AbstractWindowDraggableRule.OnWindowDraggingListener;
+import com.hjq.window.draggable.MovingWindowDraggableRule;
+import com.hjq.window.draggable.SpringBackWindowDraggableRule;
+import com.hjq.window.draggable.SpringBackWindowDraggableRule.SpringBackAnimCallback;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -251,7 +251,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 })
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
-                .setDraggable(new MovingDraggable())
+                .setWindowDraggableRule(new MovingWindowDraggableRule())
                 .setOnClickListener(R.id.iv_window_web_close, new OnViewClickListener<ImageView>() {
 
                     @Override
@@ -302,7 +302,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 })
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
-                .setDraggable(new MovingDraggable())
+                .setWindowDraggableRule(new MovingWindowDraggableRule())
                 .setOnClickListener(R.id.iv_window_list_close, new OnViewClickListener<ImageView>() {
 
                     @Override
@@ -327,7 +327,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setText(android.R.id.message, "点我消失")
                     // 设置成可拖拽的
-                    .setDraggable(new MovingDraggable())
+                    .setWindowDraggableRule(new MovingWindowDraggableRule())
                     .setOnClickListener(android.R.id.message, new OnViewClickListener<TextView>() {
 
                         @Override
@@ -386,9 +386,10 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
      * @noinspection unchecked
      */
     public static void showGlobalWindow(Application application) {
-        SpringBackDraggable springBackDraggable = new SpringBackDraggable(SpringBackDraggable.ORIENTATION_HORIZONTAL);
-        springBackDraggable.setAllowMoveToScreenNotch(false);
-        springBackDraggable.setSpringBackAnimCallback(new SpringBackAnimCallback() {
+        SpringBackWindowDraggableRule springBackWindowDraggableRule = new SpringBackWindowDraggableRule(
+            SpringBackWindowDraggableRule.ORIENTATION_HORIZONTAL);
+        springBackWindowDraggableRule.setAllowMoveToScreenNotch(false);
+        springBackWindowDraggableRule.setSpringBackAnimCallback(new SpringBackAnimCallback() {
 
             @Override
             public void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
@@ -400,21 +401,21 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 Log.i(TAG, "onSpringBackAnimationEnd");
             }
         });
-        springBackDraggable.setWindowDraggingListener(new OnWindowDraggingListener() {
+        springBackWindowDraggableRule.setWindowDraggingListener(new OnWindowDraggingListener() {
 
             @Override
             public void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {
-                Log.i(TAG, "onStartDragging");
+                Log.i(TAG, "onWindowDraggingStart");
             }
 
             @Override
             public void onWindowDraggingNow(@NonNull EasyWindow<?> easyWindow) {
-                Log.i(TAG, "onExecuteDragging");
+                Log.i(TAG, "onWindowDraggingNow");
             }
 
             @Override
             public void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {
-                Log.i(TAG, "onStopDragging");
+                Log.i(TAG, "onWindowDraggingStop");
             }
         });
         // 传入 Application 表示这个是一个全局的 Toast
@@ -423,7 +424,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setGravity(Gravity.END | Gravity.BOTTOM)
                 .setYOffset(200)
                 // 设置指定的拖拽规则
-                .setDraggable(springBackDraggable)
+                .setWindowDraggableRule(springBackWindowDraggableRule)
                 .setOnClickListener(android.R.id.icon, new OnViewClickListener<ImageView>() {
 
                     @Override

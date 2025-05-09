@@ -42,7 +42,7 @@ import com.hjq.window.EasyWindow;
  *    time   : 2019/01/04
  *    desc   : 拖拽抽象类
  */
-public abstract class BaseDraggable implements OnTouchListener {
+public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
     @Nullable
     private EasyWindow<?> mEasyWindow;

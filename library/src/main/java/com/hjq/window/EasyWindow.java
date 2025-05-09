@@ -40,8 +40,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.hjq.window.draggable.BaseDraggable;
-import com.hjq.window.draggable.MovingDraggable;
+import com.hjq.window.draggable.AbstractWindowDraggableRule;
+import com.hjq.window.draggable.MovingWindowDraggableRule;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -407,7 +407,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private ActivityWindowLifecycle mActivityWindowLifecycle;
     /** 自定义拖动处理 */
     @Nullable
-    private BaseDraggable mDraggable;
+    private AbstractWindowDraggableRule mWindowDraggableRule;
     /** 吐司显示和取消监听 */
     @Nullable
     private OnWindowLifecycle mOnWindowLifecycle;
@@ -558,8 +558,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.gravity = gravity;
         postUpdate();
         post(() -> {
-            if (mDraggable != null) {
-                mDraggable.refreshLocationCoordinate();
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.refreshLocationCoordinate();
             }
         });
         return (X) this;
@@ -572,8 +572,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.x = px;
         postUpdate();
         post(() -> {
-            if (mDraggable != null) {
-                mDraggable.refreshLocationCoordinate();
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.refreshLocationCoordinate();
             }
         });
         return (X) this;
@@ -586,8 +586,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.y = px;
         postUpdate();
         post(() -> {
-            if (mDraggable != null) {
-                mDraggable.refreshLocationCoordinate();
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.refreshLocationCoordinate();
             }
         });
         return (X) this;
@@ -896,18 +896,18 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置随意拖动
      */
-    public X setDraggable() {
-        return setDraggable(new MovingDraggable());
+    public X setWindowDraggableRule() {
+        return setWindowDraggableRule(new MovingWindowDraggableRule());
     }
 
     /**
      * 设置拖动规则
      *
-     * @param draggable         拖拽规则对象
+     * @param draggableRule         拖拽规则对象
      */
-    public X setDraggable(@Nullable BaseDraggable draggable) {
-        mDraggable = draggable;
-        if (draggable != null) {
+    public X setWindowDraggableRule(@Nullable AbstractWindowDraggableRule draggableRule) {
+        mWindowDraggableRule = draggableRule;
+        if (draggableRule != null) {
             // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
             removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
@@ -915,7 +915,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
             if (isShowing()) {
                 update();
-                draggable.start(this);
+                draggableRule.start(this);
             }
         }
 
@@ -1165,8 +1165,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
                 postDelayed(this, mDuration);
             }
             // 如果设置了拖拽规则
-            if (mDraggable != null) {
-                mDraggable.start(this);
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.start(this);
             }
 
             // 回调监听
@@ -1263,9 +1263,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mActivityWindowLifecycle.unregister();
             mActivityWindowLifecycle = null;
         }
-        if (mDraggable != null) {
-            mDraggable.recycle();
-            mDraggable = null;
+        if (mWindowDraggableRule != null) {
+            mWindowDraggableRule.recycle();
+            mWindowDraggableRule = null;
         }
         mContext = null;
         mDecorView = null;
@@ -1332,8 +1332,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * 获取当前的拖拽规则对象（可能为空）
      */
     @Nullable
-    public BaseDraggable getDraggable() {
-        return mDraggable;
+    public AbstractWindowDraggableRule getWindowDraggableRule() {
+        return mWindowDraggableRule;
     }
 
     /**
@@ -1708,9 +1708,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         if (!isShowing()) {
             return;
         }
-        if (mDraggable == null) {
+        if (mWindowDraggableRule == null) {
             return;
         }
-        mDraggable.onScreenOrientationChange();
+        mWindowDraggableRule.onScreenOrientationChange();
     }
 }

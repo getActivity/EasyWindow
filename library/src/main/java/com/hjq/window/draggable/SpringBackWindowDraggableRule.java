@@ -18,7 +18,7 @@ import com.hjq.window.EasyWindow;
  *    time   : 2019/01/04
  *    desc   : 拖拽后回弹处理实现类
  */
-public class SpringBackDraggable extends BaseDraggable {
+public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
 
     /** 水平方向回弹 */
     public static final int ORIENTATION_HORIZONTAL = LinearLayout.HORIZONTAL;
@@ -39,11 +39,11 @@ public class SpringBackDraggable extends BaseDraggable {
     @Nullable
     private SpringBackAnimCallback mSpringBackAnimCallback;
 
-    public SpringBackDraggable() {
+    public SpringBackWindowDraggableRule() {
         this(ORIENTATION_HORIZONTAL);
     }
 
-    public SpringBackDraggable(int springBackOrientation) {
+    public SpringBackWindowDraggableRule(int springBackOrientation) {
         mSpringBackOrientation = springBackOrientation;
         switch (mSpringBackOrientation) {
             case ORIENTATION_HORIZONTAL:

@@ -12,7 +12,7 @@ import com.hjq.window.EasyWindow;
  *    time   : 2019/01/04
  *    desc   : 移动拖拽处理实现类
  */
-public class MovingDraggable extends BaseDraggable {
+public class MovingWindowDraggableRule extends AbstractWindowDraggableRule {
 
     /** 手指按下的坐标 */
     private float mViewDownX;
