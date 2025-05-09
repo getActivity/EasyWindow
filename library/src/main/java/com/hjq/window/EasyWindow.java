@@ -486,7 +486,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
     private EasyWindow(@NonNull Context context) {
         mContext = context;
-        mDecorView = new WindowLayout(context);
+        mDecorView = new WindowRootLayout(context);
         mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
         // 配置一些默认的参数
         mWindowParams = new WindowManager.LayoutParams();

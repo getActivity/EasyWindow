@@ -12,21 +12,21 @@ import android.widget.FrameLayout;
  *    time   : 2021/01/04
  *    desc   : 悬浮窗根布局（处理触摸事件冲突）
  */
-public final class WindowLayout extends FrameLayout {
+public final class WindowRootLayout extends FrameLayout {
 
     /** 触摸事件监听 */
     @Nullable
     private OnTouchListener mOnTouchListener;
 
-    public WindowLayout(Context context) {
+    public WindowRootLayout(Context context) {
         super(context);
     }
 
-    public WindowLayout(Context context, AttributeSet attrs) {
+    public WindowRootLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public WindowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WindowRootLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
