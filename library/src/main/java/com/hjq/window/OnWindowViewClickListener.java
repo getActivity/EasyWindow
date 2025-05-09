@@ -7,12 +7,12 @@ import android.view.View;
  *    author : Android 轮子哥
  *    github : https://github.com/getActivity/EasyWindow
  *    time   : 2025/05/03
- *    desc   : View 的长按事件监听
+ *    desc   : 窗口 View 的点击事件监听
  */
-public interface OnViewLongClickListener<V extends View> {
+public interface OnWindowViewClickListener<V extends View> {
 
     /**
-     * 长按回调
+     * 点击回调
      */
-    boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull V view);
+    void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull V view);
 }

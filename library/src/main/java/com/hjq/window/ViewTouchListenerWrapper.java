@@ -12,14 +12,14 @@ import android.view.View;
  *    desc   : {@link View.OnTouchListener} 包装类
  */
 @SuppressWarnings("rawtypes")
-final class ViewTouchWrapper implements View.OnTouchListener {
+final class ViewTouchListenerWrapper implements View.OnTouchListener {
 
     @NonNull
     private final EasyWindow<?> mEasyWindow;
     @NonNull
-    private final OnViewTouchListener mListener;
+    private final OnWindowVIewTouchListener mListener;
 
-    ViewTouchWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewTouchListener listener) {
+    ViewTouchListenerWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnWindowVIewTouchListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }

@@ -10,14 +10,14 @@ import android.view.View;
  *    desc   : {@link View.OnLongClickListener} 包装类
  */
 @SuppressWarnings("rawtypes")
-final class ViewLongClickWrapper implements View.OnLongClickListener {
+final class ViewLongClickListenerWrapper implements View.OnLongClickListener {
 
     @NonNull
     private final EasyWindow<?> mEasyWindow;
     @NonNull
-    private final OnViewLongClickListener mListener;
+    private final OnWindowViewLongClickListener mListener;
 
-    ViewLongClickWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewLongClickListener listener) {
+    ViewLongClickListenerWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnWindowViewLongClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }

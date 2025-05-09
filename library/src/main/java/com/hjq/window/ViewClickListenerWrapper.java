@@ -10,14 +10,14 @@ import android.view.View;
  *    desc   : {@link View.OnClickListener} 包装类
  */
 @SuppressWarnings("rawtypes")
-final class ViewClickWrapper implements View.OnClickListener {
+final class ViewClickListenerWrapper implements View.OnClickListener {
 
     @NonNull
     private final EasyWindow<?> mEasyWindow;
     @NonNull
-    private final OnViewClickListener mListener;
+    private final OnWindowViewClickListener mListener;
 
-    ViewClickWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnViewClickListener listener) {
+    ViewClickListenerWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnWindowViewClickListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }

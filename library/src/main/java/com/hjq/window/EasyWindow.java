@@ -1611,15 +1611,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置点击事件
      */
-    public X setOnClickListener(@Nullable OnViewClickListener<? extends View> listener) {
+    public X setOnClickListener(@Nullable OnWindowViewClickListener<? extends View> listener) {
         return setOnClickListener(mDecorView, listener);
     }
 
-    public X setOnClickListener(@IdRes int id, @Nullable OnViewClickListener<? extends View> listener) {
+    public X setOnClickListener(@IdRes int id, @Nullable OnWindowViewClickListener<? extends View> listener) {
         return setOnClickListener(findViewById(id), listener);
     }
 
-    private X setOnClickListener(@Nullable View view, @Nullable OnViewClickListener<? extends View> listener) {
+    private X setOnClickListener(@Nullable View view, @Nullable OnWindowViewClickListener<? extends View> listener) {
         if (view == null) {
             return (X) this;
         }
@@ -1632,22 +1632,22 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         view.setClickable(true);
-        view.setOnClickListener(new ViewClickWrapper(this, listener));
+        view.setOnClickListener(new ViewClickListenerWrapper(this, listener));
         return (X) this;
     }
 
     /**
      * 设置长按事件
      */
-    public X setOnLongClickListener(@Nullable OnViewLongClickListener<? extends View> listener) {
+    public X setOnLongClickListener(@Nullable OnWindowViewLongClickListener<? extends View> listener) {
         return setOnLongClickListener(mDecorView, listener);
     }
 
-    public X setOnLongClickListener(@IdRes int id, @Nullable OnViewLongClickListener<? extends View> listener) {
+    public X setOnLongClickListener(@IdRes int id, @Nullable OnWindowViewLongClickListener<? extends View> listener) {
         return setOnLongClickListener(findViewById(id), listener);
     }
 
-    private X setOnLongClickListener(@Nullable View view, @Nullable OnViewLongClickListener<? extends View> listener) {
+    private X setOnLongClickListener(@Nullable View view, @Nullable OnWindowViewLongClickListener<? extends View> listener) {
         if (view == null) {
             return (X) this;
         }
@@ -1660,22 +1660,22 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         view.setClickable(true);
-        view.setOnLongClickListener(new ViewLongClickWrapper(this, listener));
+        view.setOnLongClickListener(new ViewLongClickListenerWrapper(this, listener));
         return (X) this;
     }
 
     /**
      * 设置触摸事件
      */
-    public X setOnTouchListener(@Nullable OnViewTouchListener<? extends View> listener) {
+    public X setOnTouchListener(@Nullable OnWindowVIewTouchListener<? extends View> listener) {
         return setOnTouchListener(mDecorView, listener);
     }
 
-    public X setOnTouchListener(@IdRes int id, @Nullable OnViewTouchListener<? extends View> listener) {
+    public X setOnTouchListener(@IdRes int id, @Nullable OnWindowVIewTouchListener<? extends View> listener) {
         return setOnTouchListener(findViewById(id), listener);
     }
 
-    private X setOnTouchListener(@Nullable View view, @Nullable OnViewTouchListener<? extends View> listener) {
+    private X setOnTouchListener(@Nullable View view, @Nullable OnWindowVIewTouchListener<? extends View> listener) {
         if (view == null) {
             return (X) this;
         }
@@ -1688,7 +1688,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         // 当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         view.setEnabled(true);
-        view.setOnTouchListener(new ViewTouchWrapper(this, listener));
+        view.setOnTouchListener(new ViewTouchListenerWrapper(this, listener));
         return (X) this;
     }
 
