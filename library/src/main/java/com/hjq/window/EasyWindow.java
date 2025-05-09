@@ -404,7 +404,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     @Nullable
     private String mTag;
     /** 窗口生命周期管理 */
-    private ActivityWindowLifecycle mActivityWindowLifecycle;
+    private WindowLifecycleControl mWindowLifecycleControl;
     /** 自定义拖动处理 */
     @Nullable
     private AbstractWindowDraggableRule mWindowDraggableRule;
@@ -450,9 +450,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         }
 
         // 跟随 Activity 的生命周期
-        mActivityWindowLifecycle = new ActivityWindowLifecycle(this, activity);
+        mWindowLifecycleControl = new WindowLifecycleControl(this, activity);
         // 注册 Activity 生命周期监听
-        mActivityWindowLifecycle.register();
+        mWindowLifecycleControl.register();
     }
 
     /**
@@ -1259,9 +1259,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mOnWindowLifecycle.onWindowRecycle(this);
             mOnWindowLifecycle = null;
         }
-        if (mActivityWindowLifecycle != null) {
-            mActivityWindowLifecycle.unregister();
-            mActivityWindowLifecycle = null;
+        if (mWindowLifecycleControl != null) {
+            mWindowLifecycleControl.unregister();
+            mWindowLifecycleControl = null;
         }
         if (mWindowDraggableRule != null) {
             mWindowDraggableRule.recycle();

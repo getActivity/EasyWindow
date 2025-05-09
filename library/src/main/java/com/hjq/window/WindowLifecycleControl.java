@@ -13,14 +13,14 @@ import android.support.annotation.Nullable;
  *    time   : 2019/01/04
  *    desc   : 悬浮窗生命周期管理，防止内存泄露
  */
-final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
+final class WindowLifecycleControl implements Application.ActivityLifecycleCallbacks {
 
     @Nullable
     private Activity mActivity;
     @Nullable
     private EasyWindow<?> mEasyWindow;
 
-    ActivityWindowLifecycle(@NonNull EasyWindow<?> easyWindow, @NonNull Activity activity) {
+    WindowLifecycleControl(@NonNull EasyWindow<?> easyWindow, @NonNull Activity activity) {
         mActivity = activity;
         mEasyWindow = easyWindow;
     }

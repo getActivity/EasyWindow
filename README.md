@@ -155,7 +155,7 @@ EasyWindow.with(activity)
 * 我们可以通过 Application 来监听所有 Activity 的生命周期方法，然后在每个 Activity.onCreate 时创建悬浮窗
 
 ```java
-public final class ActivityWindowLifecycle implements Application.ActivityLifecycleCallbacks {
+public final class WindowLifecycleControl implements Application.ActivityLifecycleCallbacks {
 
     static void with(Application application) {
         application.registerActivityLifecycleCallbacks(new FloatingLifecycle());
