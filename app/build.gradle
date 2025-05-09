@@ -59,10 +59,10 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
 
     // 权限请求框架：https://github.com/getActivity/XXPermissions
-    implementation 'com.github.getActivity:XXPermissions:20.0'
+    implementation 'com.github.getActivity:XXPermissions:21.3'
 
     // 标题栏框架：https://github.com/getActivity/TitleBar
-    implementation 'com.github.getActivity:TitleBar:10.5'
+    implementation 'com.github.getActivity:TitleBar:10.6'
 
     // 吐司框架：https://github.com/getActivity/Toaster
     implementation 'com.github.getActivity:Toaster:12.8'
