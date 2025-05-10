@@ -400,7 +400,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /** 当前是否已经显示 */
     private boolean mShowing;
     /** 悬浮窗显示时长 */
-    private int mShowDuration;
+    private int mWindowDuration;
     /** 悬浮窗标记 */
     @Nullable
     private String mTag;
@@ -943,10 +943,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * 限定悬浮窗显示时长
      */
     public X setWindowDuration(@IntRange(from = 0) int delayMillis) {
-        mShowDuration = delayMillis;
-        if (isShowing() && mShowDuration != 0) {
+        mWindowDuration = delayMillis;
+        if (isShowing() && mWindowDuration != 0) {
             removeRunnable(this);
-            postDelayed(this, mShowDuration);
+            postDelayed(this, mWindowDuration);
         }
         return (X) this;
     }
@@ -1160,9 +1160,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             // 当前已经显示
             mShowing = true;
             // 如果当前限定了显示时长
-            if (mShowDuration != 0) {
+            if (mWindowDuration != 0) {
                 removeRunnable(this);
-                postDelayed(this, mShowDuration);
+                postDelayed(this, mWindowDuration);
             }
             // 如果设置了拖拽规则
             if (mWindowDraggableRule != null) {
