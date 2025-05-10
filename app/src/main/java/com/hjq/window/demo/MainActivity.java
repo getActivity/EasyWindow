@@ -30,9 +30,9 @@ import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
 import com.hjq.window.OnWindowLayoutInflateListener;
+import com.hjq.window.OnWindowLifecycleCallback;
 import com.hjq.window.OnWindowViewClickListener;
 import com.hjq.window.OnWindowViewLongClickListener;
-import com.hjq.window.OnWindowLifecycleCallback;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
 import com.hjq.window.draggable.AbstractWindowDraggableRule.OnWindowDraggingListener;
@@ -95,21 +95,21 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         if (viewId == R.id.btn_main_anim) {
 
             EasyWindow.with(this)
-                    .setDuration(1000)
+                    .setWindowDuration(1000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.TopAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setText(android.R.id.message, "这个动画是不是很骚")
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                    .setTextByTextView(android.R.id.message, "这个动画是不是很骚")
                     .show();
 
         } else if (viewId == R.id.btn_main_duration) {
 
             EasyWindow.with(this)
-                    .setDuration(1000)
+                    .setWindowDuration(1000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_error)
-                    .setText(android.R.id.message, "一秒后自动消失")
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
+                    .setTextByTextView(android.R.id.message, "一秒后自动消失")
                     .show();
 
         } else if (viewId == R.id.btn_main_overlay) {
@@ -117,17 +117,17 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setText(android.R.id.message, "点我消失")
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                    .setTextByTextView(android.R.id.message, "点我消失")
                     // 设置外层是否能被触摸
                     .setOutsideTouchable(false)
                     // 设置窗口背景阴影强度
                     .setBackgroundDimAmount(0.5f)
-                    .setOnClickListener(android.R.id.message, new OnWindowViewClickListener<TextView>() {
+                    .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            easyWindow.cancel();
+                            cancelAndRecycleEasyWindow(easyWindow);
                         }
                     })
                     .show();
@@ -135,11 +135,11 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_lifecycle) {
 
             EasyWindow.with(this)
-                    .setDuration(3000)
+                    .setWindowDuration(3000)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
-                    .setText(android.R.id.message, "请注意下方 Snackbar")
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
+                    .setTextByTextView(android.R.id.message, "请注意下方 Snackbar")
                     .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
 
                         @Override
@@ -159,9 +159,9 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setText(android.R.id.message, "点我点我点我")
-                    .setOnClickListener(android.R.id.message, new OnWindowViewClickListener<TextView>() {
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                    .setTextByTextView(android.R.id.message, "点我点我点我")
+                    .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
@@ -169,7 +169,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                             easyWindow.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    easyWindow.cancel();
+                                    cancelAndRecycleEasyWindow(easyWindow);
                                 }
                             }, 1000);
                         }
@@ -181,14 +181,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.RightAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setDuration(2000)
-                    .setText(android.R.id.message, "位置算得准不准")
-                    .setOnClickListener(android.R.id.message, new OnWindowViewClickListener<TextView>() {
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                    .setWindowDuration(2000)
+                    .setTextByTextView(android.R.id.message, "位置算得准不准")
+                    .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            easyWindow.cancel();
+                            cancelAndRecycleEasyWindow(easyWindow);
                         }
                     })
                     .showAsDropDown(v, Gravity.BOTTOM);
@@ -199,11 +199,11 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_input)
                     .setAnimStyle(R.style.BottomAnimStyle)
                     .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
-                    .setOnClickListener(R.id.tv_window_close, new OnWindowViewClickListener<TextView>() {
+                    .setOnClickListenerByView(R.id.tv_window_close, new OnWindowViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            easyWindow.cancel();
+                            cancelAndRecycleEasyWindow(easyWindow);
                         }
                     })
                     .show();
@@ -252,14 +252,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setWindowDraggableRule(new MovingWindowDraggableRule())
-                .setOnClickListener(R.id.iv_window_web_close, new OnWindowViewClickListener<ImageView>() {
+                .setOnClickListenerByView(R.id.iv_window_web_close, new OnWindowViewClickListener<ImageView>() {
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        easyWindow.cancel();
+                        cancelAndRecycleEasyWindow(easyWindow);
                     }
                 })
-                .setOnLongClickListener(R.id.iv_window_web_close, new OnWindowViewLongClickListener<View>() {
+                .setOnLongClickListenerByView(R.id.iv_window_web_close, new OnWindowViewLongClickListener<View>() {
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
@@ -303,14 +303,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setAnimStyle(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setWindowDraggableRule(new MovingWindowDraggableRule())
-                .setOnClickListener(R.id.iv_window_list_close, new OnWindowViewClickListener<ImageView>() {
+                .setOnClickListenerByView(R.id.iv_window_list_close, new OnWindowViewClickListener<ImageView>() {
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        easyWindow.cancel();
+                        cancelAndRecycleEasyWindow(easyWindow);
                     }
                 })
-                .setOnLongClickListener(R.id.iv_window_list_close, new OnWindowViewLongClickListener<View>() {
+                .setOnLongClickListenerByView(R.id.iv_window_list_close, new OnWindowViewLongClickListener<View>() {
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
@@ -324,15 +324,15 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
                     .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setText(android.R.id.message, "点我消失")
+                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                    .setTextByTextView(android.R.id.message, "点我消失")
                     // 设置成可拖拽的
                     .setWindowDraggableRule(new MovingWindowDraggableRule())
-                    .setOnClickListener(android.R.id.message, new OnWindowViewClickListener<TextView>() {
+                    .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
                         @Override
                         public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            easyWindow.cancel();
+                            cancelAndRecycleEasyWindow(easyWindow);
                         }
                     })
                     .show();
@@ -352,10 +352,10 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
                             EasyWindow.with(MainActivity.this)
-                                    .setDuration(1000)
+                                    .setWindowDuration(1000)
                                     .setContentView(R.layout.window_hint)
-                                    .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_error)
-                                    .setText(android.R.id.message, "请先授予悬浮窗权限")
+                                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
+                                    .setTextByTextView(android.R.id.message, "请先授予悬浮窗权限")
                                     .show();
                         }
                     });
@@ -370,11 +370,11 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_utils) {
 
             EasyWindow.with(this)
-                    .setDuration(1000)
+                    .setWindowDuration(1000)
                     // 将 Toaster 中的 View 转移给 EasyWindow 来显示
                     .setContentView(Toaster.getStyle().createView(this))
                     .setAnimStyle(R.style.ScaleAnimStyle)
-                    .setText(android.R.id.message, "就问你溜不溜")
+                    .setTextByTextView(android.R.id.message, "就问你溜不溜")
                     .setGravity(Gravity.BOTTOM)
                     .setYOffset(100)
                     .show();
@@ -425,7 +425,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                 .setYOffset(200)
                 // 设置指定的拖拽规则
                 .setWindowDraggableRule(springBackWindowDraggableRule)
-                .setOnClickListener(android.R.id.icon, new OnWindowViewClickListener<ImageView>() {
+                .setOnClickListenerByView(android.R.id.icon, new OnWindowViewClickListener<ImageView>() {
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
@@ -438,7 +438,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         // https://developer.android.google.cn/about/versions/10/privacy/changes#background-activity-starts
                     }
                 })
-                .setOnLongClickListener(android.R.id.icon, new OnWindowViewLongClickListener<ImageView>() {
+                .setOnLongClickListenerByView(android.R.id.icon, new OnWindowViewLongClickListener<ImageView>() {
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         Toaster.show("我被长按了");
@@ -446,5 +446,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     }
                 })
                 .show();
+    }
+
+    private void cancelAndRecycleEasyWindow(@NonNull EasyWindow<?> easyWindow) {
+        // 有两种方式取消弹窗：
+        // 1. easyWindow.cancel：顾名思义，取消显示
+        // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
+        // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
+        // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
+        easyWindow.recycle();
     }
 }

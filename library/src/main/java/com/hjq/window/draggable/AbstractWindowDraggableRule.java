@@ -47,7 +47,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     @Nullable
     private EasyWindow<?> mEasyWindow;
     @Nullable
-    private ViewGroup mDecorView;
+    private ViewGroup mWindowRootLayout;
 
     /** 是否允许移动到挖孔屏区域 */
     private boolean mAllowMoveToScreenNotch = true;
@@ -84,12 +84,12 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     @SuppressLint("ClickableViewAccessibility")
     public void start(@NonNull EasyWindow<?> easyWindow) {
         mEasyWindow = easyWindow;
-        mDecorView = easyWindow.getDecorView();
-        if (mDecorView == null) {
+        mWindowRootLayout = easyWindow.getWindowRootLayout();
+        if (mWindowRootLayout == null) {
             return;
         }
-        mDecorView.setOnTouchListener(this);
-        mDecorView.post(() -> {
+        mWindowRootLayout.setOnTouchListener(this);
+        mWindowRootLayout.post(() -> {
             refreshWindowInfo();
             refreshPhysicalScreenSize();
             refreshLocationCoordinate();
@@ -101,17 +101,18 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      */
     public void recycle() {
         mEasyWindow = null;
-        if (mDecorView != null) {
-            mDecorView.setOnTouchListener(null);
-            mDecorView = null;
+        if (mWindowRootLayout != null) {
+            mWindowRootLayout.setOnTouchListener(null);
+            mWindowRootLayout = null;
         }
     }
 
     @Override
-    public final boolean onTouch(View v, MotionEvent event) {
-        if (mEasyWindow == null || mDecorView == null) {
+    public final boolean onTouch(View view, MotionEvent event) {
+        if (mEasyWindow == null || mWindowRootLayout == null) {
             return false;
         }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 在按下的时候先更新一下窗口信息和坐标信息，否则点击可能会出现坐标偏移的问题
@@ -124,9 +125,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 refreshLocationCoordinate();
 
                 mConsumeTouchView = null;
-                View consumeTouchEventView = findNeedConsumeTouchView(event, mDecorView);
+                View consumeTouchEventView = findNeedConsumeTouchView(mWindowRootLayout, event);
                 if (consumeTouchEventView != null) {
-                    offsetMotionEventLocation(event, v, consumeTouchEventView);
+                    offsetMotionEventLocation(mWindowRootLayout, consumeTouchEventView, event);
                     if (consumeTouchEventView.dispatchTouchEvent(event)) {
                         mConsumeTouchView = consumeTouchEventView;
                         return true;
@@ -137,7 +138,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             case MotionEvent.ACTION_CANCEL:
                 if (mConsumeTouchView != null) {
                     try {
-                        offsetMotionEventLocation(event, v, mConsumeTouchView);
+                        offsetMotionEventLocation(mWindowRootLayout, mConsumeTouchView, event);
                         return mConsumeTouchView.dispatchTouchEvent(event);
                     } finally {
                         // 释放/置空对象
@@ -146,13 +147,13 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 }
             default:
                 if (mConsumeTouchView != null) {
-                    offsetMotionEventLocation(event, v, mConsumeTouchView);
+                    offsetMotionEventLocation(mWindowRootLayout, mConsumeTouchView, event);
                     return mConsumeTouchView.dispatchTouchEvent(event);
                 }
                 break;
         }
 
-        return onDragWindow(mEasyWindow, mDecorView, event);
+        return onDragWindow(mEasyWindow, mWindowRootLayout, event);
     }
 
     /**
@@ -162,7 +163,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * @param parentView            父 View
      * @param childView             子 View（同时也是被触摸的 View）
      */
-    private void offsetMotionEventLocation(MotionEvent event, View parentView, View childView) {
+    private void offsetMotionEventLocation(View parentView, View childView, MotionEvent event) {
         final int offsetX = parentView.getScrollX() - childView.getLeft();
         final int offsetY = parentView.getScrollY() - childView.getTop();
         event.offsetLocation(offsetX, offsetY);
@@ -172,19 +173,20 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 窗口拖拽回调方法
      *
      * @param easyWindow        当前窗口对象
-     * @param decorView         当前窗口视图
+     * @param windowRootLayout  当前窗口视图
      * @param event             当前触摸事件
      * @return                  根据返回值决定是否拦截该事件
      */
-    public abstract boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull View decorView, @NonNull MotionEvent event);
+    public abstract boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull ViewGroup windowRootLayout, @NonNull MotionEvent event);
 
     @Nullable
     public EasyWindow<?> getEasyWindow() {
         return mEasyWindow;
     }
 
-    public View getDecorView() {
-        return mDecorView;
+    @Nullable
+    public ViewGroup getWindowRootLayout() {
+        return mWindowRootLayout;
     }
 
     public void setAllowMoveToScreenNotch(boolean allowMoveToScreenNotch) {
@@ -210,23 +212,23 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 获取当前 View 的宽度
+     * 获取当前窗口内容宽度
      */
-    public int getViewWidth() {
+    public int getWindowContentWidth() {
         if (mEasyWindow == null) {
             return 0;
         }
-        return mEasyWindow.getViewWidth();
+        return mEasyWindow.getWindowContentWidth();
     }
 
     /**
-     * 获取当前 View 的高度
+     * 获取当前窗口内容高度
      */
-    public int getViewHeight() {
+    public int getWindowContentHeight() {
         if (mEasyWindow == null) {
             return 0;
         }
-        return mEasyWindow.getViewHeight();
+        return mEasyWindow.getWindowContentHeight();
     }
 
     /**
@@ -277,7 +279,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         }
 
         if (decorView == null) {
-            decorView = getDecorView();
+            decorView = getWindowRootLayout();
         }
 
         if (decorView == null) {
@@ -343,13 +345,13 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 刷新当前 View 在屏幕的坐标信息
      */
     public void refreshLocationCoordinate() {
-        View decorView = getDecorView();
-        if (decorView == null) {
+        ViewGroup windowRootLayout = getWindowRootLayout();
+        if (windowRootLayout == null) {
             return;
         }
 
         int[] location = new int[2];
-        decorView.getLocationOnScreen(location);
+        windowRootLayout.getLocationOnScreen(location);
         mCurrentViewOnScreenX = location[0];
         mCurrentViewOnScreenY = location[1];
     }
@@ -359,6 +361,10 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      */
     public void onScreenOrientationChange() {
         // Log.i(getClass().getSimpleName(), "屏幕方向发生了改变");
+        ViewGroup windowRootLayout = getWindowRootLayout();
+        if (windowRootLayout == null) {
+            return;
+        }
 
         long refreshDelayMillis = 100;
 
@@ -374,8 +380,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        int viewWidth = getDecorView().getWidth();
-        int viewHeight = getDecorView().getHeight();
+        int viewWidth = windowRootLayout.getWidth();
+        int viewHeight = windowRootLayout.getHeight();
 
         // Log.i(getClass().getSimpleName(), "当前 ViewWidth = " + viewWidth + "，ViewHeight = " + viewHeight);
 
@@ -407,16 +413,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             percentY = centerY / mCurrentWindowHeight;
         }
 
-        View decorView = getDecorView();
-        if (decorView == null) {
-            return;
-        }
-
         // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
         // 修复在竖屏状态下，先锁屏，再旋转到横屏，后进行解锁，出现的 View.getWindowVisibleDisplayFrame 计算有问题的 Bug
         // 这是因为屏幕在旋转的时候，视图正处于改变状态，此时通过 View 获取窗口可视区域是有问题，会获取到旧的可视区域
         // 解决方案是监听一下 View 布局变化监听，在收到回调的时候再去获取 View 获取窗口可视区域
-        decorView.addOnLayoutChangeListener(new OnLayoutChangeListener() {
+        windowRootLayout.addOnLayoutChangeListener(new OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                 view.removeOnLayoutChangeListener(this);
@@ -484,8 +485,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        int viewWidth = getViewWidth();
-        int viewHeight = getViewHeight();
+        int viewWidth = getWindowContentWidth();
+        int viewHeight = getWindowContentHeight();
 
         int windowWidth = getWindowWidth();
         int windowHeight = getWindowHeight();
@@ -653,7 +654,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 寻找需要消费触摸事件的 View（可能为空）
      */
     @Nullable
-    protected View findNeedConsumeTouchView(MotionEvent event, ViewGroup viewGroup) {
+    protected View findNeedConsumeTouchView(ViewGroup viewGroup, MotionEvent event) {
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
 
@@ -673,7 +674,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 if (isViewNeedConsumeTouchEvent(childView)) {
                     return childView;
                 } else if (childView instanceof ViewGroup) {
-                    return findNeedConsumeTouchView(event, (ViewGroup) childView);
+                    return findNeedConsumeTouchView((ViewGroup) childView, event);
                 }
             }
         }

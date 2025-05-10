@@ -16,31 +16,31 @@ public final class IOSToast {
 
     public static void showSucceed(Activity activity, CharSequence text) {
         EasyWindow.with(activity)
-                .setDuration(TIME)
+                .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Translucent)
-                .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                .setText(android.R.id.message, text)
+                .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
+                .setTextByTextView(android.R.id.message, text)
                 .show();
     }
 
     public static void showFail(Activity activity, CharSequence text) {
         EasyWindow.with(activity)
-                .setDuration(TIME)
+                .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Activity)
-                .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_error)
-                .setText(android.R.id.message, text)
+                .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
+                .setTextByTextView(android.R.id.message, text)
                 .show();
     }
 
     public static void showWarn(Activity activity, CharSequence text) {
         EasyWindow.with(activity)
-                .setDuration(TIME)
+                .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
                 .setAnimStyle(android.R.style.Animation_Dialog)
-                .setImageDrawable(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
-                .setText(android.R.id.message, text)
+                .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
+                .setTextByTextView(android.R.id.message, text)
                 .show();
     }
 }
