@@ -61,7 +61,6 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_duration).setOnClickListener(this);
         findViewById(R.id.btn_main_overlay).setOnClickListener(this);
         findViewById(R.id.btn_main_lifecycle).setOnClickListener(this);
-        findViewById(R.id.btn_main_click).setOnClickListener(this);
         findViewById(R.id.btn_main_view).setOnClickListener(this);
         findViewById(R.id.btn_main_input).setOnClickListener(this);
         findViewById(R.id.btn_main_web).setOnClickListener(this);
@@ -150,28 +149,6 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
-                        }
-                    })
-                    .show();
-
-        } else if (viewId == R.id.btn_main_click) {
-
-            EasyWindow.with(this)
-                    .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.IOSAnimStyle)
-                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setTextByTextView(android.R.id.message, "点我点我点我")
-                    .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
-
-                        @Override
-                        public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            view.setText("不错，很听话");
-                            easyWindow.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    cancelAndRecycleEasyWindow(easyWindow);
-                                }
-                            }, 1000);
                         }
                     })
                     .show();

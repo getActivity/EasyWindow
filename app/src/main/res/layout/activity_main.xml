@@ -63,14 +63,6 @@
                     android:text="监听悬浮窗生命周期" />
 
                 <Button
-                    android:id="@+id/btn_main_click"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="12dp"
-                    android:text="设置悬浮窗点击事件" />
-
-                <Button
                     android:id="@+id/btn_main_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
