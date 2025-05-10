@@ -99,6 +99,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.TopAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setTextByTextView(android.R.id.message, "这个动画是不是很骚")
+                    .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
+
+                        @Override
+                        public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
+                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            easyWindow.recycle();
+                        }
+                    })
                     .show();
 
         } else if (viewId == R.id.btn_main_duration) {
@@ -109,6 +117,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setAnimStyle(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
                     .setTextByTextView(android.R.id.message, "一秒后自动消失")
+                    .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
+
+                        @Override
+                        public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
+                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            easyWindow.recycle();
+                        }
+                    })
                     .show();
 
         } else if (viewId == R.id.btn_main_overlay) {
@@ -149,6 +165,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
+                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            easyWindow.recycle();
                         }
                     })
                     .show();
@@ -420,6 +438,14 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         Toaster.show("我被长按了");
                         return false;
+                    }
+                })
+                .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
+
+                    @Override
+                    public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
+                        // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                        easyWindow.recycle();
                     }
                 })
                 .show();
