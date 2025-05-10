@@ -126,20 +126,16 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
                 mConsumeTouchView = null;
                 View consumeTouchEventView = findNeedConsumeTouchView(mWindowRootLayout, event);
-                if (consumeTouchEventView != null) {
-                    offsetMotionEventLocation(mWindowRootLayout, consumeTouchEventView, event);
-                    if (consumeTouchEventView.dispatchTouchEvent(event)) {
-                        mConsumeTouchView = consumeTouchEventView;
-                        return true;
-                    }
+                if (consumeTouchEventView != null && dispatchTouchEventToChildView(mWindowRootLayout, consumeTouchEventView, event)) {
+                    mConsumeTouchView = consumeTouchEventView;
+                    return true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (mConsumeTouchView != null) {
                     try {
-                        offsetMotionEventLocation(mWindowRootLayout, mConsumeTouchView, event);
-                        return mConsumeTouchView.dispatchTouchEvent(event);
+                        return dispatchTouchEventToChildView(mWindowRootLayout, mConsumeTouchView, event);
                     } finally {
                         // 释放/置空对象
                         mConsumeTouchView = null;
@@ -147,13 +143,25 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 }
             default:
                 if (mConsumeTouchView != null) {
-                    offsetMotionEventLocation(mWindowRootLayout, mConsumeTouchView, event);
-                    return mConsumeTouchView.dispatchTouchEvent(event);
+                    return dispatchTouchEventToChildView(mWindowRootLayout, mConsumeTouchView, event);
                 }
                 break;
         }
 
         return onDragWindow(mEasyWindow, mWindowRootLayout, event);
+    }
+
+    /**
+     * 派发触摸事件给子 View
+     *
+     * @param event                 触摸事件
+     * @param parentView            父 View
+     * @param childView             子 View（同时也是被触摸的 View）
+     */
+    public boolean dispatchTouchEventToChildView(@NonNull View parentView, @NonNull View childView, @NonNull MotionEvent event) {
+        // 派发触摸事件之前，先将 MotionEvent 对象中的位置进行纠偏，否则会导致点击坐标对不上的情况
+        offsetMotionEventLocation(parentView, childView, event);
+        return childView.dispatchTouchEvent(event);
     }
 
     /**
@@ -163,7 +171,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * @param parentView            父 View
      * @param childView             子 View（同时也是被触摸的 View）
      */
-    private void offsetMotionEventLocation(View parentView, View childView, MotionEvent event) {
+    public void offsetMotionEventLocation(@NonNull View parentView, @NonNull View childView, @NonNull MotionEvent event) {
+        // 这部分代码参考自 ViewGroup.dispatchTransformedTouchEvent 方法实现
         final int offsetX = parentView.getScrollX() - childView.getLeft();
         final int offsetY = parentView.getScrollY() - childView.getTop();
         event.offsetLocation(offsetX, offsetY);
