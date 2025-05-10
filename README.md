@@ -74,21 +74,25 @@ EasyWindow.with(this)
         // 设置成可拖拽的
         //.setWindowDraggableRule()
         // 设置显示时长
-        .setDuration(1000)
+        .setWindowDuration(1000)
         // 设置动画样式
         //.setAnimStyle(android.R.style.Animation_Translucent)
         // 设置外层是否能被触摸
         //.setOutsideTouchable(false)
         // 设置窗口背景阴影强度
         //.setBackgroundDimAmount(0.5f)
-        .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
-        .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, new OnWindowViewClickListener<TextView>() {
+        .setImageDrawableByImageView(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+        .setTextByTextView(android.R.id.message, "点我消失")
+        .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
             @Override
             public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                // 点击这个 View 后消失
-                easyWindow.cancel();
+                // 有两种方式取消弹窗：
+                // 1. easyWindow.cancel：顾名思义，取消显示
+                // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
+                // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
+                // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
+                easyWindow.recycle();
                 // 跳转到某个Activity
                 // easyWindow.startActivity(intent);
             }
@@ -104,20 +108,24 @@ EasyWindow.with(activity).apply {
     // 设置成可拖拽的
     //setWindowDraggableRule()
     // 设置显示时长
-    setDuration(1000)
+    setWindowDuration(1000)
     // 设置动画样式
     //setAnimStyle(android.R.style.Animation_Translucent)
     // 设置外层是否能被触摸
     //setOutsideTouchable(false)
     // 设置窗口背景阴影强度
     //setBackgroundDimAmount(0.5f)
-    setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
-    setText(android.R.id.message, "点我消失")
-    setOnClickListener(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
-        // 点击这个 View 后消失
-        easyWindow.cancel()
+    setImageDrawableByImageView(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+    setTextByTextView(android.R.id.message, "点我消失")
+    setOnClickListenerByView(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
+        // 有两种方式取消弹窗：
+        // 1. easyWindow.cancel：顾名思义，取消显示
+        // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
+        // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
+        // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
+        easyWindow.recycle()
         // 跳转到某个Activity
-        // easyWindow.startActivity(intent);
+        // easyWindow.startActivity(intent)
     })
 }.show()
 ```
@@ -128,20 +136,24 @@ EasyWindow.with(activity)
         // 设置成可拖拽的
         //.setWindowDraggableRule()
         // 设置显示时长
-        .setDuration(1000)
+        .setWindowDuration(1000)
         // 设置动画样式
         //.setAnimStyle(android.R.style.Animation_Translucent)
         // 设置外层是否能被触摸
         //.setOutsideTouchable(false)
         // 设置窗口背景阴影强度
         //.setBackgroundDimAmount(0.5f)
-        .setImageDrawable(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
-        .setText(android.R.id.message, "点我消失")
-        .setOnClickListener(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
-            // 点击这个 View 后消失
-            easyWindow.cancel()
+        .setImageDrawableByImageView(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
+        .setTextByTextView(android.R.id.message, "点我消失")
+        .setOnClickListenerByView(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
+            // 有两种方式取消弹窗：
+            // 1. easyWindow.cancel：顾名思义，取消显示
+            // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
+            // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
+            // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
+            easyWindow.recycle()
             // 跳转到某个Activity
-            // easyWindow.startActivity(intent);
+            // easyWindow.startActivity(intent)
         })
         .show()
 ```
@@ -193,87 +205,197 @@ public final class WindowLifecycleControl implements Application.ActivityLifecyc
 * 对象方法
 
 ```java
+// 显示悬浮窗
+easyWindow.show();
+// 将悬浮窗显示在指定 View 的旁边
+easyWindow.showAsDropDown(@NonNull View anchorView, int showGravity, int xOff, int yOff);
+// 取消显示悬浮窗
+easyWindow.cancel();
+// 取消显示并回收悬浮窗
+easyWindow.recycle();
+// 更新悬浮窗（在更新了悬浮窗参数才需要调用）
+easyWindow.update();
+// 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
+easyWindow.postUpdate();
+// 当前悬浮窗是否正在显示
+easyWindow.isShowing();
+
+// 设置窗口生命周期回调监听
+easyWindow.setOnWindowLifecycleCallback(@Nullable OnWindowLifecycleCallback callback);
+// 设置悬浮窗拖拽规则（框架内部提供了两种拖拽规则，MovingWindowDraggableRule 和 SpringBackWindowDraggableRule ）
+easyWindow.setWindowDraggableRule(@Nullable AbstractWindowDraggableRule draggableRule);
+// 设置悬浮窗拖拽规则（可能为空）
+easyWindow.getWindowDraggableRule();
+
+// 设置悬浮窗内容布局
+easyWindow.setContentView(@LayoutRes int layoutId);
+easyWindow.setContentView(@LayoutRes int layoutId, @Nullable OnWindowLayoutInflateListener listener);
+easyWindow.setContentView(@NonNull View view);
+// 获取内容布局（可能为空）
+easyWindow.getContentView();
+// 限定悬浮窗显示时长
+easyWindow.setWindowDuration(@IntRange(from = 0) int delayMillis);
+// 设置悬浮窗 tag
+easyWindow.setTag(@Nullable String tag);
+// 获取悬浮窗 tag
+easyWindow.getTag();
 // 设置悬浮窗宽度
-setWidth(int width)
+easyWindow.setWidth(int width);
 // 设置悬浮窗高度
-setHeight(int height)
+easyWindow.setHeight(int height);
 
 // 设置悬浮窗显示的重心
-setGravity(int gravity)
+easyWindow.setGravity(int gravity);
 // 设置水平偏移量
-setXOffset(int px)
+easyWindow.setXOffset(int px);
 // 设置垂直偏移量
-setYOffset(int px)
+easyWindow.setYOffset(int px);
 
 // 设置悬浮窗外层是否可触摸
-setOutsideTouchable(boolean touchable)
+easyWindow.setOutsideTouchable(boolean touchable);
 // 设置悬浮窗背景阴影强度
-setBackgroundDimAmount(float amount)
+easyWindow.setBackgroundDimAmount(@FloatRange(from = 0.0, to = 1.0) float amount);
 
 // 添加窗口标记
-addWindowFlags(int flags)
+easyWindow.addWindowFlags(int flags);
 // 移除窗口标记
-removeWindowFlags(int flags)
+easyWindow.removeWindowFlags(int flags);
 // 设置窗口标记
-setWindowFlags(int flags)
+easyWindow.setWindowFlags(int flags);
 // 是否存在某个窗口标记
-hasWindowFlags(int flags)
-
+easyWindow.hasWindowFlags(int flags);
 // 设置悬浮窗的显示类型
-setWindowType(int type)
+easyWindow.setWindowType(int type);
 
-// 几乎涵盖了所有 WindowManager 的参数
-// 更多 API 方法请查看 EasyWindow 类的源码
-......
+// 设置悬浮窗动画样式
+easyWindow.setAnimStyle(int id);
+// 设置悬浮窗软键盘模式
+easyWindow.setSoftInputMode(int softInputMode);
+// 设置悬浮窗 Token
+easyWindow.setWindowToken(@Nullable IBinder token);
+
+// 设置悬浮窗透明度
+easyWindow.setWindowAlpha(@FloatRange(from = 0.0, to = 1.0) float alpha);
+// 设置容器和窗口小部件之间的垂直边距
+easyWindow.setVerticalMargin(float verticalMargin);
+// 设置容器和窗口小部件之间的水平边距
+easyWindow.setHorizontalMargin(float horizontalMargin);
+// 设置位图格式
+easyWindow.setBitmapFormat(int format);
+// 设置状态栏的可见性
+easyWindow.setSystemUiVisibility(int systemUiVisibility);
+// 设置垂直权重
+easyWindow.setVerticalWeight(float verticalWeight);
+// 设置挖孔屏下的显示模式
+easyWindow.setLayoutInDisplayCutoutMode(int layoutInDisplayCutoutMode);
+// 设置悬浮窗在哪个显示屏上显示
+easyWindow.setPreferredDisplayModeId(int preferredDisplayModeId);
+// 设置悬浮窗标题
+easyWindow.setWindowTitle(@Nullable CharSequence title);
+// 设置屏幕的亮度
+easyWindow.setScreenBrightness(@FloatRange(from = -1.0, to = 1.0) float screenBrightness);
+// 设置键盘背光的亮度
+easyWindow.setButtonBrightness(@FloatRange(from = -1.0, to = 1.0) float buttonBrightness);
+// 设置悬浮窗的刷新率
+easyWindow.setPreferredRefreshRate(float preferredRefreshRate);
+// 设置悬浮窗的颜色模式
+easyWindow.setColorMode(int colorMode);
+// 设置悬浮窗背后的高斯模糊半径大小（Android 12 及以上才支持）
+easyWindow.setBlurBehindRadius(@IntRange(from = 0) int blurBehindRadius);
+// 设置悬浮窗屏幕方向
+easyWindow.setScreenOrientation(int screenOrientation);
+
+// 设置悬浮窗可见性
+easyWindow.setWindowVisibility(int visibility);
+// 获取悬浮窗可见性
+easyWindow.getWindowVisibility();
+// 设置悬浮窗根布局（一般情况下推荐使用 {@link #setContentView} 方法来填充布局）
+easyWindow.setWindowRootLayout(@NonNull ViewGroup viewGroup);
+// 重新设置 WindowManager 参数集
+easyWindow.setWindowParams(@NonNull WindowManager.LayoutParams params);
+// 重新设置 WindowManager 对象
+easyWindow.setWindowManager(@NonNull WindowManager windowManager);
+
+// 获取当前窗口内容宽度
+easyWindow.getWindowContentWidth();
+// 获取当前窗口内容高度
+easyWindow.getWindowContentHeight();
+
+// 设置可见性状态给 View
+easyWindow.setVisibilityByView(@IdRes int viewId, int visibility);
+// 设置背景 Drawable 给 View
+easyWindow.setBackgroundDrawableByView(@IdRes int viewId, @DrawableRes int drawableId);
+easyWindow.setBackgroundDrawableByView(@IdRes int viewId, @Nullable Drawable drawable);
+// 设置文本给 TextView
+easyWindow.setTextByTextView(@IdRes int viewId, @StringRes int stringId);
+easyWindow.setTextByTextView(@IdRes int viewId, @Nullable CharSequence text);
+// 设置字体颜色给 TextView
+easyWindow.setTextColorByTextView(@IdRes int viewId, @ColorInt int colorValue);
+// 设置字体大小给 TextView
+easyWindow.setTextSizeByTextView(@IdRes int viewId, float textSize);
+easyWindow.setTextSizeByTextView(@IdRes int viewId, int unit, float textSize);
+// 设置提示文本给 TextView
+easyWindow.setHintTextByTextView(@IdRes int viewId, @StringRes int stringId);
+easyWindow.setHintTextByTextView(@IdRes int viewId, @Nullable CharSequence text);
+// 设置提示文本颜色给 TextView
+easyWindow.setHintTextColorByTextView(@IdRes int viewId, @ColorInt int colorValue);
+// 设置图片 Drawable 给 ImageView
+easyWindow.setImageDrawableByImageView(@IdRes int viewId, @DrawableRes int drawableId);
+easyWindow.setImageDrawableByImageView(@IdRes int viewId, @Nullable Drawable drawable);
+
+// 跳转 Activity
+easyWindow.startActivity(@Nullable Class<? extends Activity> clazz);
+easyWindow.startActivity(@Nullable Intent intent);
+
+// 延迟执行任务
+easyWindow.post(Runnable runnable);
+// 延迟一段时间执行任务
+easyWindow.postDelayed(@NonNull Runnable runnable, long delayMillis);
+// 在指定的时间执行任务
+easyWindow.postAtTime(@NonNull Runnable runnable, long uptimeMillis);
+// 移除指定的任务
+easyWindow.removeRunnable(@NonNull Runnable runnable);
+// 移除所有的任务
+easyWindow.removeAllRunnable();
 ```
 
 * 静态方法
 
 ```java
 // 取消所有正在显示的悬浮窗
-EasyWindow.cancelAllWindow()
-
+EasyWindow.cancelAllWindow();
 // 取消特定类名的悬浮窗
-EasyWindow.cancelWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
-
+EasyWindow.cancelWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 取消特定标记的悬浮窗
-EasyWindow.cancelWindowByTag(@Nullable String tag)
+EasyWindow.cancelWindowByTag(@Nullable String tag);
 
 // 显示所有已取消但未回收的悬浮窗
-EasyWindow.showAllWindow()
-
+EasyWindow.showAllWindow();
 // 显示特定类名已取消但未回收的悬浮窗
-EasyWindow.showWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
-
+EasyWindow.showWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 显示特定标记已取消但未回收的悬浮窗
-EasyWindow.showWindowByTag(@Nullable String tag)
+EasyWindow.showWindowByTag(@Nullable String tag);
 
 // 回收所有正在显示的悬浮窗
-EasyWindow.recycleAllWindow()
-
+EasyWindow.recycleAllWindow();
 // 回收特定类名的悬浮窗
-EasyWindow.recycleWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
-
+EasyWindow.recycleWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 回收特定标记的悬浮窗
-EasyWindow.recycleWindowByTag(@Nullable String tag)
+EasyWindow.recycleWindowByTag(@Nullable String tag);
 
 // 判断当前是否有悬浮窗正在显示
-EasyWindow.existAnyWindowShowing()
-
+EasyWindow.existAnyWindowShowing();
 // 判断当前是否有特定类名的悬浮窗正在显示
-EasyWindow.existWindowShowingByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
-
+EasyWindow.existWindowShowingByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 判断当前是否有特定标记的悬浮窗正在显示
-EasyWindow.existWindowShowingByTag(@Nullable String tag)
+EasyWindow.existWindowShowingByTag(@Nullable String tag);
 
 // 获取所有的悬浮窗
-EasyWindow.getAllWindowInstance()
-
+EasyWindow.getAllWindowInstance();
 // 获取特定类名的悬浮窗
-EasyWindow.getWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz)
-
+EasyWindow.getWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 获取特定标记的悬浮窗
-EasyWindow.getWindowInstanceByTag(@Nullable String tag)
+EasyWindow.getWindowInstanceByTag(@Nullable String tag);
 ```
 
 #### 作者的其他开源项目
