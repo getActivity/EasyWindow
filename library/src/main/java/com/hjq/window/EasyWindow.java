@@ -425,7 +425,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     @SuppressWarnings("deprecation")
     public EasyWindow(@NonNull Activity activity) {
-        this((Context) activity);
+        initWindow(activity);
 
         Window window = activity.getWindow();
         View decorView = window.getDecorView();
@@ -461,7 +461,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     @SuppressWarnings("deprecation")
     public EasyWindow(@NonNull Application application) {
-        this((Context) application);
+        initWindow(application);
 
         // 设置成全局的悬浮窗，注意需要先申请悬浮窗权限，推荐使用：https://github.com/getActivity/XXPermissions
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -476,7 +476,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     @SuppressWarnings("deprecation")
     public EasyWindow(@NonNull AccessibilityService service) {
-        this((Context) service);
+        initWindow(service);
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP_MR1) {
             setWindowType(WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY);
@@ -485,7 +485,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         }
     }
 
-    private EasyWindow(@NonNull Context context) {
+    protected void initWindow(@NonNull Context context) {
         mContext = context;
         mWindowRootLayout = new WindowRootLayout(context);
         mWindowManager = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE));
