@@ -787,7 +787,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     /**
      * 派发拖拽中事件
      */
-    protected void dispatchExecuteDraggingCallback() {
+    protected void dispatchRunningDraggingCallback() {
         // Log.i(getClass().getSimpleName(), "拖拽中");
         if (mEasyWindow == null) {
             return;
@@ -795,7 +795,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         if (mWindowDraggingListener == null) {
             return;
         }
-        mWindowDraggingListener.onWindowDraggingNow(mEasyWindow);
+        mWindowDraggingListener.onWindowDraggingRunning(mEasyWindow);
     }
 
     /**
@@ -820,9 +820,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         default void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
-         * 执行拖拽中
+         * 拖拽中
          */
-        default void onWindowDraggingNow(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingRunning(@NonNull EasyWindow<?> easyWindow) {}
 
         /**
          * 停止拖拽

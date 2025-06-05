@@ -404,8 +404,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             }
 
             @Override
-            public void onWindowDraggingNow(@NonNull EasyWindow<?> easyWindow) {
-                Log.i(TAG, "onWindowDraggingNow");
+            public void onWindowDraggingRunning(@NonNull EasyWindow<?> easyWindow) {
+                Log.i(TAG, "onWindowDraggingRunning");
             }
 
             @Override

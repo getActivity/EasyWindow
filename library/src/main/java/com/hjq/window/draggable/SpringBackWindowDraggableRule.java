@@ -82,7 +82,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 updateLocation(newX, newY);
 
                 if (mTouchMoving) {
-                    dispatchExecuteDraggingCallback();
+                    dispatchRunningDraggingCallback();
                 } else if (isFingerMove(mViewDownX, event.getX(), mViewDownY, event.getY())) {
                     // 如果用户移动了手指，那么就拦截本次触摸事件，从而不让点击事件生效
                     mTouchMoving = true;
