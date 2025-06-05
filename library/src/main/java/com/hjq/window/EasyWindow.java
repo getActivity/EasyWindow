@@ -906,17 +906,29 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * {@link SpringBackWindowDraggableRule }：在 MovingWindowDraggableRule 的基础上，加上了在手指释放时触发回弹到边缘的动画
      */
     public X setWindowDraggableRule(@Nullable AbstractWindowDraggableRule windowDraggableRule) {
-        mWindowDraggableRule = windowDraggableRule;
-        if (windowDraggableRule != null) {
-            // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
-            removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
-            removeWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
-            if (isShowing()) {
-                update();
-                windowDraggableRule.start(this);
+        if (windowDraggableRule == null) {
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.recycle();
+                mWindowDraggableRule = null;
             }
+
+            if (mScreenOrientationMonitor != null) {
+                mScreenOrientationMonitor.unregisterCallback(mContext);
+                mScreenOrientationMonitor = null;
+            }
+            return (X) this;
+        }
+
+        mWindowDraggableRule = windowDraggableRule;
+
+        // 如果当前是否设置了不可触摸，如果是就擦除掉这个标记
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        // 如果当前是否设置了可移动窗口到屏幕之外，如果是就擦除这个标记
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+        if (isShowing()) {
+            update();
+            windowDraggableRule.start(this);
         }
 
         Resources resources = null;
