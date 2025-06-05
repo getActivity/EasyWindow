@@ -533,7 +533,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         WindowManager.LayoutParams params = mEasyWindow.getWindowParams();
 
         // 屏幕默认的重心（一定要先设置重心位置为左上角）
-        int screenGravity = Gravity.TOP | Gravity.START;
+        int screenGravity = Gravity.LEFT | Gravity.TOP;
 
         // 判断本次移动的位置是否跟当前的窗口位置是否一致
         if (params.gravity == screenGravity && params.x == x && params.y == y) {
