@@ -44,9 +44,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
         setContentView(R.layout.window_semi_stealth);
 
-        setGravity(Gravity.START | Gravity.TOP);
-        setXOffset(0);
-        setYOffset(200);
+        setWindowLocation(0, 200);
 
         SpringBackWindowDraggableRule springBackWindowDraggableRule = new SpringBackWindowDraggableRule(
             SpringBackWindowDraggableRule.ORIENTATION_HORIZONTAL);

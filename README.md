@@ -267,12 +267,9 @@ easyWindow.setWidth(int width);
 // 设置悬浮窗高度
 easyWindow.setHeight(int height);
 
-// 设置悬浮窗显示的重心
-easyWindow.setGravity(int gravity);
-// 设置水平偏移量
-easyWindow.setXOffset(int px);
-// 设置垂直偏移量
-easyWindow.setYOffset(int px);
+// 设置悬浮窗的位置
+easyWindow.setWindowLocation(@Px int x, @Px int y);
+easyWindow.setWindowLocation(@GravityFlag int gravity, @Px int x, @Px int y);
 
 // 设置悬浮窗外层是否可触摸
 easyWindow.setOutsideTouchable(boolean touchable);

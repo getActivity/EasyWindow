@@ -554,7 +554,36 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
+     * 设置窗口位置
+     *
+     * @param gravity           窗口重心
+     * @param x                 x 坐标
+     * @param y                 y 坐标
+     */
+    public X setWindowLocation(@GravityFlag int gravity, @Px int x, @Px int y) {
+        mWindowParams.gravity = gravity;
+        mWindowParams.x = x;
+        mWindowParams.y = y;
+        postUpdate();
+        post(() -> {
+            if (mWindowDraggableRule != null) {
+                mWindowDraggableRule.refreshLocationCoordinate();
+            }
+        });
+        return (X) this;
+    }
+
+    public X setWindowLocation(@Px int x, @Px int y) {
+        // 默认设置屏幕的重心为左上角，需要注意的一个点是，这里不能设置成 Gravity.START | Gravity.TOP，
+        // 在 Android 中，无论是否设置布局方向（如 RTL 右到左布局 ），屏幕坐标系的原点始终是屏幕左上角，
+        // 布局方向的调整主要影响的是视图的排列顺序、绘制顺序等逻辑，不会改变基础坐标系的原点位置。
+        return setWindowLocation(Gravity.LEFT | Gravity.TOP, x, y);
+    }
+
+    /**
      * 设置悬浮窗显示的重心
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int, int)}
      */
     public X setGravity(@GravityFlag int gravity) {
         mWindowParams.gravity = gravity;
@@ -569,6 +598,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
     /**
      * 设置水平偏移量
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int)}
      */
     public X setXOffset(@Px int px) {
         mWindowParams.x = px;
@@ -583,6 +614,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
     /**
      * 设置垂直偏移量
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int)}
      */
     public X setYOffset(@Px int px) {
         mWindowParams.y = px;

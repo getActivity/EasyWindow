@@ -371,13 +371,12 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_utils) {
 
             EasyWindow.with(this)
-                    .setWindowDuration(1000)
                     // 将 Toaster 中的 View 转移给 EasyWindow 来显示
                     .setContentView(Toaster.getStyle().createView(this))
+                    .setWindowLocation(Gravity.BOTTOM, 0, 100)
+                    .setWindowDuration(1000)
                     .setAnimStyle(R.style.ScaleAnimStyle)
                     .setTextByTextView(android.R.id.message, "就问你溜不溜")
-                    .setGravity(Gravity.BOTTOM)
-                    .setYOffset(100)
                     .show();
         }
     }
@@ -422,8 +421,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         // 传入 Application 表示这个是一个全局的 Toast
         EasyWindow.with(application)
                 .setContentView(R.layout.window_phone)
-                .setGravity(Gravity.END | Gravity.BOTTOM)
-                .setYOffset(200)
+                .setWindowLocation(Gravity.END | Gravity.BOTTOM, 0, 200)
                 // 设置指定的拖拽规则
                 .setWindowDraggableRule(springBackWindowDraggableRule)
                 .setOnClickListenerByView(android.R.id.icon, new OnWindowViewClickListener<ImageView>() {
