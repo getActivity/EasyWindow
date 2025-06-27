@@ -67,6 +67,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_list).setOnClickListener(this);
         findViewById(R.id.btn_main_draggable).setOnClickListener(this);
         findViewById(R.id.btn_main_global).setOnClickListener(this);
+        findViewById(R.id.btn_main_semi_stealth).setOnClickListener(this);
         findViewById(R.id.btn_main_utils).setOnClickListener(this);
         findViewById(R.id.btn_main_cancel_all).setOnClickListener(this);
 
@@ -354,6 +355,11 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                                     .show();
                         }
                     });
+
+        } else if (viewId == R.id.btn_main_semi_stealth) {
+
+            new SemiStealthWindow(this)
+                .show();
 
         } else if (viewId == R.id.btn_main_cancel_all) {
 

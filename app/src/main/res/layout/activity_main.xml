@@ -111,6 +111,14 @@
                     android:text="全局可拖拽的悬浮窗" />
 
                 <Button
+                    android:id="@+id/btn_main_semi_stealth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="12dp"
+                    android:text="拖拽后半隐的悬浮窗" />
+
+                <Button
                     android:id="@+id/btn_main_cancel_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

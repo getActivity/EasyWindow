@@ -5,7 +5,7 @@ android {
 
     defaultConfig {
         applicationId "com.hjq.window.demo"
-        minSdkVersion 16
+        minSdkVersion 18
         targetSdkVersion 28
         versionCode 1200
         versionName "12.0"
