@@ -446,10 +446,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             setSystemUiVisibility(params.systemUiVisibility);
         }
 
-        // 相关问题地址：https://github.com/getActivity/EasyWindow/issues/85
-        //if (decorView.getSystemUiVisibility() != 0) {
-        //    mWindowRootLayout.setSystemUiVisibility(decorView.getSystemUiVisibility());
-        //}
+        if (decorView.getSystemUiVisibility() != 0) {
+            mWindowRootLayout.setSystemUiVisibility(decorView.getSystemUiVisibility());
+        }
 
         // 跟随 Activity 的生命周期
         mWindowLifecycleControl = new WindowLifecycleControl(this, activity);

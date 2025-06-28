@@ -281,14 +281,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        View decorView = null;
+        // 相关问题地址：https://github.com/getActivity/EasyWindow/issues/85
+        View decorView = getWindowRootLayout();
 
-        if (context instanceof Activity) {
+        if (decorView == null && context instanceof Activity) {
             decorView = ((Activity) context).getWindow().getDecorView();
-        }
-
-        if (decorView == null) {
-            decorView = getWindowRootLayout();
         }
 
         if (decorView == null) {
