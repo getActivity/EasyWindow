@@ -263,13 +263,11 @@ easyWindow.getContentView();
 // 限定悬浮窗显示时长
 easyWindow.setWindowDuration(@IntRange(from = 0) int delayMillis);
 // 设置悬浮窗 tag
-easyWindow.setTag(@Nullable String tag);
+easyWindow.setWindowTag(@Nullable String tag);
 // 获取悬浮窗 tag
-easyWindow.getTag();
-// 设置悬浮窗宽度
-easyWindow.setWidth(int width);
-// 设置悬浮窗高度
-easyWindow.setHeight(int height);
+easyWindow.getWindowTag();
+// 设置悬浮窗宽度和高度
+easyWindow.setWindowSize(int width, int height);
 
 // 设置悬浮窗的位置
 easyWindow.setWindowLocation(@Px int x, @Px int y);
@@ -292,7 +290,7 @@ easyWindow.hasWindowFlags(int flags);
 easyWindow.setWindowType(int type);
 
 // 设置悬浮窗动画样式
-easyWindow.setAnimStyle(int id);
+easyWindow.setWindowAnim(int id);
 // 设置悬浮窗软键盘模式
 easyWindow.setSoftInputMode(int softInputMode);
 // 设置悬浮窗 Token

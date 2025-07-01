@@ -403,7 +403,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private int mWindowDuration;
     /** 悬浮窗标记 */
     @Nullable
-    private String mTag;
+    private String mWindowTag;
     /** 窗口生命周期管理 */
     private WindowLifecycleControl mWindowLifecycleControl;
     /** 自定义拖动处理 */
@@ -507,13 +507,55 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置悬浮窗 tag
      */
+    public X setWindowTag(@Nullable String tag) {
+        mWindowTag = tag;
+        return (X) this;
+    }
+
+    /**
+     * 设置悬浮窗 tag
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowTag(String)}
+     */
     public X setTag(@Nullable String tag) {
-        mTag = tag;
+        return setWindowTag(tag);
+    }
+
+    /**
+     * 设置悬浮窗大小
+     *
+     * @param width                 窗口宽度
+     * @param height                窗口高度
+     */
+    public X setWindowSize(int width, int height) {
+        mWindowParams.width = width;
+        mWindowParams.height = height;
+        if (mWindowRootLayout == null) {
+            return (X) this;
+        }
+        if (mWindowRootLayout.getChildCount() > 0) {
+            View contentView = mWindowRootLayout.getChildAt(0);
+            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
+            if (layoutParams != null &&
+                (layoutParams.width != width || layoutParams.height != height)) {
+
+                if (layoutParams.width != width) {
+                    layoutParams.width = width;
+                }
+                if (layoutParams.height != height) {
+                    layoutParams.height = height;
+                }
+                contentView.setLayoutParams(layoutParams);
+            }
+        }
+        postUpdate();
         return (X) this;
     }
 
     /**
      * 设置悬浮窗宽度
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
      */
     public X setWidth(int width) {
         mWindowParams.width = width;
@@ -534,6 +576,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
 
     /**
      * 设置悬浮窗高度
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
      */
     public X setHeight(int height) {
         mWindowParams.height = height;
@@ -708,10 +752,19 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 设置悬浮窗动画样式
      */
-    public X setAnimStyle(int id) {
+    public X setWindowAnim(int id) {
         mWindowParams.windowAnimations = id;
         postUpdate();
         return (X) this;
+    }
+
+    /**
+     * 设置悬浮窗动画样式
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
+     */
+    public X setAnimStyle(int id) {
+        return setWindowAnim(id);
     }
 
     /**
@@ -1618,8 +1671,18 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * 获取悬浮窗 tag
      */
     @Nullable
+    public String getWindowTag() {
+        return mWindowTag;
+    }
+
+    /**
+     * 获取悬浮窗 tag
+     *
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
+     */
+    @Nullable
     public String getTag() {
-        return mTag;
+        return getWindowTag();
     }
 
     /**
