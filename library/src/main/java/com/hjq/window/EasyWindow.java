@@ -1155,7 +1155,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 获取悬浮窗可见性
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowVisibility()}
      */
     public int getWindowVisibility() {
         if (mRootLayout == null) {
@@ -1165,18 +1165,35 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置悬浮窗可见性
+     * 获取窗口视图可见性
+     */
+    public int getWindowViewVisibility() {
+        if (mRootLayout == null) {
+            return View.GONE;
+        }
+        return mRootLayout.getVisibility();
+    }
+
+    /**
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowViewVisibility(int)}
+     */
+    public X setWindowVisibility(int visibility) {
+        return setWindowViewVisibility(visibility);
+    }
+
+    /**
+     * 设置窗口视图的可见性
      *
-     * @param visibility            窗口可见性类型，有三种类型：
+     * @param visibility            可见性类型，有三种类型：
      *                              {@link View#VISIBLE}
      *                              {@link View#INVISIBLE}
      *                              {@link View#GONE}
      */
-    public X setWindowVisibility(int visibility) {
+    public X setWindowViewVisibility(int visibility) {
         if (mRootLayout == null) {
             return (X) this;
         }
-        if (getWindowVisibility() == visibility) {
+        if (mRootLayout.getVisibility() == visibility) {
             return (X) this;
         }
         mRootLayout.setVisibility(visibility);

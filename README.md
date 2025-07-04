@@ -315,9 +315,9 @@ easyWindow.setBlurBehindRadius(@IntRange(from = 0) int blurBehindRadius);
 easyWindow.setScreenOrientation(int screenOrientation);
 
 // 设置悬浮窗可见性
-easyWindow.setWindowVisibility(int visibility);
+easyWindow.setWindowViewVisibility(int visibility);
 // 获取悬浮窗可见性
-easyWindow.getWindowVisibility();
+easyWindow.getWindowViewVisibility();
 // 设置悬浮窗根布局（一般情况下推荐使用 {@link #setContentView} 方法来填充布局）
 easyWindow.setRootLayout(@NonNull ViewGroup viewGroup);
 // 重新设置 WindowManager 参数集
