@@ -332,7 +332,7 @@ easyWindow.setWindowVisibility(int visibility);
 // 获取悬浮窗可见性
 easyWindow.getWindowVisibility();
 // 设置悬浮窗根布局（一般情况下推荐使用 {@link #setContentView} 方法来填充布局）
-easyWindow.setWindowRootLayout(@NonNull ViewGroup viewGroup);
+easyWindow.setRootLayout(@NonNull ViewGroup viewGroup);
 // 重新设置 WindowManager 参数集
 easyWindow.setWindowParams(@NonNull WindowManager.LayoutParams params);
 // 重新设置 WindowManager 对象

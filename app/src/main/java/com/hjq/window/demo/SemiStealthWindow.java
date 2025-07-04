@@ -93,7 +93,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
         if (windowDraggableRule == null) {
             return;
         }
-        View windowRootLayout = getWindowRootLayout();
+        View windowRootLayout = getRootLayout();
         if (windowRootLayout == null) {
             return;
         }
@@ -143,12 +143,12 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
     }
 
     private void showFullView() {
-        View windowRootLayout = getWindowRootLayout();
-        if (windowRootLayout == null) {
+        View rootLayout = getRootLayout();
+        if (rootLayout == null) {
             return;
         }
-        int viewWidth = windowRootLayout.getWidth();
-        int viewHeight = windowRootLayout.getHeight();
+        int viewWidth = rootLayout.getWidth();
+        int viewHeight = rootLayout.getHeight();
         AbstractWindowDraggableRule windowDraggableRule = getWindowDraggableRule();
         if (windowDraggableRule == null) {
             return;
@@ -159,17 +159,17 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             windowDraggableRule.updateLocation(windowParams.x + viewWidth / 2f, windowParams.y, false);
         }
         // 设置画板偏移
-        windowRootLayout.setTranslationX(0);
-        windowRootLayout.setTranslationY(0);
+        rootLayout.setTranslationX(0);
+        rootLayout.setTranslationY(0);
         // 设置裁剪区域
-        windowRootLayout.setClipBounds(new Rect(0, 0, viewWidth, viewHeight));
+        rootLayout.setClipBounds(new Rect(0, 0, viewWidth, viewHeight));
     }
 
     /**
      * View 是否全屏显示
      */
     private boolean isFullShowView() {
-        View view = getWindowRootLayout();
+        View view = getRootLayout();
         AbstractWindowDraggableRule windowDraggableRule = getWindowDraggableRule();
         if (windowDraggableRule == null) {
             return true;
