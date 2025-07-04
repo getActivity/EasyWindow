@@ -40,6 +40,8 @@ import android.widget.TextView;
 import com.hjq.window.draggable.AbstractWindowDraggableRule;
 import com.hjq.window.draggable.MovingWindowDraggableRule;
 import com.hjq.window.draggable.SpringBackWindowDraggableRule;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +58,7 @@ import java.util.List;
 public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMonitor.OnScreenOrientationCallback {
 
     @NonNull
-    private static final List<EasyWindow<?>> sWindowInstanceSet = new ArrayList<>();
+    private static final List<Reference<EasyWindow<?>>> WINDOW_INSTANCE_REFERENCE_LIST = new ArrayList<>();
 
     /**
      * 基于 Activity 创建一个 EasyWindow 实例
@@ -91,9 +93,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * 取消所有正在显示的悬浮窗
      */
     public static synchronized void cancelAllWindow() {
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -108,9 +114,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (clazz == null) {
             return;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -128,9 +138,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (tag == null) {
             return;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -145,9 +159,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * 显示所有已取消但未回收的悬浮窗
      */
     public static synchronized void showAllWindow() {
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -162,9 +180,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (clazz == null) {
             return;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -182,9 +204,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (tag == null) {
             return;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -199,9 +225,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * 回收所有正在显示的悬浮窗
      */
     public static synchronized void recycleAllWindow() {
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -220,9 +250,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (clazz == null) {
             return;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -245,9 +279,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
             return;
         }
 
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -266,13 +304,16 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * 判断当前是否有悬浮窗正在显示
      */
     public static synchronized boolean existAnyWindowShowing() {
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
-
             if (easyWindow.isShowing()) {
                 return true;
             }
@@ -287,9 +328,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (clazz == null) {
             return false;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -311,9 +356,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
             return false;
         }
 
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -332,7 +381,18 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      */
     @NonNull
     public static synchronized List<EasyWindow<?>> getAllWindowInstance() {
-        return sWindowInstanceSet;
+        List<EasyWindow<?>> easyWindowList = new ArrayList<>(WINDOW_INSTANCE_REFERENCE_LIST.size());
+        for (Reference<EasyWindow<?>> easyWindowReference : WINDOW_INSTANCE_REFERENCE_LIST) {
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
+            if (easyWindow == null) {
+                continue;
+            }
+            easyWindowList.add(easyWindow);
+        }
+        return easyWindowList;
     }
 
     /**
@@ -343,7 +403,11 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (clazz == null) {
             return null;
         }
-        for (EasyWindow<?> easyWindow : sWindowInstanceSet) {
+        for (Reference<EasyWindow<?>> easyWindowReference : WINDOW_INSTANCE_REFERENCE_LIST) {
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -363,9 +427,13 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (tag == null) {
             return null;
         }
-        Iterator<EasyWindow<?>> iterator = sWindowInstanceSet.iterator();
+        Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
-            EasyWindow<?> easyWindow = iterator.next();
+            Reference<EasyWindow<?>> easyWindowReference = iterator.next();
+            if (easyWindowReference == null) {
+                continue;
+            }
+            EasyWindow<?> easyWindow = easyWindowReference.get();
             if (easyWindow == null) {
                 continue;
             }
@@ -376,6 +444,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         }
         return null;
     }
+
+    /** 当前 Window 的弱引用 */
+    private final Reference<EasyWindow<?>> mThisReference = new WeakReference<>(this);
 
     /** 上下文 */
     @Nullable
@@ -456,7 +527,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         }
 
         // 跟随 Activity 的生命周期
-        mWindowLifecycleControl = new WindowLifecycleControl(this, activity);
+        mWindowLifecycleControl = new WindowLifecycleControl(mThisReference, activity);
         // 注册 Activity 生命周期监听
         mWindowLifecycleControl.register();
     }
@@ -505,8 +576,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         // 需要注意的是设置了 FLAG_NOT_TOUCH_MODAL 必须要设置 FLAG_NOT_FOCUSABLE，否则就会导致用户按返回键无效
         mWindowParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-        // 将当前实例添加到静态集合中
-        sWindowInstanceSet.add(this);
+        // 将当前实例引用添加到静态集合中
+        WINDOW_INSTANCE_REFERENCE_LIST.add(mThisReference);
     }
 
     /**
@@ -1425,8 +1496,11 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         }
         mContext = null;
         mRootLayout = null;
-        // 将当前实例从静态集合中移除
-        sWindowInstanceSet.remove(this);
+
+        // 清除对象引用
+        mThisReference.clear();
+        // 将当前实例引用从静态集合中移除
+        WINDOW_INSTANCE_REFERENCE_LIST.remove(mThisReference);
     }
 
     /**

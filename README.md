@@ -204,29 +204,6 @@ public final class WindowLifecycleControl implements Application.ActivityLifecyc
 }
 ```
 
-#### LeakCanary 一直报内存泄漏怎么办？
-
-* 这个问题是 EasyWindow 取消显示之后，没有回收资源才会出现的，目前比较好的解决方案是增加一个取消监听，然后在里面调用 `recycle` 方法即可
-
-```java
-EasyWindow.with(this)
-        .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
-
-            @Override
-            public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
-                // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏
-                easyWindow.recycle();
-            }
-        })
-        .show();
-```
-
-* 到这里你可能会有一个疑惑，这样的代码为什么框架不内部进行处理？而是交给外层开发者去处理，这难道不是脱裤子放屁？在这里我觉得有必要解释一下，原因有以下两点：
-
-    1. 不是框架不会处理，而是不能处理，因为窗口取消的时候，直接帮你回收窗口资源，如果你在外层持有了 `easyWindow` 对象，并且调用了相关的方法，会导致不会奏效，例如你取消窗口只是暂时的，等下还要恢复显示，你如果复用了 `easyWindow` 对象并且调用了 `easyWindow.show` 方法后窗口是不会显示，这是因为你前面调用了 `easyWindow.recycle`，窗口所有的资源已经被回收了，不能再次展示了，你调用了也是无效，至于要不要在窗口取消的会调用中调用回收窗口资源的办法，这个要取决你在外层有没有复用 `easyWindow` 对象去做什么事，如果没有就可以放心大胆调用 `easyWindow.recycle`，如果有的话，则不行。
-
-    2. 框架内部其实有做对窗口资源回收的动作，框架内部会通过 `registerActivityLifecycleCallbacks` 监听 `Activity` 生命周期，发现有 `Activity` 销毁后，会查找这个上下文相关的窗口对象，然后进行调用 `easyWindow.recycle` 对窗口资源进行回收，那这样为什么 `LeakCanary` 还会报内存泄漏？这是因为 `LeakCanary` 在 `Activity` 还没有结束的时候就急不可耐地去检查对象是否出现了内存泄漏，所以才出现了这个问题，作为框架作者我表示很受伤，至于处理方案你其实可以参考一下第一点。
-
 #### 框架的 API 介绍
 
 * 对象方法

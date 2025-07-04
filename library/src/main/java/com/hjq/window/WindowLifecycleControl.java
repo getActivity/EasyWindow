@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.lang.ref.Reference;
 
 /**
  *    author : Android 轮子哥
@@ -18,11 +19,11 @@ final class WindowLifecycleControl implements Application.ActivityLifecycleCallb
     @Nullable
     private Activity mActivity;
     @Nullable
-    private EasyWindow<?> mEasyWindow;
+    private Reference<EasyWindow<?>> mEasyWindowReference;
 
-    WindowLifecycleControl(@NonNull EasyWindow<?> easyWindow, @NonNull Activity activity) {
+    WindowLifecycleControl(@NonNull Reference<EasyWindow<?>> easyWindowReference, @NonNull Activity activity) {
         mActivity = activity;
-        mEasyWindow = easyWindow;
+        mEasyWindowReference = easyWindowReference;
     }
 
     /**
@@ -73,10 +74,20 @@ final class WindowLifecycleControl implements Application.ActivityLifecycleCallb
     @Override
     public void onActivityPaused(@NonNull Activity activity) {
         // 一定要在 onPaused 方法中销毁掉，如果放在 onDestroyed 方法中还是有一定几率会导致内存泄露
-        if (mActivity != activity || !mActivity.isFinishing() || mEasyWindow == null || !mEasyWindow.isShowing()) {
+        if (mActivity != activity || !mActivity.isFinishing()) {
             return;
         }
-        mEasyWindow.cancel();
+        if (mEasyWindowReference == null) {
+            return;
+        }
+        EasyWindow<?> easyWindow = mEasyWindowReference.get();
+        if (easyWindow == null) {
+            return;
+        }
+        if (!easyWindow.isShowing()) {
+            return;
+        }
+        easyWindow.cancel();
     }
 
     @Override
@@ -97,10 +108,14 @@ final class WindowLifecycleControl implements Application.ActivityLifecycleCallb
         // 释放 Activity 的引用
         mActivity = null;
 
-        if (mEasyWindow == null) {
+        if (mEasyWindowReference == null) {
             return;
         }
-        mEasyWindow.recycle();
-        mEasyWindow = null;
+        EasyWindow<?> easyWindow = mEasyWindowReference.get();
+        if (easyWindow == null) {
+            return;
+        }
+        easyWindow.recycle();
+        mEasyWindowReference = null;
     }
 }
