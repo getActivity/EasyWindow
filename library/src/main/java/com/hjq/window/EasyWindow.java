@@ -415,7 +415,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     private final Object mHandlerToken = new Object();
 
     /** 更新任务 */
-    private final Runnable mUpdateRunnable = this::update;
+    private final Runnable mUpdateTask = this::update;
 
     /**
      * 创建一个局部悬浮窗
@@ -545,7 +545,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
                 contentView.setLayoutParams(layoutParams);
             }
         }
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -567,7 +567,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
                 contentView.setLayoutParams(layoutParams);
             }
         }
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -589,7 +589,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
                 contentView.setLayoutParams(layoutParams);
             }
         }
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -604,7 +604,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.gravity = gravity;
         mWindowParams.x = x;
         mWindowParams.y = y;
-        postUpdate();
+        delayUpdate();
         sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
@@ -627,7 +627,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setGravity(@GravityFlag int gravity) {
         mWindowParams.gravity = gravity;
-        postUpdate();
+        delayUpdate();
         sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
@@ -643,7 +643,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setXOffset(@Px int px) {
         mWindowParams.x = px;
-        postUpdate();
+        delayUpdate();
         sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
@@ -659,7 +659,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setYOffset(@Px int px) {
         mWindowParams.y = px;
-        postUpdate();
+        delayUpdate();
         sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
@@ -679,7 +679,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         } else {
             removeWindowFlags(flags);
         }
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -699,7 +699,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         } else {
             removeWindowFlags(flags);
         }
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -708,7 +708,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X addWindowFlags(int flags) {
         mWindowParams.flags |= flags;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -717,7 +717,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X removeWindowFlags(int flags) {
         mWindowParams.flags &= ~flags;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -726,7 +726,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowFlags(int flags) {
         mWindowParams.flags = flags;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -742,7 +742,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowType(int type) {
         mWindowParams.type = type;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -751,7 +751,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowAnim(int id) {
         mWindowParams.windowAnimations = id;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -778,7 +778,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.softInputMode = softInputMode;
         // 如果设置了不能触摸，则擦除这个标记，否则会导致无法弹出输入法
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -787,7 +787,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowToken(@Nullable IBinder token) {
         mWindowParams.token = token;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -798,7 +798,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowAlpha(@FloatRange(from = 0.0, to = 1.0) float alpha) {
         mWindowParams.alpha = alpha;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -807,7 +807,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setVerticalMargin(float verticalMargin) {
         mWindowParams.verticalMargin = verticalMargin;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -816,7 +816,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setHorizontalMargin(float horizontalMargin) {
         mWindowParams.horizontalMargin = horizontalMargin;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -825,7 +825,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setBitmapFormat(int format) {
         mWindowParams.format = format;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -835,7 +835,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     @SuppressWarnings("deprecation")
     public X setSystemUiVisibility(int systemUiVisibility) {
         mWindowParams.systemUiVisibility = systemUiVisibility;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -844,7 +844,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setVerticalWeight(float verticalWeight) {
         mWindowParams.verticalWeight = verticalWeight;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -861,7 +861,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setLayoutInDisplayCutoutMode(int layoutInDisplayCutoutMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             mWindowParams.layoutInDisplayCutoutMode = layoutInDisplayCutoutMode;
-            postUpdate();
+            delayUpdate();
         }
         return (X) this;
     }
@@ -872,7 +872,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setPreferredDisplayModeId(int preferredDisplayModeId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mWindowParams.preferredDisplayModeId = preferredDisplayModeId;
-            postUpdate();
+            delayUpdate();
         }
         return (X) this;
     }
@@ -885,7 +885,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             title = "";
         }
         mWindowParams.setTitle(title);
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -900,7 +900,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setScreenBrightness(@FloatRange(from = -1.0, to = 1.0) float screenBrightness) {
         mWindowParams.screenBrightness = screenBrightness;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -915,7 +915,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setButtonBrightness(@FloatRange(from = -1.0, to = 1.0) float buttonBrightness) {
         mWindowParams.buttonBrightness = buttonBrightness;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -925,7 +925,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setPreferredRefreshRate(float preferredRefreshRate) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mWindowParams.preferredRefreshRate = preferredRefreshRate;
-            postUpdate();
+            delayUpdate();
         }
         return (X) this;
     }
@@ -936,7 +936,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setColorMode(int colorMode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mWindowParams.setColorMode(colorMode);
-            postUpdate();
+            delayUpdate();
         }
         return (X) this;
     }
@@ -953,7 +953,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (!hasWindowFlags(flag)) {
                 addWindowFlags(flag);
             }
-            postUpdate();
+            delayUpdate();
         }
         return (X) this;
     }
@@ -967,7 +967,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setScreenOrientation(int screenOrientation) {
         mWindowParams.screenOrientation = screenOrientation;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -976,7 +976,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public X setWindowParams(@NonNull WindowManager.LayoutParams params) {
         mWindowParams = params;
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -1150,7 +1150,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             }
         }
 
-        postUpdate();
+        delayUpdate();
         return (X) this;
     }
 
@@ -1319,14 +1319,21 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
      */
-    public void postUpdate() {
+    public void delayUpdate() {
         if (!isShowing()) {
             return;
         }
         // 移除上一个还未执行的更新任务
-        cancelTask(mUpdateRunnable);
+        cancelTask(mUpdateTask);
         // 添加一个新的更新任务
-        sendTask(mUpdateRunnable);
+        sendTask(mUpdateTask);
+    }
+
+    /**
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #()}
+     */
+    public void postUpdate() {
+        delayUpdate();
     }
 
     /**

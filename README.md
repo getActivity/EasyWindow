@@ -243,7 +243,7 @@ easyWindow.recycle();
 // 更新悬浮窗（在更新了悬浮窗参数才需要调用）
 easyWindow.update();
 // 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
-easyWindow.postUpdate();
+easyWindow.delayUpdate();
 // 当前悬浮窗是否正在显示
 easyWindow.isShowing();
 
