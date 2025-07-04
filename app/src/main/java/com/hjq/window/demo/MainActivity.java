@@ -104,7 +104,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
-                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            // 如果 EasyWindow 在取消显示后，没有再次使用了，则应该在窗口消失的时候回收资源，
+                            // 避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
                             easyWindow.recycle();
                         }
                     })
@@ -122,7 +123,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
-                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            // 如果 EasyWindow 在取消显示后，没有再次使用了，则应该在窗口消失的时候回收资源，
+                            // 避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
                             easyWindow.recycle();
                         }
                     })
@@ -166,7 +168,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
                             Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
-                            // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            // 如果 EasyWindow 在取消显示后，没有再次使用了，则应该在窗口消失的时候回收资源，
+                            // 避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
                             easyWindow.recycle();
                         }
                     })
@@ -377,6 +380,15 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setWindowDuration(1000)
                     .setWindowAnim(R.style.ScaleAnimStyle)
                     .setTextByTextView(android.R.id.message, "就问你溜不溜")
+                    .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
+
+                        @Override
+                        public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
+                            // 如果 EasyWindow 在取消显示后，没有再次使用了，则应该在窗口消失的时候回收资源，
+                            // 避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                            easyWindow.recycle();
+                        }
+                    })
                     .show();
         }
     }
@@ -448,7 +460,8 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
-                        // 在窗口消失的时候回收资源，避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
+                        // 如果 EasyWindow 在取消显示后，没有再次使用了，则应该在窗口消失的时候回收资源，
+                        // 避免 LeakCanary 一直报内存泄漏，关于这点框架文档有介绍，详情请看文档
                         easyWindow.recycle();
                     }
                 })
