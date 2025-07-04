@@ -135,7 +135,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (easyWindow == null) {
                 continue;
             }
-            if (!tag.equals(easyWindow.getTag())) {
+            if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
             easyWindow.cancel();
@@ -189,7 +189,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (easyWindow == null) {
                 continue;
             }
-            if (!tag.equals(easyWindow.getTag())) {
+            if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
             easyWindow.show();
@@ -252,7 +252,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (easyWindow == null) {
                 continue;
             }
-            if (!tag.equals(easyWindow.getTag())) {
+            if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
             // 这里解释一下，为什么要使用迭代器移除，如果不那么做的话
@@ -318,7 +318,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (easyWindow == null) {
                 continue;
             }
-            if (!tag.equals(easyWindow.getTag())) {
+            if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
             if (easyWindow.isShowing()) {
@@ -370,7 +370,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             if (easyWindow == null) {
                 continue;
             }
-            if (!tag.equals(easyWindow.getTag())) {
+            if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
             return easyWindow;
