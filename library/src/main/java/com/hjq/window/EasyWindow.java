@@ -476,7 +476,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /**
      * 设置悬浮窗动画样式
      *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowAnim(int)}
      */
     public X setAnimStyle(int id) {
         return setWindowAnim(id);
@@ -1064,7 +1064,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #()}
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #delayUpdate()}
      */
     public void postUpdate() {
         delayUpdate();
@@ -1275,7 +1275,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowViewWidth()}
      */
     public int getWindowContentWidth() {
         return getWindowViewWidth();
@@ -1293,7 +1293,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowViewHeight()}
      */
     public int getWindowContentHeight() {
         return getWindowViewHeight();
