@@ -193,14 +193,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         return mEasyWindow;
     }
 
-    /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getRootLayout()}
-     */
-    @Nullable
-    public ViewGroup getWindowRootLayout() {
-        return getRootLayout();
-    }
-
     @Nullable
     public ViewGroup getRootLayout() {
         return mRootLayout;

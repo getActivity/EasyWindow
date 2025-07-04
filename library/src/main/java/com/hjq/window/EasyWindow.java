@@ -228,15 +228,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置悬浮窗 tag
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowTag(String)}
-     */
-    public X setTag(@Nullable String tag) {
-        return setWindowTag(tag);
-    }
-
-    /**
      * 设置悬浮窗大小
      *
      * @param width                 窗口宽度
@@ -260,50 +251,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
                 if (layoutParams.height != height) {
                     layoutParams.height = height;
                 }
-                contentView.setLayoutParams(layoutParams);
-            }
-        }
-        delayUpdate();
-        return (X) this;
-    }
-
-    /**
-     * 设置悬浮窗宽度
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
-     */
-    public X setWidth(int width) {
-        mWindowParams.width = width;
-        if (mRootLayout == null) {
-            return (X) this;
-        }
-        if (mRootLayout.getChildCount() > 0) {
-            View contentView = mRootLayout.getChildAt(0);
-            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
-            if (layoutParams != null && layoutParams.width != width) {
-                layoutParams.width = width;
-                contentView.setLayoutParams(layoutParams);
-            }
-        }
-        delayUpdate();
-        return (X) this;
-    }
-
-    /**
-     * 设置悬浮窗高度
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowSize(int, int)}
-     */
-    public X setHeight(int height) {
-        mWindowParams.height = height;
-        if (mRootLayout == null) {
-            return (X) this;
-        }
-        if (mRootLayout.getChildCount() > 0) {
-            View contentView = mRootLayout.getChildAt(0);
-            ViewGroup.LayoutParams layoutParams = contentView.getLayoutParams();
-            if (layoutParams != null && layoutParams.height != height) {
-                layoutParams.height = height;
                 contentView.setLayoutParams(layoutParams);
             }
         }
@@ -336,54 +283,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         // 在 Android 中，无论是否设置布局方向（如 RTL 右到左布局 ），屏幕坐标系的原点始终是屏幕左上角，
         // 布局方向的调整主要影响的是视图的排列顺序、绘制顺序等逻辑，不会改变基础坐标系的原点位置。
         return setWindowLocation(Gravity.LEFT | Gravity.TOP, x, y);
-    }
-
-    /**
-     * 设置悬浮窗显示的重心
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int, int)}
-     */
-    public X setGravity(@GravityFlag int gravity) {
-        mWindowParams.gravity = gravity;
-        delayUpdate();
-        sendTask(() -> {
-            if (mWindowDraggableRule != null) {
-                mWindowDraggableRule.refreshLocationCoordinate();
-            }
-        });
-        return (X) this;
-    }
-
-    /**
-     * 设置水平偏移量
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int)}
-     */
-    public X setXOffset(@Px int px) {
-        mWindowParams.x = px;
-        delayUpdate();
-        sendTask(() -> {
-            if (mWindowDraggableRule != null) {
-                mWindowDraggableRule.refreshLocationCoordinate();
-            }
-        });
-        return (X) this;
-    }
-
-    /**
-     * 设置垂直偏移量
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowLocation(int, int)}
-     */
-    public X setYOffset(@Px int px) {
-        mWindowParams.y = px;
-        delayUpdate();
-        sendTask(() -> {
-            if (mWindowDraggableRule != null) {
-                mWindowDraggableRule.refreshLocationCoordinate();
-            }
-        });
-        return (X) this;
     }
 
     /**
@@ -471,15 +370,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         mWindowParams.windowAnimations = id;
         delayUpdate();
         return (X) this;
-    }
-
-    /**
-     * 设置悬浮窗动画样式
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowAnim(int)}
-     */
-    public X setAnimStyle(int id) {
-        return setWindowAnim(id);
     }
 
     /**
@@ -788,15 +678,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置悬浮窗根布局（一般情况下推荐使用 {@link #setContentView} 方法来填充布局）
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setRootLayout(ViewGroup)}
-     */
-    public X setWindowRootLayout(@NonNull ViewGroup viewGroup) {
-        return setRootLayout(viewGroup);
-    }
-
-    /**
      * 设置悬浮窗内容布局
      */
     public X setContentView(@LayoutRes int layoutId) {
@@ -1064,13 +945,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #delayUpdate()}
-     */
-    public void postUpdate() {
-        delayUpdate();
-    }
-
-    /**
      * 更新悬浮窗（在更新了悬浮窗参数才需要调用）
      */
     public void update() {
@@ -1155,16 +1029,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowVisibility()}
-     */
-    public int getWindowVisibility() {
-        if (mRootLayout == null) {
-            return View.GONE;
-        }
-        return mRootLayout.getVisibility();
-    }
-
-    /**
      * 获取窗口视图可见性
      */
     public int getWindowViewVisibility() {
@@ -1172,13 +1036,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
             return View.GONE;
         }
         return mRootLayout.getVisibility();
-    }
-
-    /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #setWindowViewVisibility(int)}
-     */
-    public X setWindowVisibility(int visibility) {
-        return setWindowViewVisibility(visibility);
     }
 
     /**
@@ -1251,16 +1108,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 获取根布局
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getRootLayout()}
-     */
-    @Nullable
-    public ViewGroup getWindowRootLayout() {
-        return getRootLayout();
-    }
-
-    /**
      * 获取悬浮窗内容布局（可能为空）
      */
     @Nullable
@@ -1275,13 +1122,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowViewWidth()}
-     */
-    public int getWindowContentWidth() {
-        return getWindowViewWidth();
-    }
-
-    /**
      * 获取当前窗口视图的宽度
      */
     public int getWindowViewWidth() {
@@ -1290,13 +1130,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
             return 0;
         }
         return windowRootLayout.getWidth();
-    }
-
-    /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowViewHeight()}
-     */
-    public int getWindowContentHeight() {
-        return getWindowViewHeight();
     }
 
     /**
@@ -1496,28 +1329,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 获取悬浮窗 tag
-     *
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
-     */
-    @Nullable
-    public String getTag() {
-        return getWindowTag();
-    }
-
-    /**
      * 延迟执行任务
      */
     public void sendTask(@NonNull Runnable runnable) {
         WindowTaskHandler.sendTask(runnable, mHandlerToken, 0);
-    }
-
-    /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #sendTask(Runnable)} ()}
-     */
-    public boolean post(@NonNull Runnable runnable) {
-        sendTask(runnable);
-        return true;
     }
 
     /**
@@ -1528,14 +1343,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #sendTask(Runnable, long)} ()}
-     */
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
-        sendTask(runnable, delayMillis);
-        return true;
-    }
-
-    /**
      * 移除指定的任务
      */
     public void cancelTask(@NonNull Runnable runnable) {
@@ -1543,24 +1350,10 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #cancelTask(Runnable)} ()}
-     */
-    public void removeRunnable(@NonNull Runnable runnable) {
-        cancelTask(runnable);
-    }
-
-    /**
      * 移除所有的任务
      */
     public void cancelAllTask() {
         WindowTaskHandler.cancelTask(mHandlerToken);
-    }
-
-    /**
-     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #cancelAllTask()} ()}
-     */
-    public void removeAllRunnable() {
-        cancelAllTask();
     }
 
     /**
