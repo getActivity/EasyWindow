@@ -417,6 +417,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     @Nullable
     private ScreenOrientationMonitor mScreenOrientationMonitor;
 
+    /** 消息处理器的令牌 */
+    private final Object mHandlerToken = new Object();
+
     /** 更新任务 */
     private final Runnable mUpdateRunnable = this::update;
 
@@ -1726,7 +1729,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
         // 发送和这个 WindowManager 相关的消息回调
-        return HANDLER.postAtTime(runnable, this, uptimeMillis);
+        return HANDLER.postAtTime(runnable, mHandlerToken, uptimeMillis);
     }
 
     /**
@@ -1740,7 +1743,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      * 移除所有的任务
      */
     public void removeAllRunnable() {
-        HANDLER.removeCallbacksAndMessages(this);
+        HANDLER.removeCallbacksAndMessages(mHandlerToken);
     }
 
     /**
