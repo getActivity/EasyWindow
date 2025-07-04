@@ -18,7 +18,7 @@ public final class IOSToast {
         EasyWindow.with(activity)
                 .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
-                .setAnimStyle(android.R.style.Animation_Translucent)
+                .setWindowAnim(android.R.style.Animation_Translucent)
                 .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                 .setTextByTextView(android.R.id.message, text)
                 .show();
@@ -28,7 +28,7 @@ public final class IOSToast {
         EasyWindow.with(activity)
                 .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
-                .setAnimStyle(android.R.style.Animation_Activity)
+                .setWindowAnim(android.R.style.Animation_Activity)
                 .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
                 .setTextByTextView(android.R.id.message, text)
                 .show();
@@ -38,7 +38,7 @@ public final class IOSToast {
         EasyWindow.with(activity)
                 .setWindowDuration(TIME)
                 .setContentView(R.layout.window_hint)
-                .setAnimStyle(android.R.style.Animation_Dialog)
+                .setWindowAnim(android.R.style.Animation_Dialog)
                 .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
                 .setTextByTextView(android.R.id.message, text)
                 .show();

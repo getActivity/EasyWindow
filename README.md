@@ -80,7 +80,7 @@ EasyWindow.with(this)
         // 设置显示时长
         .setWindowDuration(1000)
         // 设置动画样式
-        //.setAnimStyle(android.R.style.Animation_Translucent)
+        //.setWindowAnim(android.R.style.Animation_Translucent)
         // 设置外层是否能被触摸
         //.setOutsideTouchable(false)
         // 设置窗口背景阴影强度
@@ -114,7 +114,7 @@ EasyWindow.with(activity).apply {
     // 设置显示时长
     setWindowDuration(1000)
     // 设置动画样式
-    //setAnimStyle(android.R.style.Animation_Translucent)
+    //setWindowAnim(android.R.style.Animation_Translucent)
     // 设置外层是否能被触摸
     //setOutsideTouchable(false)
     // 设置窗口背景阴影强度
@@ -142,7 +142,7 @@ EasyWindow.with(activity)
         // 设置显示时长
         .setWindowDuration(1000)
         // 设置动画样式
-        //.setAnimStyle(android.R.style.Animation_Translucent)
+        //.setWindowAnim(android.R.style.Animation_Translucent)
         // 设置外层是否能被触摸
         //.setOutsideTouchable(false)
         // 设置窗口背景阴影强度

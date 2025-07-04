@@ -97,7 +97,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setWindowDuration(1000)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.TopAnimStyle)
+                    .setWindowAnim(R.style.TopAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setTextByTextView(android.R.id.message, "这个动画是不是很骚")
                     .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
@@ -115,7 +115,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setWindowDuration(1000)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.IOSAnimStyle)
+                    .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
                     .setTextByTextView(android.R.id.message, "一秒后自动消失")
                     .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
@@ -132,7 +132,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.IOSAnimStyle)
+                    .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setTextByTextView(android.R.id.message, "点我消失")
                     // 设置外层是否能被触摸
@@ -153,7 +153,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             EasyWindow.with(this)
                     .setWindowDuration(3000)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.IOSAnimStyle)
+                    .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
                     .setTextByTextView(android.R.id.message, "请注意下方 Snackbar")
                     .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
@@ -176,7 +176,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.RightAnimStyle)
+                    .setWindowAnim(R.style.RightAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setWindowDuration(2000)
                     .setTextByTextView(android.R.id.message, "位置算得准不准")
@@ -193,7 +193,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                     .setContentView(R.layout.window_input)
-                    .setAnimStyle(R.style.BottomAnimStyle)
+                    .setWindowAnim(R.style.BottomAnimStyle)
                     .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
                     .setOnClickListenerByView(R.id.tv_window_close, new OnWindowViewClickListener<TextView>() {
 
@@ -245,7 +245,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         webView.loadUrl("https://github.com/getActivity/EasyWindow");
                     }
                 })
-                .setAnimStyle(R.style.IOSAnimStyle)
+                .setWindowAnim(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setWindowDraggableRule(new MovingWindowDraggableRule())
                 .setOnClickListenerByView(R.id.iv_window_web_close, new OnWindowViewClickListener<ImageView>() {
@@ -296,7 +296,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         recyclerView.setAdapter(adapter);
                     }
                 })
-                .setAnimStyle(R.style.IOSAnimStyle)
+                .setWindowAnim(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setWindowDraggableRule(new MovingWindowDraggableRule())
                 .setOnClickListenerByView(R.id.iv_window_list_close, new OnWindowViewClickListener<ImageView>() {
@@ -319,7 +319,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                     .setContentView(R.layout.window_hint)
-                    .setAnimStyle(R.style.IOSAnimStyle)
+                    .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setTextByTextView(android.R.id.message, "点我消失")
                     // 设置成可拖拽的
@@ -375,7 +375,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(Toaster.getStyle().createView(this))
                     .setWindowLocation(Gravity.BOTTOM, 0, 100)
                     .setWindowDuration(1000)
-                    .setAnimStyle(R.style.ScaleAnimStyle)
+                    .setWindowAnim(R.style.ScaleAnimStyle)
                     .setTextByTextView(android.R.id.message, "就问你溜不溜")
                     .show();
         }
