@@ -259,6 +259,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
         if (!isFullShowView()) {
             showFullView();
+            postStayEdgeRunnable();
             return;
         }
         Toaster.show("我被点击了");
