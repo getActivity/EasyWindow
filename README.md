@@ -234,16 +234,26 @@ EasyWindow.with(this)
 ```java
 // 显示悬浮窗
 easyWindow.show();
+// 延迟显示悬浮窗（可在子线程中调用，不怕频繁调用）
+easyWindow.delayShow();
+easyWindow.delayShow(long delayMillis);
 // 将悬浮窗显示在指定 View 的旁边
 easyWindow.showAsDropDown(@NonNull View anchorView, int showGravity, int xOff, int yOff);
 // 取消显示悬浮窗
 easyWindow.cancel();
+// 延迟取消显示悬浮窗（可在子线程中调用，不怕频繁调用）
+easyWindow.delayCancel();
+easyWindow.delayCancel(long delayMillis);
 // 取消显示并回收悬浮窗
 easyWindow.recycle();
+// 延迟回收悬浮窗（可在子线程中调用，不怕频繁调用）
+easyWindow.delayRecycle();
+easyWindow.delayRecycle(long delayMillis);
 // 更新悬浮窗（在更新了悬浮窗参数才需要调用）
 easyWindow.update();
 // 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
 easyWindow.delayUpdate();
+easyWindow.delayUpdate(long delayMillis);
 // 当前悬浮窗是否正在显示
 easyWindow.isShowing();
 

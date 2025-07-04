@@ -53,8 +53,7 @@ import java.util.List;
  *             https://developer.android.google.cn/reference/kotlin/android/view/WindowManager.LayoutParams?hl=en
  */
 @SuppressWarnings({"unchecked", "unused", "UnusedReturnValue"})
-public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
-        ScreenOrientationMonitor.OnScreenOrientationCallback {
+public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMonitor.OnScreenOrientationCallback {
 
     @NonNull
     private static final List<EasyWindow<?>> sWindowInstanceSet = new ArrayList<>();
@@ -414,8 +413,17 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /** 消息处理器的令牌 */
     private final Object mHandlerToken = new Object();
 
+    /** 显示任务 */
+    private final Runnable mShowTask = this::show;
+
+    /** 取消显示任务 */
+    private final Runnable mCancelTask = this::cancel;
+
     /** 更新任务 */
     private final Runnable mUpdateTask = this::update;
+
+    /** 回收任务 */
+    private final Runnable mRecycleTask = this::recycle;
 
     /**
      * 创建一个局部悬浮窗
@@ -1040,8 +1048,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setWindowDuration(@IntRange(from = 0) int delayMillis) {
         mWindowDuration = delayMillis;
         if (isShowing() && mWindowDuration != 0) {
-            cancelTask(this);
-            sendTask(this, mWindowDuration);
+            delayCancel(mWindowDuration);
         }
         return (X) this;
     }
@@ -1265,8 +1272,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mShowing = true;
             // 如果当前限定了显示时长
             if (mWindowDuration != 0) {
-                cancelTask(this);
-                sendTask(this, mWindowDuration);
+                delayCancel(mWindowDuration);
             }
             // 如果设置了拖拽规则
             if (mWindowDraggableRule != null) {
@@ -1287,7 +1293,24 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
-     * 销毁悬浮窗
+     * 延迟显示悬浮窗（可在子线程中调用，不怕频繁调用）
+     */
+    public void delayShow(long delayMillis) {
+        if (isShowing()) {
+            return;
+        }
+        // 移除上一个还未执行的显示任务
+        cancelTask(mShowTask);
+        // 添加一个新的显示任务
+        sendTask(mShowTask, delayMillis);
+    }
+
+    public void delayShow() {
+        delayShow(0);
+    }
+
+    /**
+     * 取消悬浮窗
      */
     public void cancel() {
         if (!mShowing) {
@@ -1299,9 +1322,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             // 如果当前 WindowManager 没有附加这个 View 则会抛出异常
             // java.lang.IllegalArgumentException: View not attached to window manager
             mWindowManager.removeViewImmediate(mRootLayout);
-
-            // 移除销毁任务
-            cancelTask(this);
 
             // 回调监听
             if (mOnWindowLifecycleCallback != null) {
@@ -1317,16 +1337,20 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
-     * 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
+     * 延迟取消悬浮窗（可在子线程中调用，不怕频繁调用）
      */
-    public void delayUpdate() {
+    public void delayCancel(long delayMillis) {
         if (!isShowing()) {
             return;
         }
-        // 移除上一个还未执行的更新任务
-        cancelTask(mUpdateTask);
-        // 添加一个新的更新任务
-        sendTask(mUpdateTask);
+        // 移除上一个还未执行的取消显示任务
+        cancelTask(mCancelTask);
+        // 添加一个新的取消显示任务
+        sendTask(mCancelTask, delayMillis);
+    }
+
+    public void delayCancel() {
+        delayCancel(0);
     }
 
     /**
@@ -1358,6 +1382,23 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     }
 
     /**
+     * 延迟更新悬浮窗（可在子线程中调用，不怕频繁调用）
+     */
+    public void delayUpdate(long delayMillis) {
+        if (!isShowing()) {
+            return;
+        }
+        // 移除上一个还未执行的更新任务
+        cancelTask(mUpdateTask);
+        // 添加一个新的更新任务
+        sendTask(mUpdateTask, delayMillis);
+    }
+
+    public void delayUpdate() {
+        delayUpdate(0);
+    }
+
+    /**
      * 回收释放
      */
     public void recycle() {
@@ -1386,6 +1427,20 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mRootLayout = null;
         // 将当前实例从静态集合中移除
         sWindowInstanceSet.remove(this);
+    }
+
+    /**
+     * 延迟回收悬浮窗（可在子线程中调用，不怕频繁调用）
+     */
+    public void delayRecycle(long delayMillis) {
+        // 移除上一个还未执行的回收任务
+        cancelTask(mRecycleTask);
+        // 添加一个新的回收任务
+        sendTask(mRecycleTask, delayMillis);
+    }
+
+    public void delayRecycle() {
+        delayRecycle(0);
     }
 
     /**
@@ -1848,14 +1903,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         view.setEnabled(true);
         view.setOnTouchListener(new ViewTouchListenerWrapper(this, listener));
         return (X) this;
-    }
-
-    /**
-     * {@link Runnable}
-     */
-    @Override
-    public void run() {
-        cancel();
     }
 
     /**
