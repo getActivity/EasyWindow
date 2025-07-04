@@ -370,39 +370,40 @@ easyWindow.cancelAllTask();
 
 ```java
 // 取消所有正在显示的悬浮窗
-EasyWindow.cancelAllWindow();
+EasyWindowManager.cancelAllWindow();
 // 取消特定类名的悬浮窗
-EasyWindow.cancelWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.cancelWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 取消特定标记的悬浮窗
-EasyWindow.cancelWindowByTag(@Nullable String tag);
+EasyWindowManager.cancelWindowByTag(@Nullable String tag);
 
 // 显示所有已取消但未回收的悬浮窗
-EasyWindow.showAllWindow();
+EasyWindowManager.showAllWindow();
 // 显示特定类名已取消但未回收的悬浮窗
-EasyWindow.showWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.showWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 显示特定标记已取消但未回收的悬浮窗
-EasyWindow.showWindowByTag(@Nullable String tag);
+EasyWindowManager.showWindowByTag(@Nullable String tag);
 
 // 回收所有正在显示的悬浮窗
-EasyWindow.recycleAllWindow();
+EasyWindowManager.recycleAllWindow();
 // 回收特定类名的悬浮窗
-EasyWindow.recycleWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.recycleWindowByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 回收特定标记的悬浮窗
-EasyWindow.recycleWindowByTag(@Nullable String tag);
+EasyWindowManager.recycleWindowByTag(@Nullable String tag);
 
 // 判断当前是否有悬浮窗正在显示
-EasyWindow.existAnyWindowShowing();
+EasyWindowManager.existAnyWindowShowing();
 // 判断当前是否有特定类名的悬浮窗正在显示
-EasyWindow.existWindowShowingByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.existWindowShowingByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 判断当前是否有特定标记的悬浮窗正在显示
-EasyWindow.existWindowShowingByTag(@Nullable String tag);
+EasyWindowManager.existWindowShowingByTag(@Nullable String tag);
+
+// 寻找特定类名的悬浮窗
+EasyWindowManager.findWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+// 寻找特定标记的悬浮窗
+EasyWindowManager.findWindowInstanceByTag(@Nullable String tag);
 
 // 获取所有的悬浮窗
-EasyWindow.getAllWindowInstance();
-// 获取特定类名的悬浮窗
-EasyWindow.getWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
-// 获取特定标记的悬浮窗
-EasyWindow.getWindowInstanceByTag(@Nullable String tag);
+EasyWindowManager.getAllWindowInstance();
 ```
 
 #### 作者的其他开源项目

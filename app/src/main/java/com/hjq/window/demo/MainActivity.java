@@ -29,6 +29,7 @@ import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
+import com.hjq.window.EasyWindowManager;
 import com.hjq.window.OnWindowLayoutInflateListener;
 import com.hjq.window.OnWindowLifecycleCallback;
 import com.hjq.window.OnWindowViewClickListener;
@@ -348,7 +349,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             // 关闭当前正在显示的悬浮窗
             // EasyWindow.cancelAll();
             // 回收当前正在显示的悬浮窗
-            EasyWindow.recycleAllWindow();
+            EasyWindowManager.recycleAllWindow();
 
         } else if (viewId == R.id.btn_main_utils) {
 
