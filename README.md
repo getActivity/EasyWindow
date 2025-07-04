@@ -370,15 +370,13 @@ easyWindow.startActivity(@Nullable Class<? extends Activity> clazz);
 easyWindow.startActivity(@Nullable Intent intent);
 
 // 延迟执行任务
-easyWindow.post(Runnable runnable);
+easyWindow.sendTask(Runnable runnable);
 // 延迟一段时间执行任务
-easyWindow.postDelayed(@NonNull Runnable runnable, long delayMillis);
-// 在指定的时间执行任务
-easyWindow.postAtTime(@NonNull Runnable runnable, long uptimeMillis);
+easyWindow.sendTask(@NonNull Runnable runnable, long delayMillis);
 // 移除指定的任务
-easyWindow.removeRunnable(@NonNull Runnable runnable);
+easyWindow.cancelTask(@NonNull Runnable runnable);
 // 移除所有的任务
-easyWindow.removeAllRunnable();
+easyWindow.cancelAllTask();
 ```
 
 * 静态方法

@@ -14,10 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.FloatRange;
@@ -58,9 +55,6 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "unused", "UnusedReturnValue"})
 public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         ScreenOrientationMonitor.OnScreenOrientationCallback {
-
-    @NonNull
-    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
     @NonNull
     private static final List<EasyWindow<?>> sWindowInstanceSet = new ArrayList<>();
@@ -611,7 +605,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
         mWindowParams.x = x;
         mWindowParams.y = y;
         postUpdate();
-        post(() -> {
+        sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
             }
@@ -634,7 +628,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setGravity(@GravityFlag int gravity) {
         mWindowParams.gravity = gravity;
         postUpdate();
-        post(() -> {
+        sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
             }
@@ -650,7 +644,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setXOffset(@Px int px) {
         mWindowParams.x = px;
         postUpdate();
-        post(() -> {
+        sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
             }
@@ -666,7 +660,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setYOffset(@Px int px) {
         mWindowParams.y = px;
         postUpdate();
-        post(() -> {
+        sendTask(() -> {
             if (mWindowDraggableRule != null) {
                 mWindowDraggableRule.refreshLocationCoordinate();
             }
@@ -1046,8 +1040,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     public X setWindowDuration(@IntRange(from = 0) int delayMillis) {
         mWindowDuration = delayMillis;
         if (isShowing() && mWindowDuration != 0) {
-            removeRunnable(this);
-            postDelayed(this, mWindowDuration);
+            cancelTask(this);
+            sendTask(this, mWindowDuration);
         }
         return (X) this;
     }
@@ -1271,8 +1265,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mShowing = true;
             // 如果当前限定了显示时长
             if (mWindowDuration != 0) {
-                removeRunnable(this);
-                postDelayed(this, mWindowDuration);
+                cancelTask(this);
+                sendTask(this, mWindowDuration);
             }
             // 如果设置了拖拽规则
             if (mWindowDraggableRule != null) {
@@ -1307,7 +1301,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             mWindowManager.removeViewImmediate(mRootLayout);
 
             // 移除销毁任务
-            removeRunnable(this);
+            cancelTask(this);
 
             // 回调监听
             if (mOnWindowLifecycleCallback != null) {
@@ -1330,9 +1324,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
             return;
         }
         // 移除上一个还未执行的更新任务
-        removeRunnable(mUpdateRunnable);
+        cancelTask(mUpdateRunnable);
         // 添加一个新的更新任务
-        post(mUpdateRunnable);
+        sendTask(mUpdateRunnable);
     }
 
     /**
@@ -1361,7 +1355,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
      */
     public void recycle() {
         // 移除所有未执行的任务
-        removeAllRunnable();
+        cancelAllTask();
         if (isShowing()) {
             cancel();
         }
@@ -1710,40 +1704,59 @@ public class EasyWindow<X extends EasyWindow<?>> implements Runnable,
     /**
      * 延迟执行任务
      */
+    public void sendTask(@NonNull Runnable runnable) {
+        WindowTaskHandler.sendTask(runnable, mHandlerToken, 0);
+    }
+
+    /**
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #sendTask(Runnable)} ()}
+     */
     public boolean post(@NonNull Runnable runnable) {
-        return postDelayed(runnable, 0);
+        sendTask(runnable);
+        return true;
     }
 
     /**
      * 延迟一段时间执行任务
      */
-    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
-        if (delayMillis < 0) {
-            delayMillis = 0;
-        }
-        return postAtTime(runnable, SystemClock.uptimeMillis() + delayMillis);
+    public void sendTask(@NonNull Runnable runnable, long delayMillis) {
+        WindowTaskHandler.sendTask(runnable, mHandlerToken, delayMillis);
     }
 
     /**
-     * 在指定的时间执行任务
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #sendTask(Runnable, long)} ()}
      */
-    public boolean postAtTime(@NonNull Runnable runnable, long uptimeMillis) {
-        // 发送和这个 WindowManager 相关的消息回调
-        return HANDLER.postAtTime(runnable, mHandlerToken, uptimeMillis);
+    public boolean postDelayed(@NonNull Runnable runnable, long delayMillis) {
+        sendTask(runnable, delayMillis);
+        return true;
     }
 
     /**
      * 移除指定的任务
      */
+    public void cancelTask(@NonNull Runnable runnable) {
+        WindowTaskHandler.cancelTask(runnable);
+    }
+
+    /**
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #cancelTask(Runnable)} ()}
+     */
     public void removeRunnable(@NonNull Runnable runnable) {
-        HANDLER.removeCallbacks(runnable);
+        cancelTask(runnable);
     }
 
     /**
      * 移除所有的任务
      */
+    public void cancelAllTask() {
+        WindowTaskHandler.cancelTask(mHandlerToken);
+    }
+
+    /**
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #cancelAllTask()} ()}
+     */
     public void removeAllRunnable() {
-        HANDLER.removeCallbacksAndMessages(mHandlerToken);
+        cancelAllTask();
     }
 
     /**

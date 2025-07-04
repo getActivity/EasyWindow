@@ -385,7 +385,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         if (!isFollowScreenRotationChanges()) {
             EasyWindow<?> easyWindow = getEasyWindow();
             if (easyWindow != null) {
-                easyWindow.postDelayed(() -> {
+                easyWindow.sendTask(() -> {
                     refreshWindowInfo();
                     refreshPhysicalScreenSize();
                     refreshLocationCoordinate();

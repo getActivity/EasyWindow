@@ -61,8 +61,8 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
      * 发送贴边显示任务
      */
     public void postStayEdgeRunnable() {
-        removeRunnable(mStayEdgeRunnable);
-        postDelayed(mStayEdgeRunnable, 3000);
+        cancelTask(mStayEdgeRunnable);
+        sendTask(mStayEdgeRunnable, 3000);
     }
 
     private final Runnable mStayEdgeRunnable = () -> {
