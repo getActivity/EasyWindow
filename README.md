@@ -325,10 +325,10 @@ easyWindow.setWindowParams(@NonNull WindowManager.LayoutParams params);
 // 重新设置 WindowManager 对象
 easyWindow.setWindowManager(@NonNull WindowManager windowManager);
 
-// 获取当前窗口内容宽度
-easyWindow.getWindowContentWidth();
-// 获取当前窗口内容高度
-easyWindow.getWindowContentHeight();
+// 获取当前窗口视图宽度
+easyWindow.getWindowViewWidth();
+// 获取当前窗口视图高度
+easyWindow.getWindowViewHeight();
 
 // 设置可见性状态给 View
 easyWindow.setVisibilityByView(@IdRes int viewId, int visibility);

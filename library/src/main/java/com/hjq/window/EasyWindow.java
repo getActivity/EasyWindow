@@ -1258,9 +1258,16 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 获取当前窗口内容宽度
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
      */
     public int getWindowContentWidth() {
+        return getWindowViewWidth();
+    }
+
+    /**
+     * 获取当前窗口视图的宽度
+     */
+    public int getWindowViewWidth() {
         ViewGroup windowRootLayout = getRootLayout();
         if (windowRootLayout == null) {
             return 0;
@@ -1269,9 +1276,16 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 获取当前窗口内容高度
+     * @deprecated           该 API 已经过时，随时会被删除，请尽早迁移到 {@link #getWindowTag()}
      */
     public int getWindowContentHeight() {
+        return getWindowViewHeight();
+    }
+
+    /**
+     * 获取当前窗口视图的高度
+     */
+    public int getWindowViewHeight() {
         ViewGroup windowRootLayout = getRootLayout();
         if (windowRootLayout == null) {
             return 0;

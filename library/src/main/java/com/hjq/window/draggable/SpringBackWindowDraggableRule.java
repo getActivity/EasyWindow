@@ -139,7 +139,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 } else {
                     // 回弹到屏幕右边（注意减去 View 宽度，因为 View 坐标系是从屏幕左上角开始算的）
                     // 如果在最右边向右移动就会产生负数，这里需要处理掉，因为坐标没有负数这一说
-                    endX = Math.max((float) screenWidth - getWindowContentWidth(), 0);
+                    endX = Math.max((float) screenWidth - getWindowViewWidth(), 0);
                 }
                 float y = rawMoveY - mViewDownY;
                 if (!equalsWithRelativeTolerance(startX, endX)) {
@@ -160,7 +160,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 } else {
                     // 回弹到屏幕底部（注意减去 View 高度，因为 View 坐标系是从屏幕左上角开始算的）
                     // 如果在最底部向下移动就会产生负数，这里需要处理掉，因为坐标没有负数这一说
-                    endY = Math.max((float) screenHeight - getWindowContentHeight(), 0);
+                    endY = Math.max((float) screenHeight - getWindowViewHeight(), 0);
                 }
                 if (!equalsWithRelativeTolerance(startY, endY)) {
                     // 从移动的点回弹到边界上

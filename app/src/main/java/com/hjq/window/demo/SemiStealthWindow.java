@@ -98,8 +98,8 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             return;
         }
 
-        int viewWidth = getWindowContentWidth();
-        int viewHeight = getWindowContentHeight();
+        int viewWidth = getWindowViewWidth();
+        int viewHeight = getWindowViewHeight();
 
         // 创建一个矩形来定义裁剪区域
         Rect clipBounds = new Rect();
@@ -110,7 +110,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
                     WindowManager.LayoutParams windowParams = getWindowParams();
                     windowDraggableRule.updateLocation(windowParams.x - viewWidth / 2f, windowParams.y, true);
                 } else {
-                    int offSet = getWindowContentWidth() / 2; //用小球来做偏移
+                    int offSet = getWindowViewWidth() / 2; //用小球来做偏移
                     clipBounds.set(offSet, 0, viewWidth, viewHeight);
                     // 设置画板偏移
                     windowRootLayout.setTranslationX(-offSet);
@@ -204,7 +204,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
         if (isLeftShow()) {
             return windowParams.x > windowParams.y;
         } else {
-            return getScreenWidth() - windowParams.x - getWindowContentWidth() > windowParams.y;
+            return getScreenWidth() - windowParams.x - getWindowViewWidth() > windowParams.y;
         }
     }
 
@@ -222,7 +222,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
      * 悬浮球是否靠左显示
      */
     private boolean isLeftShow(){
-        return (getWindowParams().x + getWindowContentWidth() / 2f)  < getScreenWidth() / 2f;
+        return (getWindowParams().x + getWindowViewWidth() / 2f)  < getScreenWidth() / 2f;
     }
 
     /** {@link OnWindowDraggingListener} */

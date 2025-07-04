@@ -229,23 +229,23 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 获取当前窗口内容宽度
+     * 获取当前窗口视图的宽度
      */
-    public int getWindowContentWidth() {
+    public int getWindowViewWidth() {
         if (mEasyWindow == null) {
             return 0;
         }
-        return mEasyWindow.getWindowContentWidth();
+        return mEasyWindow.getWindowViewWidth();
     }
 
     /**
-     * 获取当前窗口内容高度
+     * 获取当前窗口视图的高度
      */
-    public int getWindowContentHeight() {
+    public int getWindowViewHeight() {
         if (mEasyWindow == null) {
             return 0;
         }
-        return mEasyWindow.getWindowContentHeight();
+        return mEasyWindow.getWindowViewHeight();
     }
 
     /**
@@ -499,8 +499,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        int viewWidth = getWindowContentWidth();
-        int viewHeight = getWindowContentHeight();
+        int viewWidth = getWindowViewWidth();
+        int viewHeight = getWindowViewHeight();
 
         int windowWidth = getWindowWidth();
         int windowHeight = getWindowHeight();
