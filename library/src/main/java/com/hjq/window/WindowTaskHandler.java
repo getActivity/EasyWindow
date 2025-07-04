@@ -16,6 +16,10 @@ public final class WindowTaskHandler {
     /** Handler 对象 */
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
+    private WindowTaskHandler() {
+        // default implementation ignored
+    }
+
     /**
      * 延迟发送一个任务
      */
