@@ -351,8 +351,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onGranted(@NonNull List<IPermission> permissions, boolean allGranted) {
-                        // 这里最好要做一下延迟显示，因为在某些手机（华为鸿蒙 3.0）上面立即显示会导致显示效果有一些瑕疵
-                        runOnUiThread(() -> showGlobalWindow(getApplication()));
+                        showGlobalWindow(getApplication());
                     }
 
                     @Override

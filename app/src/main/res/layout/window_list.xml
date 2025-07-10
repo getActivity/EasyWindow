@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="150dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:background="@drawable/dialog_toast_bg"
@@ -10,18 +10,39 @@
     android:minHeight="120dp"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_window_list_close"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_gravity="end"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:src="@drawable/ic_close" />
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:ellipsize="end"
+            android:text="触摸此处可以拖拽窗口"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/iv_window_list_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_close" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#ECECEC" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_window_list_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="300dp"
         tools:listitem="@layout/window_list_item" />
 
 </LinearLayout>

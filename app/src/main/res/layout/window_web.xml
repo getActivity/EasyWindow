@@ -11,13 +11,34 @@
     android:minHeight="120dp"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_window_web_close"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_gravity="end"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:src="@drawable/ic_close" />
+        android:gravity="center_vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:ellipsize="end"
+            android:text="触摸此处可以拖拽窗口"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/iv_window_web_close"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_close" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#ECECEC" />
 
     <WebView
         android:id="@+id/wv_window_web_content"
