@@ -26,7 +26,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.Px;
 import android.support.annotation.StringRes;
 import android.support.transition.Slide.GravityFlag;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -256,6 +258,26 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         }
         delayUpdate();
         return (X) this;
+    }
+
+    /**
+     * 设置悬浮窗大小（按照屏幕百分比）
+     *
+     * @param widthPercent                 窗口宽度百分比
+     * @param heightPercent                窗口高度百分比
+     */
+    @SuppressWarnings("deprecation")
+    public X setWindowSizePercent(@FloatRange(from = 0, to = 1) float widthPercent, @FloatRange(from = 0, to = 1) float heightPercent) {
+        widthPercent = Math.min(Math.max(widthPercent, 0), 1);
+        heightPercent = Math.min(Math.max(heightPercent, 0), 1);
+        Display defaultDisplay = mWindowManager.getDefaultDisplay();
+        if (defaultDisplay == null) {
+            return setWindowSize(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        }
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        defaultDisplay.getMetrics(metrics);
+        return setWindowSize((int) (metrics.widthPixels * widthPercent), (int) (metrics.heightPixels * heightPercent));
     }
 
     /**

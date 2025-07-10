@@ -255,6 +255,8 @@ easyWindow.setWindowTag(@Nullable String tag);
 easyWindow.getWindowTag();
 // 设置悬浮窗宽度和高度
 easyWindow.setWindowSize(int width, int height);
+// 设置悬浮窗大小（按照屏幕百分比）
+easyWindow.setWindowSizePercent(@FloatRange(from = 0, to = 1) float widthPercent, @FloatRange(from = 0, to = 1) float heightPercent);
 
 // 设置悬浮窗的位置
 easyWindow.setWindowLocation(@Px int x, @Px int y);
