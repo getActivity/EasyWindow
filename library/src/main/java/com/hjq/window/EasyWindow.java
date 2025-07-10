@@ -1441,6 +1441,34 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
+     * 设置按键监听
+     */
+    public X setOnKeyListenerByView(@Nullable OnWindowViewKeyListener<? extends View> listener) {
+        return setOnKeyListenerByView(mRootLayout, listener);
+    }
+
+    public X setOnKeyListenerByView(@IdRes int id, @Nullable OnWindowViewKeyListener<? extends View> listener) {
+        return setOnKeyListenerByView(findViewById(id), listener);
+    }
+
+    private X setOnKeyListenerByView(@Nullable View view, @Nullable OnWindowViewKeyListener<? extends View> listener) {
+        if (view == null) {
+            return (X) this;
+        }
+
+        if (listener == null) {
+            view.setOnKeyListener(null);
+            return (X) this;
+        }
+
+        // 如果当前是否设置了不可触摸，如果是就擦除掉
+        removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        view.setClickable(true);
+        view.setOnKeyListener(new ViewKeyListenerWrapper(this, listener));
+        return (X) this;
+    }
+
+    /**
      * {@link ScreenOrientationMonitor.OnScreenOrientationCallback}
      */
     @Override
