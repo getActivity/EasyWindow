@@ -25,8 +25,9 @@ import android.widget.TextView;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
 import com.hjq.permissions.OnPermissionCallback;
-import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.hjq.permissions.permission.PermissionLists;
+import com.hjq.permissions.permission.base.IPermission;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
 import com.hjq.window.EasyWindowManager;
@@ -342,26 +343,23 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_global) {
 
-            XXPermissions.with(MainActivity.this)
-                    .permission(Permission.SYSTEM_ALERT_WINDOW)
-                    .request(new OnPermissionCallback() {
+            Toaster.show("需要悬浮窗权限才能显示全局的窗口");
 
-                        @Override
-                        public void onGranted(@NonNull List<String> permissions, boolean allGranted) {
-                            // 这里最好要做一下延迟显示，因为在某些手机（华为鸿蒙 3.0）上面立即显示会导致显示效果有一些瑕疵
-                            runOnUiThread(() -> showGlobalWindow(getApplication()));
-                        }
+            XXPermissions.with(this)
+                .permission(PermissionLists.getSystemAlertWindowPermission())
+                .request(new OnPermissionCallback() {
 
-                        @Override
-                        public void onDenied(@NonNull List<String> permissions, boolean doNotAskAgain) {
-                            EasyWindow.with(MainActivity.this)
-                                    .setWindowDuration(1000)
-                                    .setContentView(R.layout.window_hint)
-                                    .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
-                                    .setTextByTextView(android.R.id.message, "请先授予悬浮窗权限")
-                                    .show();
-                        }
-                    });
+                    @Override
+                    public void onGranted(@NonNull List<IPermission> permissions, boolean allGranted) {
+                        // 这里最好要做一下延迟显示，因为在某些手机（华为鸿蒙 3.0）上面立即显示会导致显示效果有一些瑕疵
+                        runOnUiThread(() -> showGlobalWindow(getApplication()));
+                    }
+
+                    @Override
+                    public void onDenied(@NonNull List<IPermission> permissions, boolean doNotAskAgain) {
+                        Toaster.show("申请悬浮窗权限失败，无法显示全局的窗口");
+                    }
+                });
 
         } else if (viewId == R.id.btn_main_semi_stealth) {
 
