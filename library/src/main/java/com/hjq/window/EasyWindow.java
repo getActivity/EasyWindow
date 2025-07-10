@@ -1357,7 +1357,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置点击事件
+     * 设置点击监听
      */
     public X setOnClickListenerByView(@Nullable OnWindowViewClickListener<? extends View> listener) {
         return setOnClickListenerByView(mRootLayout, listener);
@@ -1385,9 +1385,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置长按事件
+     * 设置长按监听（需要注意：这与框架内部的拖拽逻辑会相冲突）
      */
-    public X setOnLongClickListenerByView(@Nullable OnWindowViewLongClickListener<? extends View> listener) {
+    public X setOnLongClickListener(@Nullable OnWindowViewLongClickListener<? extends View> listener) {
         return setOnLongClickListenerByView(mRootLayout, listener);
     }
 
@@ -1413,9 +1413,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
-     * 设置触摸事件
+     * 设置触摸监听
      */
-    public X setOnTouchListenerByView(@Nullable OnWindowViewTouchListener<? extends View> listener) {
+    public X setOnTouchListener(@Nullable OnWindowViewTouchListener<? extends View> listener) {
         return setOnTouchListenerByView(mRootLayout, listener);
     }
 
@@ -1443,7 +1443,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /**
      * 设置按键监听
      */
-    public X setOnKeyListenerByView(@Nullable OnWindowViewKeyListener<? extends View> listener) {
+    public X setOnKeyListener(@Nullable OnWindowViewKeyListener<? extends View> listener) {
         return setOnKeyListenerByView(mRootLayout, listener);
     }
 
@@ -1463,7 +1463,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
 
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        view.setClickable(true);
         view.setOnKeyListener(new ViewKeyListenerWrapper(this, listener));
         return (X) this;
     }
