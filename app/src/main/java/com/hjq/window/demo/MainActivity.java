@@ -7,13 +7,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -33,6 +33,7 @@ import com.hjq.window.EasyWindowManager;
 import com.hjq.window.OnWindowLayoutInflateListener;
 import com.hjq.window.OnWindowLifecycleCallback;
 import com.hjq.window.OnWindowViewClickListener;
+import com.hjq.window.OnWindowViewKeyListener;
 import com.hjq.window.OnWindowViewLongClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemClickListener;
 import com.hjq.window.demo.DemoAdapter.OnItemLongClickListener;
@@ -128,7 +129,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            cancelAndRecycleEasyWindow(easyWindow);
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -167,7 +168,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            cancelAndRecycleEasyWindow(easyWindow);
+                            easyWindow.cancel();
                         }
                     })
                     .showAsDropDown(v, Gravity.BOTTOM);
@@ -182,7 +183,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onClick(final @NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            cancelAndRecycleEasyWindow(easyWindow);
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -190,11 +191,12 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         } else if (viewId == R.id.btn_main_web) {
 
             EasyWindow.with(this)
-                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED)
+                .setWindowSizePercent(0.8f, 0.8f)
                 .setContentView(R.layout.window_web, new OnWindowLayoutInflateListener() {
 
                     @Override
-                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
+                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @NonNull View view, int layoutId, @NonNull ViewGroup parentView) {
                         WebView webView = view.findViewById(R.id.wv_window_web_content);
                         WebSettings settings = webView.getSettings();
                         // 允许文件访问
@@ -225,6 +227,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                             }
                         });
 
+                        // 加载指定的网页链接
                         webView.loadUrl("https://github.com/getActivity/EasyWindow");
                     }
                 })
@@ -235,13 +238,32 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        cancelAndRecycleEasyWindow(easyWindow);
+                        easyWindow.cancel();
                     }
                 })
                 .setOnLongClickListenerByView(R.id.iv_window_web_close, new OnWindowViewLongClickListener<View>() {
+
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
+                        return false;
+                    }
+                })
+                .setOnKeyListenerByView(R.id.wv_window_web_content, new OnWindowViewKeyListener<WebView>() {
+
+                    @Override
+                    public boolean onKey(@NonNull EasyWindow<?> easyWindow, @NonNull WebView webView, @NonNull KeyEvent event, int keyCode) {
+                        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                            // 判断网页是否能回退
+                            if (webView.canGoBack()) {
+                                // 如果可以，则返回到上一页
+                                webView.goBack();
+                            } else {
+                                // 如果不行，则关闭窗口
+                                easyWindow.cancel();
+                            }
+                            return true;
+                        }
                         return false;
                     }
                 })
@@ -251,8 +273,9 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             EasyWindow.with(this)
                 .setContentView(R.layout.window_list, new OnWindowLayoutInflateListener() {
+
                     @Override
-                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @Nullable View view, int layoutId, @NonNull ViewGroup parentView) {
+                    public void onWindowLayoutInflateFinished(@NonNull EasyWindow<?> easyWindow, @NonNull View view, int layoutId, @NonNull ViewGroup parentView) {
                         RecyclerView recyclerView = view.findViewById(R.id.rv_window_list_view);
                         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
@@ -286,10 +309,11 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        cancelAndRecycleEasyWindow(easyWindow);
+                        easyWindow.cancel();
                     }
                 })
                 .setOnLongClickListenerByView(R.id.iv_window_list_close, new OnWindowViewLongClickListener<View>() {
+
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
                         Toaster.show("关闭按钮被长按了");
@@ -311,7 +335,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         @Override
                         public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                            cancelAndRecycleEasyWindow(easyWindow);
+                            easyWindow.cancel();
                         }
                     })
                     .show();
@@ -404,7 +428,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         // 传入 Application 表示这个是一个全局的 Toast
         EasyWindow.with(application)
                 .setContentView(R.layout.window_phone)
-                .setWindowLocation(Gravity.END | Gravity.BOTTOM, 0, 200)
+                .setWindowLocationPercent(Gravity.END | Gravity.BOTTOM, 0, 0.2f)
                 // 设置指定的拖拽规则
                 .setWindowDraggableRule(springBackWindowDraggableRule)
                 .setOnClickListenerByView(android.R.id.icon, new OnWindowViewClickListener<ImageView>() {
@@ -421,6 +445,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     }
                 })
                 .setOnLongClickListenerByView(android.R.id.icon, new OnWindowViewLongClickListener<ImageView>() {
+
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
                         Toaster.show("我被长按了");
@@ -428,14 +453,5 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     }
                 })
                 .show();
-    }
-
-    private void cancelAndRecycleEasyWindow(@NonNull EasyWindow<?> easyWindow) {
-        // 有两种方式取消弹窗：
-        // 1. easyWindow.cancel：顾名思义，取消显示
-        // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
-        // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
-        // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
-        easyWindow.recycle();
     }
 }
