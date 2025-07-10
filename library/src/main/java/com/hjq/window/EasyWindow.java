@@ -1415,15 +1415,15 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /**
      * 设置触摸事件
      */
-    public X setOnTouchListenerByView(@Nullable OnWindowVIewTouchListener<? extends View> listener) {
+    public X setOnTouchListenerByView(@Nullable OnWindowViewTouchListener<? extends View> listener) {
         return setOnTouchListenerByView(mRootLayout, listener);
     }
 
-    public X setOnTouchListenerByView(@IdRes int id, @Nullable OnWindowVIewTouchListener<? extends View> listener) {
+    public X setOnTouchListenerByView(@IdRes int id, @Nullable OnWindowViewTouchListener<? extends View> listener) {
         return setOnTouchListenerByView(findViewById(id), listener);
     }
 
-    private X setOnTouchListenerByView(@Nullable View view, @Nullable OnWindowVIewTouchListener<? extends View> listener) {
+    private X setOnTouchListenerByView(@Nullable View view, @Nullable OnWindowViewTouchListener<? extends View> listener) {
         if (view == null) {
             return (X) this;
         }

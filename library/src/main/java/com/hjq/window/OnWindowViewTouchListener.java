@@ -10,7 +10,7 @@ import android.view.View;
  *    time   : 2025/05/03
  *    desc   : 窗口 View 的触摸事件监听
  */
-public interface OnWindowVIewTouchListener<V extends View> {
+public interface OnWindowViewTouchListener<V extends View> {
 
     /**
      * 触摸回调

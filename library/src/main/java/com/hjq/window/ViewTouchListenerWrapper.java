@@ -17,9 +17,9 @@ final class ViewTouchListenerWrapper implements View.OnTouchListener {
     @NonNull
     private final EasyWindow<?> mEasyWindow;
     @NonNull
-    private final OnWindowVIewTouchListener mListener;
+    private final OnWindowViewTouchListener mListener;
 
-    ViewTouchListenerWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnWindowVIewTouchListener listener) {
+    ViewTouchListenerWrapper(@NonNull EasyWindow<?> easyWindow, @NonNull OnWindowViewTouchListener listener) {
         mEasyWindow = easyWindow;
         mListener = listener;
     }
