@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 
 /**
  *    author : Android 轮子哥
@@ -19,7 +21,7 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
 
    /** 屏幕旋转回调 */
    @Nullable
-   private OnScreenOrientationCallback mCallback;
+   private Reference<OnScreenOrientationCallback> mCallbackReference;
 
    public ScreenOrientationMonitor(int screenOrientation) {
       mScreenOrientation = screenOrientation;
@@ -40,7 +42,7 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
       if (applicationContext != null) {
          applicationContext.registerComponentCallbacks(this);
       }
-      mCallback = callback;
+      mCallbackReference = new WeakReference<>(callback);
    }
 
    /**
@@ -54,7 +56,10 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
       if (applicationContext != null) {
          applicationContext.unregisterComponentCallbacks(this);
       }
-      mCallback = null;
+      if (mCallbackReference != null) {
+         mCallbackReference.clear();
+      }
+      mCallbackReference = null;
    }
 
    @Override
@@ -64,10 +69,14 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
       }
       mScreenOrientation = newConfig.orientation;
 
-      if (mCallback == null) {
+      if (mCallbackReference == null) {
          return;
       }
-      mCallback.onScreenOrientationChange(mScreenOrientation);
+      OnScreenOrientationCallback callback = mCallbackReference.get();
+      if (callback == null) {
+          return;
+      }
+      callback.onScreenOrientationChange(mScreenOrientation);
    }
 
    @Override
