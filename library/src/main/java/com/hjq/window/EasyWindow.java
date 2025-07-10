@@ -308,6 +308,33 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     }
 
     /**
+     * 设置窗口位置（偏移量按照屏幕百分比）
+     *
+     * @param gravity                   窗口重心
+     * @param horizontalPercent         水平方向百分比
+     * @param verticalPercent           垂直方向百分比
+     */
+    @SuppressWarnings("deprecation")
+    public X setWindowLocationPercent(@GravityFlag int gravity, @FloatRange(from = 0, to = 1) @Px float horizontalPercent,
+                                                                @FloatRange(from = 0, to = 1) @Px float verticalPercent) {
+        horizontalPercent = Math.min(Math.max(horizontalPercent, 0), 1);
+        verticalPercent = Math.min(Math.max(verticalPercent, 0), 1);
+        Display defaultDisplay = mWindowManager.getDefaultDisplay();
+        if (defaultDisplay == null) {
+            return (X) this;
+        }
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        defaultDisplay.getMetrics(metrics);
+        return setWindowLocation(gravity, (int) (metrics.widthPixels * horizontalPercent), (int) (metrics.heightPixels * verticalPercent));
+    }
+
+    public X setWindowLocationPercent(@FloatRange(from = 0, to = 1) @Px float horizontalPercent,
+                                      @FloatRange(from = 0, to = 1) @Px float verticalPercent) {
+        return setWindowLocationPercent(Gravity.LEFT | Gravity.TOP, horizontalPercent, verticalPercent);
+    }
+
+    /**
      * 设置悬浮窗外层是否可触摸
      */
     public X setOutsideTouchable(boolean touchable) {

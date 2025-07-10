@@ -261,6 +261,9 @@ easyWindow.setWindowSizePercent(@FloatRange(from = 0, to = 1) float widthPercent
 // 设置悬浮窗的位置
 easyWindow.setWindowLocation(@Px int x, @Px int y);
 easyWindow.setWindowLocation(@GravityFlag int gravity, @Px int x, @Px int y);
+// 设置窗口位置（偏移量按照屏幕百分比）
+easyWindow.setWindowLocationPercent(@FloatRange(from = 0, to = 1) @Px float horizontalPercent, @FloatRange(from = 0, to = 1) @Px float verticalPercent);
+easyWindow.setWindowLocationPercent(@GravityFlag int gravity, @FloatRange(from = 0, to = 1) @Px float horizontalPercent, @FloatRange(from = 0, to = 1) @Px float verticalPercent);
 
 // 设置悬浮窗外层是否可触摸
 easyWindow.setOutsideTouchable(boolean touchable);
