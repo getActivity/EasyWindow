@@ -1359,7 +1359,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /**
      * 设置点击监听
      */
-    public X setOnClickListenerByView(@Nullable OnWindowViewClickListener<? extends View> listener) {
+    public X setOnClickListener(@Nullable OnWindowViewClickListener<? extends View> listener) {
         return setOnClickListenerByView(mRootLayout, listener);
     }
 
