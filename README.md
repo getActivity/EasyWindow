@@ -360,19 +360,15 @@ easyWindow.setImageDrawableByImageView(@IdRes int viewId, @Nullable Drawable dra
 // 设置点击监听（没有传入 View 的方法默认使用窗口根布局）
 easyWindow.setOnClickListener(@Nullable OnWindowViewClickListener<? extends View> listener);
 easyWindow.setOnClickListenerByView(@IdRes int id, @Nullable OnWindowViewClickListener<? extends View> listener);
-easyWindow.setOnClickListenerByView(@Nullable View view, @Nullable OnWindowViewClickListener<? extends View> listener);
 // 设置长按监听（没有传入 View 的方法默认使用窗口根布局）
 easyWindow.setOnLongClickListener(@Nullable OnWindowViewLongClickListener<? extends View> listener);
 easyWindow.setOnLongClickListenerByView(@IdRes int id, @Nullable OnWindowViewLongClickListener<? extends View> listener);
-easyWindow.setOnLongClickListenerByView(@Nullable View view, @Nullable OnWindowViewLongClickListener<? extends View> listener);
 // 设置触摸监听（没有传入 View 的方法默认使用窗口根布局）
 easyWindow.setOnTouchListener(@Nullable OnWindowViewTouchListener<? extends View> listener);
 easyWindow.setOnTouchListenerByView(@IdRes int id, @Nullable OnWindowViewTouchListener<? extends View> listener);
-easyWindow.setOnTouchListenerByView(@Nullable View view, @Nullable OnWindowViewTouchListener<? extends View> listener);
 // 设置按键监听（没有传入 View 的方法默认使用窗口根布局）
 easyWindow.setOnKeyListener(@Nullable OnWindowViewKeyListener<? extends View> listener);
 easyWindow.setOnKeyListenerByView(@IdRes int id, @Nullable OnWindowViewKeyListener<? extends View> listener);
-easyWindow.setOnKeyListenerByView(@Nullable View view, @Nullable OnWindowViewKeyListener<? extends View> listener);
 
 // 跳转 Activity
 easyWindow.startActivity(@Nullable Class<? extends Activity> clazz);
