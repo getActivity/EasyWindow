@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.window.demo"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1208
-        versionName "12.8"
+        versionCode 1300
+        versionName "13.0"
     }
 
     // 支持 Java JDK 8
