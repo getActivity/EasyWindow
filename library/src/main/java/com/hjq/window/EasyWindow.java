@@ -1456,7 +1456,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
 
         // 如果当前是否设置了不可触摸，如果是就擦除掉
         removeWindowFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-        view.setClickable(true);
+        view.setLongClickable(true);
         view.setOnLongClickListener(new ViewLongClickListenerWrapper(this, listener));
         return (X) this;
     }
