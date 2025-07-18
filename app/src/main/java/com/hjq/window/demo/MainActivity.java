@@ -343,8 +343,6 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_global) {
 
-            Toaster.show("需要悬浮窗权限才能显示全局的窗口");
-
             XXPermissions.with(this)
                 .permission(PermissionLists.getSystemAlertWindowPermission())
                 .request(new OnPermissionCallback() {
