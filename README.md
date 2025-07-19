@@ -180,7 +180,7 @@ public final class WindowLifecycleControl implements Application.ActivityLifecyc
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         EasyWindow.with(activity)
-                .setView(R.layout.xxx)
+                .setContentView(R.layout.xxx)
                 .show();
     }
 
