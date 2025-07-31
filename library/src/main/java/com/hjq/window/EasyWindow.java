@@ -924,8 +924,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
                 mOnWindowLifecycleCallback.onWindowShow(this);
             }
 
-        } catch (NullPointerException | IllegalStateException |
-                IllegalArgumentException | WindowManager.BadTokenException e) {
+        } catch (Exception e) {
             // 如果这个 View 对象被重复添加到 WindowManager 则会抛出异常
             // java.lang.IllegalStateException: View has already been added to the window manager.
             e.printStackTrace();
@@ -968,7 +967,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
                 mOnWindowLifecycleCallback.onWindowCancel(this);
             }
 
-        } catch (NullPointerException | IllegalArgumentException | IllegalStateException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             // 当前没有显示
