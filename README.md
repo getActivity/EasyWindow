@@ -1,3 +1,5 @@
+# [English Doc](README-en.md)
+
 # 悬浮窗框架
 
 * 项目地址：[Github](https://github.com/getActivity/EasyWindow)
@@ -6,9 +8,9 @@
 
 * 可以扫码下载 Demo 进行演示或者测试，如果扫码下载不了的，[点击此处可直接下载](https://github.com/getActivity/EasyWindow/releases/download/13.0/EasyWindow.apk)
 
-![](picture/demo_code.png)
+![](picture/zh/demo_code.png)
 
-![](picture/dynamic_figure.gif)
+![](picture/zh/dynamic_figure.gif)
 
 #### 本框架意在解决一些悬浮窗的需求，如果是普通的 Toast 封装推荐使用 [Toaster](https://github.com/getActivity/Toaster)
 
@@ -91,12 +93,7 @@ EasyWindow.with(this)
 
             @Override
             public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull TextView view) {
-                // 有两种方式取消弹窗：
-                // 1. easyWindow.cancel：顾名思义，取消显示
-                // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
-                // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
-                // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
-                easyWindow.recycle();
+                easyWindow.cancel();
                 // 跳转到某个Activity
                 // easyWindow.startActivity(intent);
             }
@@ -122,12 +119,7 @@ EasyWindow.with(activity).apply {
     setImageDrawableByImageView(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
     setTextByTextView(android.R.id.message, "点我消失")
     setOnClickListenerByView(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
-        // 有两种方式取消弹窗：
-        // 1. easyWindow.cancel：顾名思义，取消显示
-        // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
-        // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
-        // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
-        easyWindow.recycle()
+        easyWindow.cancel()
         // 跳转到某个Activity
         // easyWindow.startActivity(intent)
     })
@@ -150,12 +142,7 @@ EasyWindow.with(activity)
         .setImageDrawableByImageView(android.R.id.icon, R.mipmap.ic_dialog_tip_finish)
         .setTextByTextView(android.R.id.message, "点我消失")
         .setOnClickListenerByView(android.R.id.message, OnWindowViewClickListener<TextView?> { easyWindow: EasyWindow<*>, view: TextView ->
-            // 有两种方式取消弹窗：
-            // 1. easyWindow.cancel：顾名思义，取消显示
-            // 2. easyWindow.recycle：在取消显示的基础上，加上了回收
-            // 这两种区别在于，cancel 之后还能 show，但是 recycle 之后不能再 show
-            // 通常情况下，如果你创建的 EasyWindow 对象在 cancel 之后永远不会再显示，取消弹窗建议直接用 recycle 方法，否则用 cancel 方法
-            easyWindow.recycle()
+            easyWindow.cancel()
             // 跳转到某个Activity
             // easyWindow.startActivity(intent)
         })
@@ -184,23 +171,7 @@ public final class WindowLifecycleControl implements Application.ActivityLifecyc
                 .show();
     }
 
-    @Override
-    public void onActivityStarted(Activity activity) {}
-
-    @Override
-    public void onActivityResumed(Activity activity) {}
-
-    @Override
-    public void onActivityPaused(Activity activity) {}
-
-    @Override
-    public void onActivityStopped(Activity activity) {}
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {}
+    ......
 }
 ```
 
@@ -437,6 +408,8 @@ EasyWindowManager.getAllWindowInstance();
 * 网络框架：[EasyHttp](https://github.com/getActivity/EasyHttp) ![](https://img.shields.io/github/stars/getActivity/EasyHttp.svg) ![](https://img.shields.io/github/forks/getActivity/EasyHttp.svg)
 
 * 标题栏框架：[TitleBar](https://github.com/getActivity/TitleBar) ![](https://img.shields.io/github/stars/getActivity/TitleBar.svg) ![](https://img.shields.io/github/forks/getActivity/TitleBar.svg)
+
+* 设备兼容框架：[DeviceCompat](https://github.com/getActivity/DeviceCompat) ![](https://img.shields.io/github/stars/getActivity/DeviceCompat.svg) ![](https://img.shields.io/github/forks/getActivity/DeviceCompat.svg)
 
 * ShapeView 框架：[ShapeView](https://github.com/getActivity/ShapeView) ![](https://img.shields.io/github/stars/getActivity/ShapeView.svg) ![](https://img.shields.io/github/forks/getActivity/ShapeView.svg)
 

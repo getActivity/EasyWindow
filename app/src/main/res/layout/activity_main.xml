@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="15dp"
-                    android:text="自定义悬浮窗显示动画" />
+                    android:text="@string/demo_custom_window_animation" />
 
                 <Button
                     android:id="@+id/btn_main_duration"
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="自定义悬浮窗显示时长" />
+                    android:text="@string/demo_custom_window_duration" />
 
                 <Button
                     android:id="@+id/btn_main_overlay"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="显示带蒙层的悬浮窗" />
+                    android:text="@string/demo_show_window_with_mask" />
 
                 <Button
                     android:id="@+id/btn_main_lifecycle"
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="监听悬浮窗生命周期" />
+                    android:text="@string/demo_monitor_window_lifecycle" />
 
                 <Button
                     android:id="@+id/btn_main_view"
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="显示在 View 下方" />
+                    android:text="@string/demo_show_below_view" />
 
                 <Button
                     android:id="@+id/btn_main_input"
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="搭配软键盘弹出演示" />
+                    android:text="@string/demo_soft_keyboard_example" />
 
                 <Button
                     android:id="@+id/btn_main_web"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="搭配 WebView 演示" />
+                    android:text="@string/demo_web_view_example" />
 
                 <Button
                     android:id="@+id/btn_main_list"
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="搭配 RecyclerView 演示" />
+                    android:text="@string/demo_recyclerview_example" />
 
                 <Button
                     android:id="@+id/btn_main_draggable"
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="可自由拖拽的悬浮窗" />
+                    android:text="@string/demo_freely_draggable_window" />
 
                 <Button
                     android:id="@+id/btn_main_global"
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="全局可拖拽的悬浮窗" />
+                    android:text="@string/demo_global_draggable_window" />
 
                 <Button
                     android:id="@+id/btn_main_semi_stealth"
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="拖拽后半隐的悬浮窗" />
+                    android:text="@string/demo_semi_stealth_window" />
 
                 <Button
                     android:id="@+id/btn_main_cancel_all"
@@ -124,16 +124,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
-                    android:text="关闭并回收所有悬浮窗" />
+                    android:text="@string/demo_close_and_recycle_all_windows" />
 
                 <Button
-                    android:id="@+id/btn_main_utils"
+                    android:id="@+id/btn_main_toaster_example"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="20dp"
-                    android:text="搭配 Toaster 框架" />
+                    android:text="@string/demo_toaster_framework_example" />
             </LinearLayout>
 
         </FrameLayout>

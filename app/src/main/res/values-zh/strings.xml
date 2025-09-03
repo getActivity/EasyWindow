@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EasyWindow</string>
+
+    <string name="demo_toast_long_press">我被长按了</string>
+    <string name="demo_callback_show">显示回调</string>
+    <string name="demo_toast_click">我被点击了</string>
+    <string name="demo_text_position_accuracy">位置算得准不准</string>
+    
+    <string name="demo_animation_cool">这个动画是不是很骚</string>
+    <string name="demo_auto_dismiss">一秒后自动消失</string>
+    <string name="demo_click_to_dismiss">点我消失</string>
+    <string name="demo_notice_snackbar">请注意下方 Snackbar</string>
+    <string name="demo_dismiss_callback">消失回调</string>
+    <string name="demo_close_button_long_press">关闭按钮被长按了</string>
+    <string name="demo_item_prefix">我是条目</string>
+    <string name="demo_item_clicked">条目 %1$d 被点击了</string>
+    <string name="demo_item_long_pressed">条目 %1$d 被长按了</string>
+    <string name="demo_permission_denied">申请悬浮窗权限失败，无法显示全局的窗口</string>
+    <string name="demo_cool_animation">就问你溜不溜</string>
+    
+    <string name="demo_custom_window_animation">自定义悬浮窗显示动画</string>
+    <string name="demo_custom_window_duration">自定义悬浮窗显示时长</string>
+    <string name="demo_show_window_with_mask">显示带蒙层的悬浮窗</string>
+    <string name="demo_monitor_window_lifecycle">监听悬浮窗生命周期</string>
+    <string name="demo_show_below_view">显示在 View 下方</string>
+    <string name="demo_soft_keyboard_example">搭配软键盘弹出演示</string>
+    <string name="demo_web_view_example">搭配 WebView 演示</string>
+    <string name="demo_recyclerview_example">搭配 RecyclerView 演示</string>
+    <string name="demo_freely_draggable_window">可自由拖拽的悬浮窗</string>
+    <string name="demo_global_draggable_window">全局可拖拽的悬浮窗</string>
+    <string name="demo_semi_stealth_window">拖拽后半隐的悬浮窗</string>
+    <string name="demo_close_and_recycle_all_windows">关闭并回收所有悬浮窗</string>
+    <string name="demo_toaster_framework_example">搭配 Toaster 框架</string>
+
+    <string name="demo_click_to_close">点我关闭</string>
+    <string name="demo_enter_your_name">请输入你的名字</string>
+    <string name="demo_hint_text">提示语</string>
+    <string name="demo_touch_to_drag">触摸此处可以拖拽窗口</string>
+</resources>

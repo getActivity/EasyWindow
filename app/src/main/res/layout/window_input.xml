@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:text="点我关闭"
+        android:text="@string/demo_click_to_close"
         android:textColor="#ffffff"
         android:textSize="14sp" />
 
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:hint="请输入你的名字"
+        android:hint="@string/demo_enter_your_name"
         android:textColor="#ffffff"
         android:textColorHint="#999999"
         android:textSize="14sp" />

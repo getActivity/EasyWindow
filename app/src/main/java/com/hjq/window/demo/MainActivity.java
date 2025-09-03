@@ -71,7 +71,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.btn_main_draggable).setOnClickListener(this);
         findViewById(R.id.btn_main_global).setOnClickListener(this);
         findViewById(R.id.btn_main_semi_stealth).setOnClickListener(this);
-        findViewById(R.id.btn_main_utils).setOnClickListener(this);
+        findViewById(R.id.btn_main_toaster_example).setOnClickListener(this);
         findViewById(R.id.btn_main_cancel_all).setOnClickListener(this);
 
         TitleBar titleBar = findViewById(R.id.tb_main_bar);
@@ -102,7 +102,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_hint)
                     .setWindowAnim(R.style.TopAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setTextByTextView(android.R.id.message, "这个动画是不是很骚")
+                    .setTextByTextView(android.R.id.message, getString(R.string.demo_animation_cool))
                     .show();
 
         } else if (viewId == R.id.btn_main_duration) {
@@ -112,7 +112,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_hint)
                     .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_error)
-                    .setTextByTextView(android.R.id.message, "一秒后自动消失")
+                    .setTextByTextView(android.R.id.message, getString(R.string.demo_auto_dismiss))
                     .show();
 
         } else if (viewId == R.id.btn_main_overlay) {
@@ -121,7 +121,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_hint)
                     .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
-                    .setTextByTextView(android.R.id.message, "点我消失")
+                    .setTextByTextView(android.R.id.message, getString(R.string.demo_click_to_dismiss))
                     // 设置外层是否能被触摸
                     .setOutsideTouchable(false)
                     // 设置窗口背景阴影强度
@@ -142,17 +142,17 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setContentView(R.layout.window_hint)
                     .setWindowAnim(R.style.IOSAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_warning)
-                    .setTextByTextView(android.R.id.message, "请注意下方 Snackbar")
+                    .setTextByTextView(android.R.id.message, getString(R.string.demo_notice_snackbar))
                     .setOnWindowLifecycleCallback(new OnWindowLifecycleCallback() {
 
                         @Override
                         public void onWindowShow(@NonNull EasyWindow<?> easyWindow) {
-                            Snackbar.make(getWindow().getDecorView(), "显示回调", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getWindow().getDecorView(), getString(R.string.demo_callback_show), Snackbar.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
-                            Snackbar.make(getWindow().getDecorView(), "消失回调", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getWindow().getDecorView(), getString(R.string.demo_dismiss_callback), Snackbar.LENGTH_SHORT).show();
                         }
                     })
                     .show();
@@ -164,7 +164,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                     .setWindowAnim(R.style.RightAnimStyle)
                     .setImageDrawableByImageView(android.R.id.icon, R.drawable.ic_dialog_tip_finish)
                     .setWindowDuration(2000)
-                    .setTextByTextView(android.R.id.message, "位置算得准不准")
+                    .setTextByTextView(android.R.id.message, getString(R.string.demo_text_position_accuracy))
                     .setOnClickListenerByView(android.R.id.message, new OnWindowViewClickListener<TextView>() {
 
                         @Override
@@ -246,7 +246,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
-                        Toaster.show("关闭按钮被长按了");
+                        Toaster.show(getString(R.string.demo_close_button_long_press));
                         return false;
                     }
                 })
@@ -282,7 +282,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                         List<String> dataList = new ArrayList<>();
                         for (int i = 1; i <= 20; i++) {
-                            dataList.add("我是条目 " + i);
+                            dataList.add(getString(R.string.demo_item_prefix) + " " + i);
                         }
 
                         DemoAdapter adapter = new DemoAdapter(dataList);
@@ -290,13 +290,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                             @Override
                             public void onItemClick(View itemView, int position) {
-                                Toaster.show("条目 " + (position +  1) + " 被点击了");
+                                Toaster.show(getString(R.string.demo_item_clicked, (position + 1)));
                             }
                         });
                         adapter.setOnItemLongClickListener(new OnItemLongClickListener() {
                             @Override
                             public boolean onItemLongClick(View itemView, int position) {
-                                Toaster.show("条目 " + (position +  1) + " 被长按了");
+                                Toaster.show(getString(R.string.demo_item_long_pressed, (position + 1)));
                                 return false;
                             }
                         });
@@ -370,7 +370,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
             // 回收当前正在显示的悬浮窗
             EasyWindowManager.recycleAllWindow();
 
-        } else if (viewId == R.id.btn_main_utils) {
+        } else if (viewId == R.id.btn_main_toaster_example) {
 
             EasyWindow.with(this)
                     // 将 Toaster 中的 View 转移给 EasyWindow 来显示
@@ -430,7 +430,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        Toaster.show("我被点击了");
+                        Toaster.show(R.string.demo_toast_click);
                         // 点击后跳转到拨打电话界面
                         // Intent intent = new Intent(Intent.ACTION_DIAL);
                         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -443,8 +443,9 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
                     @Override
                     public boolean onLongClick(@NonNull EasyWindow<?> easyWindow, @NonNull ImageView view) {
-                        Toaster.show("我被长按了");
-                        return false;
+                        Toaster.show(R.string.demo_toast_long_press);
+                        // 这里返回 true 就不会触发点击事件
+                        return true;
                     }
                 })
                 .show();

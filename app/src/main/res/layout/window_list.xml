@@ -23,7 +23,7 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:ellipsize="end"
-            android:text="触摸此处可以拖拽窗口"
+            android:text="@string/demo_touch_to_drag"
             android:textColor="@android:color/white" />
 
         <ImageView

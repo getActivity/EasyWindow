@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EasyWindow</string>
+    <string name="demo_toast_long_press">I was long pressed</string>
+    <string name="demo_callback_show">Show callback</string>
+    <string name="demo_toast_click">I was clicked</string>
+    <string name="demo_text_position_accuracy">Is the position accurate?</string>
+    
+    <string name="demo_animation_cool">Is this animation cool</string>
+    <string name="demo_auto_dismiss">Auto dismiss after one second</string>
+    <string name="demo_click_to_dismiss">Click to dismiss</string>
+    <string name="demo_notice_snackbar">Please notice the Snackbar below</string>
+    <string name="demo_dismiss_callback">Dismiss callback</string>
+    <string name="demo_close_button_long_press">Close button was long pressed</string>
+    <string name="demo_item_prefix">I am item</string>
+    <string name="demo_item_clicked">Item %1$d was clicked</string>
+    <string name="demo_item_long_pressed">Item %1$d was long pressed</string>
+    <string name="demo_permission_denied">Failed to request floating window permission, cannot display global window</string>
+    <string name="demo_cool_animation">Is this smooth or what</string>
+    
+    <string name="demo_custom_window_animation">Custom floating window animation</string>
+    <string name="demo_custom_window_duration">Custom floating window display duration</string>
+    <string name="demo_show_window_with_mask">Show floating window with mask</string>
+    <string name="demo_monitor_window_lifecycle">Monitor floating window lifecycle</string>
+    <string name="demo_show_below_view">Show below View</string>
+    <string name="demo_soft_keyboard_example">Soft Keyboard example</string>
+    <string name="demo_web_view_example">WebView example</string>
+    <string name="demo_recyclerview_example">RecyclerView example</string>
+    <string name="demo_freely_draggable_window">Freely draggable window</string>
+    <string name="demo_global_draggable_window">Global draggable window</string>
+    <string name="demo_semi_stealth_window">Semi-stealth window after dragging</string>
+    <string name="demo_close_and_recycle_all_windows">Close and recycle all windows</string>
+    <string name="demo_toaster_framework_example">Toaster framework example</string>
+
+    <string name="demo_click_to_close">Click to close</string>
+    <string name="demo_enter_your_name">Please enter your name</string>
+    <string name="demo_hint_text">Hint text</string>
+    <string name="demo_touch_to_drag">Touch here to drag window</string>
 </resources>

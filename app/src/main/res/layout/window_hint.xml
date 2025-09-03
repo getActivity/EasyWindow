@@ -29,6 +29,6 @@
         android:maxLines="3"
         android:textColor="#ffffff"
         android:textSize="14sp"
-        tools:text="提示语" />
+        tools:text="@string/demo_hint_text" />
 
 </LinearLayout>

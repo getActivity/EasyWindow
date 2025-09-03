@@ -71,17 +71,9 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
         }
 
         if (isLeftShow()) {
-            if (isTopShow()) {
-                hideHalfView(Gravity.TOP);
-            } else {
-                hideHalfView(Gravity.LEFT);
-            }
+            hideHalfView(Gravity.LEFT);
         } else {
-            if (isTopShow()) {
-                hideHalfView(Gravity.TOP);
-            } else {
-                hideHalfView(Gravity.RIGHT);
-            }
+            hideHalfView(Gravity.RIGHT);
         }
     };
 
@@ -110,7 +102,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
                     WindowManager.LayoutParams windowParams = getWindowParams();
                     windowDraggableRule.updateLocation(windowParams.x - viewWidth / 2f, windowParams.y, true);
                 } else {
-                    int offSet = getWindowViewWidth() / 2; //用小球来做偏移
+                    int offSet = getWindowViewWidth() / 2;
                     clipBounds.set(offSet, 0, viewWidth, viewHeight);
                     // 设置画板偏移
                     windowRootLayout.setTranslationX(-offSet);
@@ -125,15 +117,6 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
                 // 设置画板偏移
                 windowRootLayout.setTranslationX(offSet);
                 windowRootLayout.setTranslationY(0);
-                // 设置裁剪区域
-                windowRootLayout.setClipBounds(clipBounds);
-                break;
-            case Gravity.TOP:
-                int offSetHeight = viewHeight / 2;
-                clipBounds.set(0, offSetHeight, viewWidth, viewHeight);
-                // 设置画板偏移
-                windowRootLayout.setTranslationX(0);
-                windowRootLayout.setTranslationY(-offSetHeight);
                 // 设置裁剪区域
                 windowRootLayout.setClipBounds(clipBounds);
                 break;
@@ -154,7 +137,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             return;
         }
         Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
-        if (safeInsetRect != null && safeInsetRect.left > 0 && !isTopShow()) {
+        if (safeInsetRect != null && safeInsetRect.left > 0) {
             WindowManager.LayoutParams windowParams = getWindowParams();
             windowDraggableRule.updateLocation(windowParams.x + viewWidth / 2f, windowParams.y, false);
         }
@@ -175,7 +158,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             return true;
         }
         Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
-        if (safeInsetRect != null && safeInsetRect.left > 0 && !isTopShow()) {
+        if (safeInsetRect != null && safeInsetRect.left > 0) {
             if (getWindowParams().x < safeInsetRect.left) {
                 return false;
             }
@@ -197,24 +180,21 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
     }
 
     /**
-     * 悬浮球是否靠顶显示
+     * 获取当前屏幕宽度
      */
-    private boolean isTopShow() {
-        WindowManager.LayoutParams windowParams = getWindowParams();
-        if (isLeftShow()) {
-            return windowParams.x > windowParams.y;
-        } else {
-            return getScreenWidth() - windowParams.x - getWindowViewWidth() > windowParams.y;
-        }
-    }
-
     private int getScreenWidth() {
         Context context = getContext();
         if (context == null) {
             return 0;
         }
-        Resources resources = getContext().getResources();
+        Resources resources = context.getResources();
+        if (resources == null) {
+            return 0;
+        }
         DisplayMetrics displayMetrics = resources.getDisplayMetrics();
+        if (displayMetrics == null) {
+            return 0;
+        }
         return displayMetrics.widthPixels;
     }
 
@@ -262,7 +242,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             postStayEdgeRunnable();
             return;
         }
-        Toaster.show("我被点击了");
+        Toaster.show(R.string.demo_toast_click);
     }
 
     /** {@link OnWindowLifecycleCallback} */
