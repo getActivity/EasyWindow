@@ -14,22 +14,30 @@ public interface OnWindowLifecycleCallback {
     /**
      * 窗口显示回调
      */
-    default void onWindowShow(@NonNull EasyWindow<?> easyWindow) {}
+    default void onWindowShow(@NonNull EasyWindow<?> easyWindow) {
+        // default implementation ignored
+    }
 
     /**
      * 窗口更新回调
      */
-    default void onWindowUpdate(@NonNull EasyWindow<?> easyWindow) {}
+    default void onWindowUpdate(@NonNull EasyWindow<?> easyWindow) {
+        // default implementation ignored
+    }
 
     /**
      * 窗口消失回调
      */
-    default void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {}
+    default void onWindowCancel(@NonNull EasyWindow<?> easyWindow) {
+        // default implementation ignored
+    }
 
     /**
      * 窗口回收回调
      */
-    default void onWindowRecycle(@NonNull EasyWindow<?> easyWindow) {}
+    default void onWindowRecycle(@NonNull EasyWindow<?> easyWindow) {
+        // default implementation ignored
+    }
 
     /***
      * 窗口可见性发生变化
@@ -39,5 +47,7 @@ public interface OnWindowLifecycleCallback {
      *                              {@link View#INVISIBLE}
      *                              {@link View#GONE}
      */
-    default void onWindowVisibilityChanged(@NonNull EasyWindow<?> easyWindow, int visibility) {}
+    default void onWindowVisibilityChanged(@NonNull EasyWindow<?> easyWindow, int visibility) {
+        // default implementation ignored
+    }
 }

@@ -311,11 +311,15 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
         /**
          * 回弹动画开始执行
          */
-        default void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {}
+        default void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
+            // default implementation ignored
+        }
 
         /**
          * 回弹动画结束执行
          */
-        default void onSpringBackAnimationEnd(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {}
+        default void onSpringBackAnimationEnd(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
+            // default implementation ignored
+        }
     }
 }

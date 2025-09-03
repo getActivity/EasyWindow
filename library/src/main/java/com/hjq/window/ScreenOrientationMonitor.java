@@ -94,6 +94,8 @@ final class ScreenOrientationMonitor implements ComponentCallbacks {
        *
        * @param newOrientation         最新的屏幕方向
        */
-      default void onScreenOrientationChange(int newOrientation) {}
+      default void onScreenOrientationChange(int newOrientation) {
+          // default implementation ignored
+      }
    }
 }

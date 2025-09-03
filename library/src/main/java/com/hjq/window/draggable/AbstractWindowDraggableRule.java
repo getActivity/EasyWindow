@@ -814,16 +814,22 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         /**
          * 开始拖拽
          */
-        default void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {
+            // default implementation ignored
+        }
 
         /**
          * 拖拽中
          */
-        default void onWindowDraggingRunning(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingRunning(@NonNull EasyWindow<?> easyWindow) {
+            // default implementation ignored
+        }
 
         /**
          * 停止拖拽
          */
-        default void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {}
+        default void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {
+            // default implementation ignored
+        }
     }
 }
