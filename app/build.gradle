@@ -7,8 +7,8 @@ android {
         applicationId "com.hjq.window.demo"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 1300
-        versionName "13.0"
+        versionCode 1302
+        versionName "13.2"
     }
 
     // 支持 Java JDK 8
@@ -65,7 +65,7 @@ dependencies {
     implementation 'com.github.getActivity:TitleBar:10.6'
 
     // 吐司框架：https://github.com/getActivity/Toaster
-    implementation 'com.github.getActivity:Toaster:13.0'
+    implementation 'com.github.getActivity:Toaster:13.2'
 
     // 内存泄漏捕捉：https://github.com/square/leakcanary
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.12'
