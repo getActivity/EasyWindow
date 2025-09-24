@@ -66,8 +66,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     private int mCurrentWindowInvisibleWidth;
     private int mCurrentWindowInvisibleHeight;
 
-    /** 当前屏幕物理尺寸 */
-    private double mPhysicalScreenSize;
+    /** 当前屏幕的物理尺寸 */
+    private double mScreenPhysicalSize;
 
     /** 需要消费触摸事件的 View（可能为空）*/
     @Nullable
@@ -91,7 +91,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         mRootLayout.setOnTouchListener(this);
         mRootLayout.post(() -> {
             refreshWindowInfo();
-            refreshPhysicalScreenSize();
+            refreshScreenPhysicalSize();
             refreshLocationCoordinate();
         });
     }
@@ -121,7 +121,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 // 目前能想到比较好的办法就是在悬浮窗移动前之前先更新 Window 信息和 View 坐标
                 // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
                 refreshWindowInfo();
-                refreshPhysicalScreenSize();
+                refreshScreenPhysicalSize();
                 refreshLocationCoordinate();
 
                 mConsumeTouchView = null;
@@ -314,10 +314,10 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 刷新当前设备的物理屏幕尺寸
+     * 刷新当前屏幕的物理尺寸
      */
     @SuppressWarnings("deprecation")
-    public void refreshPhysicalScreenSize() {
+    public void refreshScreenPhysicalSize() {
         if (mEasyWindow == null) {
             return;
         }
@@ -344,7 +344,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         }
 
         // 勾股定理：直角三角形的两条直角边的平方和等于斜边的平方
-        mPhysicalScreenSize = Math.sqrt(Math.pow(screenWidthInInches, 2) + Math.pow(screenHeightInInches, 2));
+        mScreenPhysicalSize = Math.sqrt(Math.pow(screenWidthInInches, 2) + Math.pow(screenHeightInInches, 2));
     }
 
     /**
@@ -379,7 +379,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             if (easyWindow != null) {
                 easyWindow.sendTask(() -> {
                     refreshWindowInfo();
-                    refreshPhysicalScreenSize();
+                    refreshScreenPhysicalSize();
                     refreshLocationCoordinate();
                 }, refreshDelayMillis);
             }
@@ -430,8 +430,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 view.postDelayed(() -> {
                     // 先刷新当前窗口信息
                     refreshWindowInfo();
-                    // 刷新屏幕物理尺寸
-                    refreshPhysicalScreenSize();
+                    // 刷新屏幕的物理尺寸
+                    refreshScreenPhysicalSize();
                     int x = Math.max((int) (mCurrentWindowWidth * percentX - viewWidth / 2f), 0);
                     int y = Math.max((int) (mCurrentWindowHeight * percentY - viewWidth / 2f), 0);
                     updateLocation(x, y);
@@ -447,7 +447,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      */
     protected void onScreenRotateInfluenceCoordinateChangeFinish() {
         refreshWindowInfo();
-        refreshPhysicalScreenSize();
+        refreshScreenPhysicalSize();
         refreshLocationCoordinate();
     }
 
@@ -641,14 +641,14 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         // 疑问三：为什么要用 Resources.getSystem 来获取，而不是 context.getResources？
         //        这是因为如果用了 AutoSize 这个框架，上下文中的 1dp 就不是 3px 了
         //        使用 Resources.getSystem 能够保证 Resources 对象 dp 计算规则不被第三方框架篡改
-        // 疑问四：为什么用物理屏幕尺寸来算出最小触摸距离呢？
-        //        这是因为在大号的物理屏幕尺寸上面，单击悬浮窗的误差就不止 1dp，可能是更大的值，所以需要更大的值来兼容
+        // 疑问四：为什么用屏幕的物理尺寸来算出最小触摸距离呢？
+        //        这是因为在超大屏的设备上面，单击悬浮窗的误差就不止 1dp，可能是更大的值，所以需要更大的值来兼容
         //        Github issue：https://github.com/getActivity/EasyWindow/pull/79
-        double physicalScreenSize = getPhysicalScreenSize();
+        double screenPhysicalSize = getScreenPhysicalSize();
         int dpValue;
-        if (physicalScreenSize > 0) {
+        if (screenPhysicalSize > 0) {
             // 市面上的平板最大尺寸不超过 15 英寸
-            dpValue = (int) Math.ceil(physicalScreenSize / 15);
+            dpValue = (int) Math.ceil(screenPhysicalSize / 15);
         } else {
             dpValue = 1;
         }
@@ -744,10 +744,10 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 获取物理的屏幕尺寸
+     * 获取屏幕的物理尺寸（单位：英寸）
      */
-    protected double getPhysicalScreenSize() {
-        return mPhysicalScreenSize;
+    protected double getScreenPhysicalSize() {
+        return mScreenPhysicalSize;
     }
 
     /**
