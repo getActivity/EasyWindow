@@ -66,8 +66,8 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 记录移动的位置（相对屏幕的坐标）
-                float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
-                float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
+                float rawMoveX = event.getRawX() - getScreenInvisibleWidth();
+                float rawMoveY = event.getRawY() - getScreenInvisibleHeight();
 
                 float newX = rawMoveX - mViewDownX;
                 float newY = rawMoveY - mViewDownY;
@@ -122,8 +122,8 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
      */
     public void dispatchSpringBackViewToScreenEdge(float rawX, float rawY) {
         // 记录移动的位置（相对屏幕的坐标）
-        float rawMoveX = rawX - getWindowInvisibleWidth();
-        float rawMoveY = rawY - getWindowInvisibleHeight();
+        float rawMoveX = rawX - getScreenInvisibleWidth();
+        float rawMoveY = rawY - getScreenInvisibleHeight();
 
         // 自动回弹吸附
         switch (mSpringBackOrientation) {
@@ -132,7 +132,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 float startX = Math.max(rawMoveX - mViewDownX, 0);
                 float endX;
                 // 获取当前屏幕的宽度
-                int screenWidth = getWindowWidth();
+                int screenWidth = getScreenWidth();
                 if (rawMoveX < screenWidth / 2f) {
                     // 回弹到屏幕左边
                     endX = 0f;
@@ -153,7 +153,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
                 float startY = Math.max(rawMoveY - mViewDownY, 0);
                 float endY;
                 // 获取当前屏幕的高度
-                int screenHeight = getWindowHeight();
+                int screenHeight = getScreenHeight();
                 if (rawMoveY < screenHeight / 2f) {
                     // 回弹到屏幕顶部
                     endY = 0f;

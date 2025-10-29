@@ -59,12 +59,14 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     @NonNull
     private final Rect mTempRect = new Rect();
 
-    private int mCurrentWindowWidth;
-    private int mCurrentWindowHeight;
+    private int mCurrentScreenWidth;
+    private int mCurrentScreenHeight;
+
+    private int mCurrentScreenInvisibleWidth;
+    private int mCurrentScreenInvisibleHeight;
+
     private int mCurrentViewOnScreenX;
     private int mCurrentViewOnScreenY;
-    private int mCurrentWindowInvisibleWidth;
-    private int mCurrentWindowInvisibleHeight;
 
     /** 当前屏幕的物理尺寸 */
     private double mScreenPhysicalSize;
@@ -207,17 +209,31 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 获取当前 Window 的宽度
+     * 获取当前屏幕的宽度
      */
-    public int getWindowWidth() {
-        return mCurrentWindowWidth;
+    public int getScreenWidth() {
+        return mCurrentScreenWidth;
     }
 
     /**
-     * 获取当前 Window 的高度
+     * 获取当前屏幕的高度
      */
-    public int getWindowHeight() {
-        return mCurrentWindowHeight;
+    public int getScreenHeight() {
+        return mCurrentScreenHeight;
+    }
+
+    /**
+     * 获取屏幕不可用的宽度，一般情况下为横屏状态下刘海的高度
+     */
+    public int getScreenInvisibleWidth() {
+        return mCurrentScreenInvisibleWidth;
+    }
+
+    /**
+     * 获取屏幕不可用的高度，一般情况下为状态栏的高度
+     */
+    public int getScreenInvisibleHeight() {
+        return mCurrentScreenInvisibleHeight;
     }
 
     /**
@@ -238,20 +254,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return 0;
         }
         return mEasyWindow.getWindowViewHeight();
-    }
-
-    /**
-     * 获取窗口不可见的宽度，一般情况下为横屏状态下刘海的高度
-     */
-    public int getWindowInvisibleWidth() {
-        return mCurrentWindowInvisibleWidth;
-    }
-
-    /**
-     * 获取窗口不可见的高度，一般情况下为状态栏的高度
-     */
-    public int getWindowInvisibleHeight() {
-        return mCurrentWindowInvisibleHeight;
     }
 
     /**
@@ -298,18 +300,18 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         // 回调 onConfigurationChanged 方法的时候获取到这些参数已经变化了
         // 所以需要提前记录下来，避免后续进行坐标计算的时候出现问题
         decorView.getWindowVisibleDisplayFrame(mTempRect);
-        mCurrentWindowWidth = mTempRect.right - mTempRect.left;
-        mCurrentWindowHeight = mTempRect.bottom - mTempRect.top;
+        mCurrentScreenWidth = mTempRect.right - mTempRect.left;
+        mCurrentScreenHeight = mTempRect.bottom - mTempRect.top;
 
-        mCurrentWindowInvisibleWidth = Math.max(mTempRect.left, 0);
-        mCurrentWindowInvisibleHeight = Math.max(mTempRect.top, 0);
+        mCurrentScreenInvisibleWidth = Math.max(mTempRect.left, 0);
+        mCurrentScreenInvisibleHeight = Math.max(mTempRect.top, 0);
 
         /*
         Log.i(getClass().getSimpleName(),
-            "CurrentWindowWidth = " + mCurrentWindowWidth +
-            "，CurrentWindowHeight = " + mCurrentWindowHeight +
-            "，CurrentWindowInvisibleWidth = " + mCurrentWindowInvisibleWidth +
-            "，CurrentWindowInvisibleHeight = " + mCurrentWindowInvisibleHeight);
+            "CurrentScreenWidth = " + mCurrentScreenWidth +
+            "，CurrentScreenHeight = " + mCurrentScreenHeight +
+            "，CurrentScreenInvisibleWidth = " + mCurrentScreenInvisibleWidth +
+            "，CurrentScreenInvisibleHeight = " + mCurrentScreenInvisibleHeight);
          */
     }
 
@@ -391,8 +393,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
         // Log.i(getClass().getSimpleName(), "当前 ViewWidth = " + viewWidth + "，ViewHeight = " + viewHeight);
 
-        int startX = mCurrentViewOnScreenX - mCurrentWindowInvisibleWidth;
-        int startY = mCurrentViewOnScreenY - mCurrentWindowInvisibleHeight;
+        int startX = mCurrentViewOnScreenX - mCurrentScreenInvisibleWidth;
+        int startY = mCurrentViewOnScreenY - mCurrentScreenInvisibleHeight;
 
         float percentX;
         // 这里为什么用 getMinTouchDistance()，而不是 0？
@@ -402,21 +404,21 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
         if (startX <= minTouchDistance) {
             percentX = 0;
-        } else if (Math.abs(mCurrentWindowWidth - (startX + viewWidth)) < minTouchDistance) {
+        } else if (Math.abs(mCurrentScreenWidth - (startX + viewWidth)) < minTouchDistance) {
             percentX = 1;
         } else {
             float centerX = startX + viewWidth / 2f;
-            percentX = centerX / mCurrentWindowWidth;
+            percentX = centerX / mCurrentScreenWidth;
         }
 
         float percentY;
         if (startY <= minTouchDistance) {
             percentY = 0;
-        } else if (Math.abs(mCurrentWindowHeight - (startY + viewHeight)) < minTouchDistance) {
+        } else if (Math.abs(mCurrentScreenHeight - (startY + viewHeight)) < minTouchDistance) {
             percentY = 1;
         } else {
             float centerY = startY + viewHeight / 2f;
-            percentY = centerY / mCurrentWindowHeight;
+            percentY = centerY / mCurrentScreenHeight;
         }
 
         // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
@@ -432,8 +434,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                     refreshWindowInfo();
                     // 刷新屏幕的物理尺寸
                     refreshScreenPhysicalSize();
-                    int x = Math.max((int) (mCurrentWindowWidth * percentX - viewWidth / 2f), 0);
-                    int y = Math.max((int) (mCurrentWindowHeight * percentY - viewWidth / 2f), 0);
+                    int x = Math.max((int) (mCurrentScreenWidth * percentX - viewWidth / 2f), 0);
+                    int y = Math.max((int) (mCurrentScreenHeight * percentY - viewWidth / 2f), 0);
                     updateLocation(x, y);
                     // 需要注意，这里需要延迟执行，否则会有问题
                     view.post(() -> onScreenRotateInfluenceCoordinateChangeFinish());
@@ -494,27 +496,27 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         int viewWidth = getWindowViewWidth();
         int viewHeight = getWindowViewHeight();
 
-        int windowWidth = getWindowWidth();
-        int windowHeight = getWindowHeight();
+        int screenWidth = getScreenWidth();
+        int screenHeight = getScreenHeight();
 
         // Log.i(getClass().getSimpleName(), "开始 x 坐标为：" + x);
         // Log.i(getClass().getSimpleName(), "开始 y 坐标为：" + y);
 
-        if (x < safeInsetRect.left - getWindowInvisibleWidth()) {
-            x = safeInsetRect.left - getWindowInvisibleWidth();
+        if (x < safeInsetRect.left - getScreenInvisibleWidth()) {
+            x = safeInsetRect.left - getScreenInvisibleWidth();
             // Log.i(getClass().getSimpleName(), "x 坐标已经触碰到屏幕左侧的安全区域");
-        } else if (x > windowWidth - safeInsetRect.right - viewWidth) {
-            x = windowWidth - safeInsetRect.right - viewWidth;
+        } else if (x > screenWidth - safeInsetRect.right - viewWidth) {
+            x = screenWidth - safeInsetRect.right - viewWidth;
             // Log.i(getClass().getSimpleName(), "x 坐标已经触碰到屏幕右侧的安全区域");
         }
 
         // Log.i(getClass().getSimpleName(), "最终 x 坐标为：" + x);
 
-        if (y < safeInsetRect.top - getWindowInvisibleHeight()) {
-            y = safeInsetRect.top - getWindowInvisibleHeight();
+        if (y < safeInsetRect.top - getScreenInvisibleHeight()) {
+            y = safeInsetRect.top - getScreenInvisibleHeight();
             // Log.i(getClass().getSimpleName(), "y 坐标已经触碰到屏幕顶侧的安全区域");
-        } else if (y > windowHeight - safeInsetRect.bottom - viewHeight) {
-            y = windowHeight - safeInsetRect.bottom - viewHeight;
+        } else if (y > screenHeight - safeInsetRect.bottom - viewHeight) {
+            y = screenHeight - safeInsetRect.bottom - viewHeight;
             // Log.i(getClass().getSimpleName(), "y 坐标已经触碰到屏幕底部的安全区域");
         }
 

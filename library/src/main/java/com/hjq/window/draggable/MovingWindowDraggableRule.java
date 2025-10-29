@@ -33,8 +33,8 @@ public class MovingWindowDraggableRule extends AbstractWindowDraggableRule {
                 break;
             case MotionEvent.ACTION_MOVE:
                 // 记录移动的位置（相对屏幕的坐标）
-                float rawMoveX = event.getRawX() - getWindowInvisibleWidth();
-                float rawMoveY = event.getRawY() - getWindowInvisibleHeight();
+                float rawMoveX = event.getRawX() - getScreenInvisibleWidth();
+                float rawMoveY = event.getRawY() - getScreenInvisibleHeight();
 
                 float newX = rawMoveX - mViewDownX;
                 float newY = rawMoveY - mViewDownY;
