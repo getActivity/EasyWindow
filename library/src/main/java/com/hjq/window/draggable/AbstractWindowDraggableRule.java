@@ -15,7 +15,6 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -110,7 +109,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     @Override
-    public final boolean onTouch(View view, MotionEvent event) {
+    public final boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
         if (mEasyWindow == null || mRootLayout == null) {
             return false;
         }
@@ -200,10 +199,16 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         return mRootLayout;
     }
 
+    /**
+     * 设置是否可以移动到刘海屏区域
+     */
     public void setAllowMoveToScreenNotch(boolean allowMoveToScreenNotch) {
         mAllowMoveToScreenNotch = allowMoveToScreenNotch;
     }
 
+    /**
+     * 当前是否可以移动到刘海屏区域
+     */
     public boolean isAllowMoveToScreenNotch() {
         return mAllowMoveToScreenNotch;
     }
@@ -573,7 +578,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 根据 Window 对象获取屏幕安全区域位置（返回的对象可能为空）
      */
     @Nullable
-    public static Rect getSafeInsetRect(Window window) {
+    public static Rect getSafeInsetRect(@Nullable Window window) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return null;
         }
@@ -638,7 +643,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         //        当然我的结论不一定正确，你要是有发现新的问题也可以找我反馈，我会持续优化这个问题
         // 疑问二：为什么不使用 ViewConfiguration.get(context).getScaledTouchSlop() ？
         //        这是因为这个 API 获取到的数值太大了，有一定概率会出现误判，同样的手机上面
-        //        用 getScaledTouchSlop 获取到的是 24，而系统 1dp 获取的到是 3，
+        //        用 getScaledTouchSlop 获取到的是 24，而系统 1dp 获取的到是 3px，
         //        两者相差太大，因为 getScaledTouchSlop API 默认获取的是 8dp * 3 = 24px
         // 疑问三：为什么要用 Resources.getSystem 来获取，而不是 context.getResources？
         //        这是因为如果用了 AutoSize 这个框架，上下文中的 1dp 就不是 3px 了
@@ -697,12 +702,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return canTouchByView(view);
         }
 
-        if (view instanceof WebView || view instanceof ScrollView || view instanceof ListView || view instanceof SeekBar) {
-            return canTouchByView(view);
-        }
-
         // NestedScrollingChild 的子类有：RecyclerView、NestedScrollView、SwipeRefreshLayout 等等
-        if (view instanceof NestedScrollingChild || view instanceof NestedScrollingParent || view instanceof ViewPager) {
+        if (view instanceof NestedScrollingChild || view instanceof NestedScrollingParent || view instanceof WebView ||
+            view instanceof ScrollView || view instanceof ListView || view instanceof SeekBar || view instanceof ViewPager) {
             return canTouchByView(view);
         }
 
@@ -735,7 +737,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 判断 RecyclerView 是否能被触摸
      */
     protected boolean canScrollByRecyclerView(@NonNull RecyclerView recyclerView) {
-        LayoutManager layoutManager = recyclerView.getLayoutManager();
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager == null) {
             // 如果没有设置 LayoutManager，则默认不需要触摸事件
             return false;
@@ -765,7 +767,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     /**
      * 设置拖拽回调
      */
-    public void setWindowDraggingListener(OnWindowDraggingListener callback) {
+    public void setWindowDraggingListener(@Nullable OnWindowDraggingListener callback) {
         mWindowDraggingListener = callback;
     }
 

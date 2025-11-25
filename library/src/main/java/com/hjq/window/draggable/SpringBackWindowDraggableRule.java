@@ -264,7 +264,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
     /**
      * 设置拖拽回弹回调
      */
-    public void setSpringBackAnimCallback(SpringBackAnimCallback callback) {
+    public void setSpringBackAnimCallback(@Nullable SpringBackAnimCallback callback) {
         mSpringBackAnimCallback = callback;
     }
 
