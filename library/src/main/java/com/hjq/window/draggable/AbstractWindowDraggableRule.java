@@ -440,7 +440,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                     // 刷新屏幕的物理尺寸
                     refreshScreenPhysicalSize();
                     int x = Math.max((int) (mCurrentScreenWidth * percentX - viewWidth / 2f), 0);
-                    int y = Math.max((int) (mCurrentScreenHeight * percentY - viewWidth / 2f), 0);
+                    int y = Math.max((int) (mCurrentScreenHeight * percentY - viewHeight / 2f), 0);
                     updateLocation(x, y);
                     // 需要注意，这里需要延迟执行，否则会有问题
                     view.post(() -> onScreenRotateInfluenceCoordinateChangeFinish());
