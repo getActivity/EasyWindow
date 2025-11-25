@@ -48,8 +48,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     @Nullable
     private ViewGroup mRootLayout;
 
-    /** 是否允许移动到挖孔屏区域 */
-    private boolean mAllowMoveToScreenNotch = true;
+    /** 是否允许移动到屏幕安全区域 */
+    private boolean mAllowMoveToScreenSafeArea = true;
 
     /** 拖拽回调监听对象（可能为空） */
     @Nullable
@@ -200,17 +200,17 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 设置是否可以移动到刘海屏区域
+     * 设置是否可以移动到屏幕安全区域
      */
-    public void setAllowMoveToScreenNotch(boolean allowMoveToScreenNotch) {
-        mAllowMoveToScreenNotch = allowMoveToScreenNotch;
+    public void setAllowMoveToScreenSafeArea(boolean allowMoveToScreenSafeArea) {
+        mAllowMoveToScreenSafeArea = allowMoveToScreenSafeArea;
     }
 
     /**
-     * 当前是否可以移动到刘海屏区域
+     * 当前是否可以移动到屏幕安全区域
      */
-    public boolean isAllowMoveToScreenNotch() {
-        return mAllowMoveToScreenNotch;
+    public boolean isAllowMoveToScreenSafeArea() {
+        return mAllowMoveToScreenSafeArea;
     }
 
     /**
@@ -466,11 +466,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     public void updateLocation(float x, float y) {
-        updateLocation(x, y, isAllowMoveToScreenNotch());
+        updateLocation(x, y, isAllowMoveToScreenSafeArea());
     }
 
-    public void updateLocation(float x, float y, boolean allowMoveToScreenNotch) {
-        updateLocation((int) x, (int) y, allowMoveToScreenNotch);
+    public void updateLocation(float x, float y, boolean allowMoveToScreenSafeArea) {
+        updateLocation((int) x, (int) y, allowMoveToScreenSafeArea);
     }
 
     /**
@@ -478,10 +478,10 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      *
      * @param x                                 x 坐标（相对与屏幕左上位置）
      * @param y                                 y 坐标（相对与屏幕左上位置）
-     * @param allowMoveToScreenNotch            是否允许移动到挖孔屏的区域
+     * @param allowMoveToScreenSafeArea         是否允许移动到屏幕安全区域
      */
-    public void updateLocation(int x, int y, boolean allowMoveToScreenNotch) {
-        if (allowMoveToScreenNotch) {
+    public void updateLocation(int x, int y, boolean allowMoveToScreenSafeArea) {
+        if (allowMoveToScreenSafeArea) {
             updateWindowCoordinate(x, y);
             return;
         }

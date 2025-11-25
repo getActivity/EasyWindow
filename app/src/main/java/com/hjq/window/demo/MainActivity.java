@@ -390,7 +390,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
     public static void showGlobalWindow(Application application) {
         SpringBackWindowDraggableRule springBackWindowDraggableRule = new SpringBackWindowDraggableRule(
             SpringBackWindowDraggableRule.ORIENTATION_HORIZONTAL);
-        springBackWindowDraggableRule.setAllowMoveToScreenNotch(false);
+        springBackWindowDraggableRule.setAllowMoveToScreenSafeArea(false);
         springBackWindowDraggableRule.setSpringBackAnimCallback(new SpringBackAnimCallback() {
 
             @Override

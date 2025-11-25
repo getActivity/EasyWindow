@@ -48,7 +48,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
         SpringBackWindowDraggableRule springBackWindowDraggableRule = new SpringBackWindowDraggableRule(
             SpringBackWindowDraggableRule.ORIENTATION_HORIZONTAL);
-        springBackWindowDraggableRule.setAllowMoveToScreenNotch(false);
+        springBackWindowDraggableRule.setAllowMoveToScreenSafeArea(false);
         springBackWindowDraggableRule.setWindowDraggingListener(this);
         springBackWindowDraggableRule.setSpringBackAnimCallback(this);
         setWindowDraggableRule(springBackWindowDraggableRule);
