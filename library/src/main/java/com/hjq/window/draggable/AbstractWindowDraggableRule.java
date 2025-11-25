@@ -487,13 +487,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         }
 
         Rect safeInsetRect = getSafeInsetRect();
-        if (safeInsetRect == null) {
-            updateWindowCoordinate(x, y);
-            return;
-        }
-
-        if (safeInsetRect.left > 0 && safeInsetRect.right > 0 &&
-            safeInsetRect.top > 0 && safeInsetRect.bottom > 0) {
+        if (safeInsetRect == null ||
+            (safeInsetRect.left == 0 && safeInsetRect.right == 0 &&
+            safeInsetRect.top == 0 && safeInsetRect.bottom == 0)) {
             updateWindowCoordinate(x, y);
             return;
         }
