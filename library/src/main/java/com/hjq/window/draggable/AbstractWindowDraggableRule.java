@@ -393,37 +393,38 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        int viewWidth = windowRootLayout.getWidth();
-        int viewHeight = windowRootLayout.getHeight();
-
         // Log.i(getClass().getSimpleName(), "当前 ViewWidth = " + viewWidth + "，ViewHeight = " + viewHeight);
 
         int startX = mCurrentViewOnScreenX - mCurrentScreenInvisibleWidth;
         int startY = mCurrentViewOnScreenY - mCurrentScreenInvisibleHeight;
 
-        float percentX;
         // 这里为什么用 getMinTouchDistance()，而不是 0？
         // 因为其实用 getLocationOnScreen 测量出来的值不太准，有时候是 0，有时候是 1，有时候 2
         // 但大多数情况是 0 和 1，这里为了兼容这种误差，使用了最小触摸距离来作为基准值
         float minTouchDistance = getMinTouchDistance();
 
+        // 计算水平坐标中心点百分比
+        double horizontalCoordinatePercent;
         if (startX <= minTouchDistance) {
-            percentX = 0;
-        } else if (Math.abs(mCurrentScreenWidth - (startX + viewWidth)) < minTouchDistance) {
-            percentX = 1;
+            horizontalCoordinatePercent = 0;
+        } else if (Math.abs(getScreenWidth() - (startX + getWindowViewWidth())) < minTouchDistance) {
+            horizontalCoordinatePercent = 1;
         } else {
-            float centerX = startX + viewWidth / 2f;
-            percentX = centerX / mCurrentScreenWidth;
+            // 这里因为要计算中心点位置，所以要加上 View 宽度的二分之一，因为坐标是左上开始计算的
+            double centerX = startX + getWindowViewWidth() / 2f;
+            horizontalCoordinatePercent = centerX / getScreenWidth();
         }
 
-        float percentY;
+        // 计算垂直坐标中心点百分比
+        double verticalCoordinatePercent;
         if (startY <= minTouchDistance) {
-            percentY = 0;
-        } else if (Math.abs(mCurrentScreenHeight - (startY + viewHeight)) < minTouchDistance) {
-            percentY = 1;
+            verticalCoordinatePercent = 0;
+        } else if (Math.abs(getScreenHeight() - (startY + getWindowViewHeight())) < minTouchDistance) {
+            verticalCoordinatePercent = 1;
         } else {
-            float centerY = startY + viewHeight / 2f;
-            percentY = centerY / mCurrentScreenHeight;
+            // 这里因为要计算中心点位置，所以要加上 View 高度的二分之一，因为坐标是左上开始计算的
+            double centerY = startY + getWindowViewHeight() / 2d;
+            verticalCoordinatePercent = centerY / getScreenHeight();
         }
 
         // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
@@ -439,8 +440,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                     refreshWindowInfo();
                     // 刷新屏幕的物理尺寸
                     refreshScreenPhysicalSize();
-                    int x = Math.max((int) (mCurrentScreenWidth * percentX - viewWidth / 2f), 0);
-                    int y = Math.max((int) (mCurrentScreenHeight * percentY - viewHeight / 2f), 0);
+                    int x = Math.max((int) (getScreenWidth() * horizontalCoordinatePercent - getWindowViewWidth() / 2d), 0);
+                    int y = Math.max((int) (getScreenHeight() * verticalCoordinatePercent - getWindowViewHeight() / 2d), 0);
                     updateLocation(x, y);
                     // 需要注意，这里需要延迟执行，否则会有问题
                     view.post(() -> onScreenRotateInfluenceCoordinateChangeFinish());
