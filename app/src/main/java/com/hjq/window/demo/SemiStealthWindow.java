@@ -1,12 +1,11 @@
 package com.hjq.window.demo;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -31,8 +30,14 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
                                                 OnWindowViewClickListener<View>,
                                                 OnWindowLifecycleCallback {
 
-    private boolean mAnimatingFlag;
-    private boolean mDraggingFlag;
+    /** 贴边间隔时间 */
+    private static final int STAY_EDGE_INTERVAL_TIME = 3000;
+
+    /** 动画是否进行中 */
+    private boolean mAnimatingRunning;
+
+    /** 拖拽是否进行中 */
+    private boolean mDraggingRunning;
 
     public SemiStealthWindow(@NonNull Activity activity) {
         super(activity);
@@ -44,17 +49,24 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
         setContentView(R.layout.window_semi_stealth);
 
-        setWindowLocation(0, 200);
-
-        SpringBackWindowDraggableRule springBackWindowDraggableRule = new SpringBackWindowDraggableRule(
+        SpringBackWindowDraggableRule windowDraggableRule = new SpringBackWindowDraggableRule(
             SpringBackWindowDraggableRule.ORIENTATION_HORIZONTAL);
-        springBackWindowDraggableRule.setAllowMoveToScreenSafeArea(false);
-        springBackWindowDraggableRule.setWindowDraggingListener(this);
-        springBackWindowDraggableRule.setSpringBackAnimCallback(this);
-        setWindowDraggableRule(springBackWindowDraggableRule);
+        windowDraggableRule.setAllowMoveToScreenSafeArea(false);
+        windowDraggableRule.setWindowDraggingListener(this);
+        windowDraggableRule.setSpringBackAnimCallback(this);
+        setWindowDraggableRule(windowDraggableRule);
 
         setOnClickListenerByView(android.R.id.icon, this);
         setOnWindowLifecycleCallback(this);
+
+        int x = 0;
+        if (!windowDraggableRule.isAllowMoveToScreenSafeArea() && context instanceof Activity) {
+            Rect safeInsetRect = AbstractWindowDraggableRule.getSafeInsetRect(((Activity) context).getWindow());
+            if (safeInsetRect != null) {
+                x = safeInsetRect.left;
+            }
+        }
+        setWindowLocation(x, 200);
     }
 
     /**
@@ -62,31 +74,38 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
      */
     public void postStayEdgeRunnable() {
         cancelTask(mStayEdgeRunnable);
-        sendTask(mStayEdgeRunnable, 3000);
+        sendTask(mStayEdgeRunnable, STAY_EDGE_INTERVAL_TIME);
     }
 
+    @SuppressLint("RtlHardcoded")
     private final Runnable mStayEdgeRunnable = () -> {
-        if (mAnimatingFlag || mDraggingFlag) {
+        if (mAnimatingRunning || mDraggingRunning) {
             return;
         }
 
-        if (isLeftShow()) {
-            hideHalfView(Gravity.LEFT);
-        } else {
-            hideHalfView(Gravity.RIGHT);
-        }
-    };
-
-    /**
-     * 隐藏 View 一半显示
-     */
-    private void hideHalfView(int gravity) {
         AbstractWindowDraggableRule windowDraggableRule = getWindowDraggableRule();
         if (windowDraggableRule == null) {
             return;
         }
-        View windowRootLayout = getRootLayout();
-        if (windowRootLayout == null) {
+
+        if ((getWindowParams().x + getWindowViewWidth() / 2f)  < windowDraggableRule.getScreenWidth() / 2f) {
+            toHalfShow(Gravity.LEFT);
+        } else {
+            toHalfShow(Gravity.RIGHT);
+        }
+    };
+
+    /**
+     * 开启半边显示
+     */
+    @SuppressLint("RtlHardcoded")
+    private void toHalfShow(int gravity) {
+        AbstractWindowDraggableRule windowDraggableRule = getWindowDraggableRule();
+        if (windowDraggableRule == null) {
+            return;
+        }
+        View rootLayout = getRootLayout();
+        if (rootLayout == null) {
             return;
         }
 
@@ -97,35 +116,38 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
         Rect clipBounds = new Rect();
         switch (gravity) {
             case Gravity.LEFT:
+                WindowManager.LayoutParams windowParams = getWindowParams();
                 Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
-                if (safeInsetRect != null && safeInsetRect.left > 0) {
-                    WindowManager.LayoutParams windowParams = getWindowParams();
+                if (safeInsetRect != null && safeInsetRect.left > 0 && windowParams.x > 0) {
                     windowDraggableRule.updateLocation(windowParams.x - viewWidth / 2f, windowParams.y, true);
                 } else {
                     int offSet = getWindowViewWidth() / 2;
                     clipBounds.set(offSet, 0, viewWidth, viewHeight);
                     // 设置画板偏移
-                    windowRootLayout.setTranslationX(-offSet);
-                    windowRootLayout.setTranslationY(0);
+                    rootLayout.setTranslationX(-offSet);
+                    rootLayout.setTranslationY(0);
                     // 设置裁剪区域
-                    windowRootLayout.setClipBounds(clipBounds);
+                    rootLayout.setClipBounds(clipBounds);
                 }
                 break;
             case Gravity.RIGHT:
                 int offSet = viewWidth / 2;
                 clipBounds.set(0, 0, viewWidth - offSet, viewHeight);
                 // 设置画板偏移
-                windowRootLayout.setTranslationX(offSet);
-                windowRootLayout.setTranslationY(0);
+                rootLayout.setTranslationX(offSet);
+                rootLayout.setTranslationY(0);
                 // 设置裁剪区域
-                windowRootLayout.setClipBounds(clipBounds);
+                rootLayout.setClipBounds(clipBounds);
                 break;
             default:
                 break;
         }
     }
 
-    private void showFullView() {
+    /**
+     * 取消半边显示
+     */
+    private void cancelHalfShow() {
         View rootLayout = getRootLayout();
         if (rootLayout == null) {
             return;
@@ -137,99 +159,84 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
             return;
         }
         Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
-        if (safeInsetRect != null && safeInsetRect.left > 0) {
+        if (safeInsetRect != null && safeInsetRect.left > 0 &&
+            getWindowParams().x > 0 && getWindowParams().x < safeInsetRect.left) {
             WindowManager.LayoutParams windowParams = getWindowParams();
-            windowDraggableRule.updateLocation(windowParams.x + viewWidth / 2f, windowParams.y, false);
+            windowDraggableRule.updateLocation(windowParams.x + viewWidth / 2f, windowParams.y);
         }
-        // 设置画板偏移
-        rootLayout.setTranslationX(0);
-        rootLayout.setTranslationY(0);
+        // 将画板偏移还原回去
+        if (rootLayout.getTranslationX() != 0) {
+            rootLayout.setTranslationX(0);
+        }
+        if (rootLayout.getTranslationY() != 0) {
+            rootLayout.setTranslationY(0);
+        }
         // 设置裁剪区域
-        rootLayout.setClipBounds(new Rect(0, 0, viewWidth, viewHeight));
+        Rect clipBounds = rootLayout.getClipBounds();
+        if (clipBounds == null) {
+            clipBounds = new Rect();
+        }
+        if (clipBounds .left != 0 || clipBounds.top != 0 ||
+            clipBounds.right != viewWidth || clipBounds.bottom != viewHeight) {
+            rootLayout.setClipBounds(new Rect(0, 0, viewWidth, viewHeight));
+        }
     }
 
     /**
-     * View 是否全屏显示
+     * 当前是否为半边显示
      */
-    private boolean isFullShowView() {
-        View view = getRootLayout();
+    private boolean isHalfShow() {
         AbstractWindowDraggableRule windowDraggableRule = getWindowDraggableRule();
         if (windowDraggableRule == null) {
-            return true;
-        }
-        Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
-        if (safeInsetRect != null && safeInsetRect.left > 0) {
-            if (getWindowParams().x < safeInsetRect.left) {
-                return false;
-            }
-        }
-        if (view == null) {
-            return true;
-        }
-        int viewWidth = view.getWidth();
-        int viewHeight = view.getHeight();
-        Rect clipBounds = view.getClipBounds();
-        if (view.getTranslationX() != 0 && view.getTranslationY() != 0) {
             return false;
         }
-        if (clipBounds == null) {
+        Rect safeInsetRect = windowDraggableRule.getSafeInsetRect();
+        if (safeInsetRect != null && safeInsetRect.left > 0 &&
+            getWindowParams().x > 0 && getWindowParams().x < safeInsetRect.left) {
             return true;
         }
-        return clipBounds.left == 0 && clipBounds.top == 0 &&
-            clipBounds.right == viewWidth && clipBounds.bottom == viewHeight;
-    }
-
-    /**
-     * 获取当前屏幕宽度
-     */
-    private int getScreenWidth() {
-        Context context = getContext();
-        if (context == null) {
-            return 0;
+        View rootLayout = getRootLayout();
+        if (rootLayout == null) {
+            return false;
         }
-        Resources resources = context.getResources();
-        if (resources == null) {
-            return 0;
+        int viewWidth = rootLayout.getWidth();
+        int viewHeight = rootLayout.getHeight();
+        Rect clipBounds = rootLayout.getClipBounds();
+        if (rootLayout.getTranslationX() != 0 && rootLayout.getTranslationY() != 0) {
+            return true;
         }
-        DisplayMetrics displayMetrics = resources.getDisplayMetrics();
-        if (displayMetrics == null) {
-            return 0;
+        if (clipBounds == null) {
+            return false;
         }
-        return displayMetrics.widthPixels;
-    }
-
-    /**
-     * 悬浮球是否靠左显示
-     */
-    private boolean isLeftShow(){
-        return (getWindowParams().x + getWindowViewWidth() / 2f)  < getScreenWidth() / 2f;
+        return clipBounds.left != 0 || clipBounds.top != 0 ||
+            clipBounds.right != viewWidth || clipBounds.bottom != viewHeight;
     }
 
     /** {@link OnWindowDraggingListener} */
 
     @Override
     public void onWindowDraggingStart(@NonNull EasyWindow<?> easyWindow) {
-        mDraggingFlag = true;
-        if (!isFullShowView()) {
-            showFullView();
+        mDraggingRunning = true;
+        if (isHalfShow()) {
+            cancelHalfShow();
         }
     }
 
     @Override
     public void onWindowDraggingStop(@NonNull EasyWindow<?> easyWindow) {
-        mDraggingFlag = false;
+        mDraggingRunning = false;
     }
 
     /** {@link SpringBackAnimCallback} */
 
     @Override
     public void onSpringBackAnimationStart(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
-        mAnimatingFlag = true;
+        mAnimatingRunning = true;
     }
 
     @Override
     public void onSpringBackAnimationEnd(@NonNull EasyWindow<?> easyWindow, @NonNull Animator animator) {
-        mAnimatingFlag = false;
+        mAnimatingRunning = false;
         postStayEdgeRunnable();
     }
 
@@ -237,8 +244,8 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
     @Override
     public void onClick(@NonNull EasyWindow<?> easyWindow, @NonNull View view) {
-        if (!isFullShowView()) {
-            showFullView();
+        if (isHalfShow()) {
+            cancelHalfShow();
             postStayEdgeRunnable();
             return;
         }
@@ -249,6 +256,15 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
     @Override
     public void onWindowShow(@NonNull EasyWindow<?> easyWindow) {
+        postStayEdgeRunnable();
+    }
+
+    @Override
+    public void onScreenOrientationChange(int newOrientation) {
+        if (isHalfShow()) {
+            cancelHalfShow();
+        }
+        super.onScreenOrientationChange(newOrientation);
         postStayEdgeRunnable();
     }
 }
