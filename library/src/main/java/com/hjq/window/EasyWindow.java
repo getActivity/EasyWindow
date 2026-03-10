@@ -25,7 +25,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Px;
 import android.support.annotation.StringRes;
-import android.support.transition.Slide.GravityFlag;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -287,7 +286,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * @param x                 x 坐标
      * @param y                 y 坐标
      */
-    public X setWindowLocation(@GravityFlag int gravity, @Px int x, @Px int y) {
+    public X setWindowLocation(int gravity, @Px int x, @Px int y) {
         mWindowParams.gravity = gravity;
         mWindowParams.x = x;
         mWindowParams.y = y;
@@ -315,8 +314,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * @param verticalPercent           垂直方向百分比
      */
     @SuppressWarnings("deprecation")
-    public X setWindowLocationPercent(@GravityFlag int gravity, @FloatRange(from = 0, to = 1) @Px float horizontalPercent,
-                                                                @FloatRange(from = 0, to = 1) @Px float verticalPercent) {
+    public X setWindowLocationPercent(int gravity, @FloatRange(from = 0, to = 1) float horizontalPercent,
+                                                   @FloatRange(from = 0, to = 1) float verticalPercent) {
         horizontalPercent = Math.min(Math.max(horizontalPercent, 0), 1);
         verticalPercent = Math.min(Math.max(verticalPercent, 0), 1);
         Display defaultDisplay = mWindowManager.getDefaultDisplay();
@@ -329,8 +328,8 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         return setWindowLocation(gravity, (int) (metrics.widthPixels * horizontalPercent), (int) (metrics.heightPixels * verticalPercent));
     }
 
-    public X setWindowLocationPercent(@FloatRange(from = 0, to = 1) @Px float horizontalPercent,
-                                      @FloatRange(from = 0, to = 1) @Px float verticalPercent) {
+    public X setWindowLocationPercent(@FloatRange(from = 0, to = 1) float horizontalPercent,
+                                      @FloatRange(from = 0, to = 1) float verticalPercent) {
         return setWindowLocationPercent(Gravity.LEFT | Gravity.TOP, horizontalPercent, verticalPercent);
     }
 
