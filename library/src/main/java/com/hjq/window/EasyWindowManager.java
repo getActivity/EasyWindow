@@ -332,10 +332,12 @@ public final class EasyWindowManager {
     /**
      * 寻找特定类名的悬浮窗
      */
-    @Nullable
-    public static synchronized <X extends EasyWindow<?>> X findWindowInstanceByClass(@Nullable Class<X> clazz) {
+    @SuppressWarnings("unchecked")
+    @NonNull
+    public static synchronized <X extends EasyWindow<?>> List<X> findWindowInstancesByClass(@Nullable Class<X> clazz) {
+        List<X> easyWindowList = new ArrayList<>(1);
         if (clazz == null) {
-            return null;
+            return easyWindowList;
         }
         for (Reference<EasyWindow<?>> easyWindowReference : WINDOW_INSTANCE_REFERENCE_LIST) {
             if (easyWindowReference == null) {
@@ -348,18 +350,19 @@ public final class EasyWindowManager {
             if (!clazz.equals(easyWindow.getClass())) {
                 continue;
             }
-            return (X) easyWindow;
+            easyWindowList.add((X) easyWindow);
         }
-        return null;
+        return easyWindowList;
     }
 
     /**
      * 寻找特定标记的悬浮窗
      */
-    @Nullable
-    public static synchronized EasyWindow<?> findWindowInstanceByTag(@Nullable String tag) {
+    @NonNull
+    public static synchronized List<EasyWindow<?>> findWindowInstancesByTag(@Nullable String tag) {
+        List<EasyWindow<?>> easyWindowList = new ArrayList<>(1);
         if (tag == null) {
-            return null;
+            return easyWindowList;
         }
         Iterator<Reference<EasyWindow<?>>> iterator = WINDOW_INSTANCE_REFERENCE_LIST.iterator();
         while (iterator.hasNext()) {
@@ -374,16 +377,16 @@ public final class EasyWindowManager {
             if (!tag.equals(easyWindow.getWindowTag())) {
                 continue;
             }
-            return easyWindow;
+            easyWindowList.add(easyWindow);
         }
-        return null;
+        return easyWindowList;
     }
 
     /**
      * 获取所有的悬浮窗
      */
     @NonNull
-    public static synchronized List<EasyWindow<?>> getAllWindowInstance() {
+    public static synchronized List<EasyWindow<?>> getAllWindowInstances() {
         List<EasyWindow<?>> easyWindowList = new ArrayList<>(WINDOW_INSTANCE_REFERENCE_LIST.size());
         for (Reference<EasyWindow<?>> easyWindowReference : WINDOW_INSTANCE_REFERENCE_LIST) {
             if (easyWindowReference == null) {

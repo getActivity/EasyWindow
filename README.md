@@ -387,12 +387,12 @@ EasyWindowManager.existWindowShowingByClass(@Nullable Class<? extends EasyWindow
 EasyWindowManager.existWindowShowingByTag(@Nullable String tag);
 
 // 寻找特定类名的悬浮窗
-EasyWindowManager.findWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.findWindowInstancesByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // 寻找特定标记的悬浮窗
-EasyWindowManager.findWindowInstanceByTag(@Nullable String tag);
+EasyWindowManager.findWindowInstancesByTag(@Nullable String tag);
 
 // 获取所有的悬浮窗
-EasyWindowManager.getAllWindowInstance();
+EasyWindowManager.getAllWindowInstances();
 ```
 
 #### 作者的其他开源项目

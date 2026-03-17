@@ -383,12 +383,12 @@ EasyWindowManager.existWindowShowingByClass(@Nullable Class<? extends EasyWindow
 EasyWindowManager.existWindowShowingByTag(@Nullable String tag);
 
 // Find a floating window instance by class
-EasyWindowManager.findWindowInstanceByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
+EasyWindowManager.findWindowInstancesByClass(@Nullable Class<? extends EasyWindow<?>> clazz);
 // Find a floating window instance by tag
-EasyWindowManager.findWindowInstanceByTag(@Nullable String tag);
+EasyWindowManager.findWindowInstancesByTag(@Nullable String tag);
 
 // Get all floating window instances
-EasyWindowManager.getAllWindowInstance();
+EasyWindowManager.getAllWindowInstances();
 ```
 
 #### Author's other open source projects
