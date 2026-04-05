@@ -110,7 +110,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
     @Override
     public final boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
-        if (mEasyWindow == null || mRootLayout == null) {
+        EasyWindow<?> easyWindow = mEasyWindow;
+        ViewGroup rootLayout = mRootLayout;
+        if (easyWindow == null || rootLayout == null) {
             return false;
         }
 
@@ -126,8 +128,8 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 refreshLocationCoordinate();
 
                 mConsumeTouchView = null;
-                View consumeTouchEventView = findNeedConsumeTouchView(mRootLayout, event);
-                if (consumeTouchEventView != null && dispatchTouchEventToChildView(mRootLayout, consumeTouchEventView, event)) {
+                View consumeTouchEventView = findNeedConsumeTouchView(rootLayout, event);
+                if (consumeTouchEventView != null && dispatchTouchEventToChildView(rootLayout, consumeTouchEventView, event)) {
                     mConsumeTouchView = consumeTouchEventView;
                     return true;
                 }
@@ -136,7 +138,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             case MotionEvent.ACTION_CANCEL:
                 if (mConsumeTouchView != null) {
                     try {
-                        return dispatchTouchEventToChildView(mRootLayout, mConsumeTouchView, event);
+                        return dispatchTouchEventToChildView(rootLayout, mConsumeTouchView, event);
                     } finally {
                         // 释放/置空对象
                         mConsumeTouchView = null;
@@ -144,12 +146,12 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 }
             default:
                 if (mConsumeTouchView != null) {
-                    return dispatchTouchEventToChildView(mRootLayout, mConsumeTouchView, event);
+                    return dispatchTouchEventToChildView(rootLayout, mConsumeTouchView, event);
                 }
                 break;
         }
 
-        return onDragWindow(mEasyWindow, mRootLayout, event);
+        return onDragWindow(easyWindow, rootLayout, event);
     }
 
     /**
@@ -664,7 +666,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 寻找需要消费触摸事件的 View（可能为空）
      */
     @Nullable
-    protected View findNeedConsumeTouchView(ViewGroup viewGroup, MotionEvent event) {
+    protected View findNeedConsumeTouchView(@NonNull ViewGroup viewGroup, @NonNull MotionEvent event) {
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
 
