@@ -24,10 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.snackbar.Snackbar;
 import com.hjq.bar.OnTitleBarListener;
 import com.hjq.bar.TitleBar;
-import com.hjq.permissions.OnPermissionCallback;
 import com.hjq.permissions.XXPermissions;
 import com.hjq.permissions.permission.PermissionLists;
-import com.hjq.permissions.permission.base.IPermission;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
 import com.hjq.window.EasyWindowManager;
@@ -345,17 +343,13 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
             XXPermissions.with(this)
                 .permission(PermissionLists.getSystemAlertWindowPermission())
-                .request(new OnPermissionCallback() {
-
-                    @Override
-                    public void onGranted(@NonNull List<IPermission> permissions, boolean allGranted) {
-                        showGlobalWindow(getApplication());
-                    }
-
-                    @Override
-                    public void onDenied(@NonNull List<IPermission> permissions, boolean doNotAskAgain) {
+                .request((grantedList, deniedList) -> {
+                    boolean allGranted = deniedList.isEmpty();
+                    if (!allGranted) {
                         Toaster.show("申请悬浮窗权限失败，无法显示全局的窗口");
+                        return;
                     }
+                    showGlobalWindow(getApplication());
                 });
 
         } else if (viewId == R.id.btn_main_semi_stealth) {
