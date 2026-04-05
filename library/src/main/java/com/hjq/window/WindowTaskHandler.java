@@ -3,7 +3,7 @@ package com.hjq.window;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  *    author : Android 轮子哥

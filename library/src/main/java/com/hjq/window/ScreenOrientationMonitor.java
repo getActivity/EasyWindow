@@ -3,8 +3,8 @@ package com.hjq.window;
 import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 

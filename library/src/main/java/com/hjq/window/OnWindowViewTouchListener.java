@@ -1,8 +1,8 @@
 package com.hjq.window;
 
-import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
+import androidx.annotation.NonNull;
 
 /**
  *    author : Android 轮子哥

@@ -1,9 +1,9 @@
 package com.hjq.window;
 
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 /**
  *    author : Android 轮子哥

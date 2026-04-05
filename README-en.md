@@ -53,16 +53,18 @@ dependencies {
 
 #### Support library compatible
 
-* If the project is based on **AndroidX** package, please in the item `gradle.properties` file added, if you have already joined, you can ignore it
+* Option 1: Use remote dependencies of the old version framework
 
-```text
-# Indicates the use of AndroidX
-android.useAndroidX = true
-# Indicates migration of third-party libraries to AndroidX
-android.enableJetifier = true
+```groovy
+dependencies {
+    // Floating window framework：https://github.com/getActivity/EasyWindow
+    implementation 'com.github.getActivity:EasyWindow:13.5'
+}
 ```
 
-* If the project is based on **Support** Packages do not need to be added to this configuration
+* Option 2: If your project is still in the Support phase and it's not convenient to migrate to **AndroidX** yet, but you want to use the latest version of the framework, you can use the [JetifierStandalone](https://developer.android.com/tools/jetifier#install) tool provided by **Google** to convert the **aar** packages from the released Release versions into **Support-compatible aar** packages using reverse mode.
+
+* You can choose either of the above two options, but it's still not recommended. These are only stopgap measures, not long-term solutions. Subsequent versions of the framework will no longer support **Support** projects. The best approach is to migrate your project to **AndroidX**.
 
 #### Use Cases
 

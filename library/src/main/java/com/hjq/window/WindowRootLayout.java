@@ -1,10 +1,10 @@
 package com.hjq.window;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
+import androidx.annotation.Nullable;
 
 /**
  *    author : Android 轮子哥

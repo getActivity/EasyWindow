@@ -9,12 +9,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.view.NestedScrollingChild;
-import android.support.v4.view.NestedScrollingParent;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -33,6 +27,12 @@ import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingParent;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import com.hjq.window.EasyWindow;
 
 /**
