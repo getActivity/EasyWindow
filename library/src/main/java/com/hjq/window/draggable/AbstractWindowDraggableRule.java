@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -16,7 +17,6 @@ import android.view.DisplayCutout;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLayoutChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -64,9 +64,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     private int mCurrentScreenInvisibleWidth;
     private int mCurrentScreenInvisibleHeight;
 
-    private int mCurrentViewOnScreenX;
-    private int mCurrentViewOnScreenY;
-
     /** 当前屏幕的物理尺寸 */
     private double mScreenPhysicalSize;
 
@@ -90,11 +87,9 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
         mRootLayout.setOnTouchListener(this);
-        mRootLayout.post(() -> {
-            refreshWindowInfo();
-            refreshScreenPhysicalSize();
-            refreshLocationCoordinate();
-        });
+
+        refreshWindowInfo();
+        refreshScreenPhysicalSize();
     }
 
     /**
@@ -125,7 +120,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
                 // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/69
                 refreshWindowInfo();
                 refreshScreenPhysicalSize();
-                refreshLocationCoordinate();
 
                 mConsumeTouchView = null;
                 View consumeTouchEventView = findNeedConsumeTouchView(rootLayout, event);
@@ -185,11 +179,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 窗口拖拽回调方法
      *
      * @param easyWindow        当前窗口对象
-     * @param windowRootLayout  当前窗口视图
+     * @param rootLayout        当前窗口视图
      * @param event             当前触摸事件
      * @return                  根据返回值决定是否拦截该事件
      */
-    public abstract boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull ViewGroup windowRootLayout, @NonNull MotionEvent event);
+    public abstract boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull ViewGroup rootLayout, @NonNull MotionEvent event);
 
     @Nullable
     public EasyWindow<?> getEasyWindow() {
@@ -261,20 +255,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return 0;
         }
         return mEasyWindow.getWindowViewHeight();
-    }
-
-    /**
-     * 获取 View 在当前屏幕的 X 坐标
-     */
-    public int getViewOnScreenX() {
-        return mCurrentViewOnScreenX;
-    }
-
-    /**
-     * 获取 View 在当前屏幕的 Y 坐标
-     */
-    public int getViewOnScreenY() {
-        return mCurrentViewOnScreenY;
     }
 
     /**
@@ -357,98 +337,125 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
     }
 
     /**
-     * 刷新当前 View 在屏幕的坐标信息
-     */
-    public void refreshLocationCoordinate() {
-        ViewGroup windowRootLayout = getRootLayout();
-        if (windowRootLayout == null) {
-            return;
-        }
-
-        int[] location = new int[2];
-        windowRootLayout.getLocationOnScreen(location);
-        mCurrentViewOnScreenX = location[0];
-        mCurrentViewOnScreenY = location[1];
-    }
-
-    /**
      * 屏幕方向发生了改变
      */
     public void onScreenOrientationChange() {
         // Log.i(getClass().getSimpleName(), "屏幕方向发生了改变");
-        ViewGroup windowRootLayout = getRootLayout();
-        if (windowRootLayout == null) {
+        final ViewGroup rootLayout = getRootLayout();
+        if (rootLayout == null) {
             return;
         }
 
-        long refreshDelayMillis = 100;
+        final EasyWindow<?> easyWindow = getEasyWindow();
+        if (easyWindow == null) {
+            return;
+        }
+
+        final WindowManager.LayoutParams windowParams = easyWindow.getWindowParams();
+
+        final long refreshDelayMillis = 100;
 
         if (!isFollowScreenRotationChanges()) {
-            EasyWindow<?> easyWindow = getEasyWindow();
-            if (easyWindow != null) {
-                easyWindow.sendTask(() -> {
-                    refreshWindowInfo();
-                    refreshScreenPhysicalSize();
-                    refreshLocationCoordinate();
-                }, refreshDelayMillis);
-            }
+            easyWindow.sendTask(() -> {
+                refreshWindowInfo();
+                refreshScreenPhysicalSize();
+            }, refreshDelayMillis);
             return;
         }
-
-        // Log.i(getClass().getSimpleName(), "当前 ViewWidth = " + viewWidth + "，ViewHeight = " + viewHeight);
-
-        int startX = mCurrentViewOnScreenX - mCurrentScreenInvisibleWidth;
-        int startY = mCurrentViewOnScreenY - mCurrentScreenInvisibleHeight;
 
         // 这里为什么用 getMinTouchDistance()，而不是 0？
         // 因为其实用 getLocationOnScreen 测量出来的值不太准，有时候是 0，有时候是 1，有时候 2
         // 但大多数情况是 0 和 1，这里为了兼容这种误差，使用了最小触摸距离来作为基准值
-        float minTouchDistance = getMinTouchDistance();
+        final float minTouchDistance = getMinTouchDistance();
+        // Log.i(getClass().getSimpleName(), "最小触摸距离 minTouchDistance = " + minTouchDistance);
+
+        final int screenWidth = getScreenWidth();
+        final int screenHeight = getScreenHeight();
+        // Log.i(getClass().getSimpleName(), "屏幕旋转前 screenWidth = " + screenWidth + "，screenHeight = " + screenHeight);
+
+        final int screenInvisibleWidth = getScreenInvisibleWidth();
+        final int screenInvisibleHeight = getScreenInvisibleHeight();
+        // Log.i(getClass().getSimpleName(), "屏幕旋转前 screenInvisibleWidth = " + screenInvisibleWidth + "，screenInvisibleHeight = " + screenInvisibleHeight);
+
+        final int windowViewWidth = getWindowViewWidth();
+        final int windowViewHeight = getWindowViewHeight();
+        // Log.i(getClass().getSimpleName(), "屏幕旋转前 windowViewWidth = " + windowViewWidth + "，windowViewHeight = " + windowViewHeight);
+
+        final int windowGravity;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            windowGravity = Gravity.getAbsoluteGravity(windowParams.gravity, rootLayout.getLayoutDirection());
+        } else {
+            windowGravity = windowParams.gravity;
+        }
+        final int windowHorizontalOffset = windowParams.x;
+        final int windowVerticalOffset = windowParams.y;
+
+        int windowHorizontalGravity = windowGravity & Gravity.HORIZONTAL_GRAVITY_MASK;
+        final int currentViewOnScreenX;
+        if (windowHorizontalGravity == Gravity.LEFT) {
+            currentViewOnScreenX = windowHorizontalOffset;
+        } else if (windowHorizontalGravity == Gravity.RIGHT) {
+            currentViewOnScreenX = (screenWidth - screenInvisibleWidth) - windowHorizontalOffset;
+        } else {
+            // Gravity.CENTER_HORIZONTAL
+            currentViewOnScreenX = (screenWidth - screenInvisibleWidth - windowViewWidth) / 2 + windowHorizontalOffset;
+        }
+
+        int windowVerticalGravity = windowGravity & Gravity.VERTICAL_GRAVITY_MASK;
+        final int currentViewOnScreenY;
+        if (windowVerticalGravity == Gravity.TOP) {
+            currentViewOnScreenY = windowVerticalOffset;
+        } else if (windowVerticalGravity == Gravity.BOTTOM) {
+            currentViewOnScreenY = (screenHeight - screenInvisibleHeight) - windowVerticalOffset;
+        } else {
+            // Gravity.CENTER_VERTICAL
+            currentViewOnScreenY = (screenHeight - screenInvisibleHeight - windowViewHeight) / 2 + windowVerticalOffset;
+        }
+        // Log.i(getClass().getSimpleName(), "currentViewOnScreenX = " + currentViewOnScreenX + "，currentViewOnScreenY = " + currentViewOnScreenY);
 
         // 计算水平坐标中心点百分比
-        double horizontalCoordinatePercent;
-        if (startX <= minTouchDistance) {
+        final double horizontalCoordinatePercent;
+        if (currentViewOnScreenX <= minTouchDistance) {
             horizontalCoordinatePercent = 0;
-        } else if (Math.abs(getScreenWidth() - (startX + getWindowViewWidth())) < minTouchDistance) {
+        } else if (Math.abs(screenWidth - (currentViewOnScreenX + windowViewWidth)) <= minTouchDistance) {
             horizontalCoordinatePercent = 1;
         } else {
             // 这里因为要计算中心点位置，所以要加上 View 宽度的二分之一，因为坐标是左上开始计算的
-            double centerX = startX + getWindowViewWidth() / 2f;
-            horizontalCoordinatePercent = centerX / getScreenWidth();
+            horizontalCoordinatePercent = (currentViewOnScreenX + windowViewWidth / 2f) / screenWidth;
         }
-
         // 计算垂直坐标中心点百分比
-        double verticalCoordinatePercent;
-        if (startY <= minTouchDistance) {
+        final double verticalCoordinatePercent;
+        if (currentViewOnScreenY <= minTouchDistance) {
             verticalCoordinatePercent = 0;
-        } else if (Math.abs(getScreenHeight() - (startY + getWindowViewHeight())) < minTouchDistance) {
+        } else if (Math.abs(screenHeight - (currentViewOnScreenY + windowViewHeight)) <= minTouchDistance) {
             verticalCoordinatePercent = 1;
         } else {
             // 这里因为要计算中心点位置，所以要加上 View 高度的二分之一，因为坐标是左上开始计算的
-            double centerY = startY + getWindowViewHeight() / 2d;
-            verticalCoordinatePercent = centerY / getScreenHeight();
+            verticalCoordinatePercent = (currentViewOnScreenY + windowViewHeight / 2d) / screenHeight;
         }
+        // Log.i(getClass().getSimpleName(), "horizontalCoordinatePercent = " + horizontalCoordinatePercent + "，verticalCoordinatePercent = " + verticalCoordinatePercent);
 
         // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
         // 修复在竖屏状态下，先锁屏，再旋转到横屏，后进行解锁，出现的 View.getWindowVisibleDisplayFrame 计算有问题的 Bug
         // 这是因为屏幕在旋转的时候，视图正处于改变状态，此时通过 View 获取窗口可视区域是有问题，会获取到旧的可视区域
         // 解决方案是监听一下 View 布局变化监听，在收到回调的时候再去获取 View 获取窗口可视区域
-        windowRootLayout.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                view.removeOnLayoutChangeListener(this);
-                view.postDelayed(() -> {
-                    // 先刷新当前窗口信息
-                    refreshWindowInfo();
-                    // 刷新屏幕的物理尺寸
-                    refreshScreenPhysicalSize();
-                    int x = Math.max((int) (getScreenWidth() * horizontalCoordinatePercent - getWindowViewWidth() / 2d), 0);
-                    int y = Math.max((int) (getScreenHeight() * verticalCoordinatePercent - getWindowViewHeight() / 2d), 0);
-                    updateLocation(x, y);
-                    // 需要注意，这里需要延迟执行，否则会有问题
-                    view.post(() -> onScreenRotateInfluenceCoordinateChangeFinish());
-                }, refreshDelayMillis);
-            }
+        Looper.myQueue().addIdleHandler(() -> {
+            easyWindow.sendTask(() -> {
+                // 先刷新当前窗口信息
+                refreshWindowInfo();
+                // 刷新屏幕的物理尺寸
+                refreshScreenPhysicalSize();
+                int newScreenWidth = getScreenWidth();
+                int newScreenHeight = getScreenHeight();
+                // Log.i(getClass().getSimpleName(), "屏幕旋转后 screenWidth = " + newScreenWidth + "，screenHeight = " + newScreenHeight);
+                int newViewOnScreenX = Math.max((int) (newScreenWidth * horizontalCoordinatePercent - windowViewWidth / 2d), 0);
+                int newViewOnScreenY = Math.max((int) (newScreenHeight * verticalCoordinatePercent - windowViewHeight / 2d), 0);
+                // Log.i(getClass().getSimpleName(), "屏幕旋转后 newViewOnScreenX = " + newViewOnScreenX + "，newViewOnScreenY = " + newViewOnScreenY);
+                updateLocation(newViewOnScreenX, newViewOnScreenY);
+                // 需要注意，这里需要延迟执行，否则会有问题
+                easyWindow.sendTask(this::onScreenRotateInfluenceCoordinateChangeFinish);
+            }, refreshDelayMillis);
+            return false;
         });
     }
 
@@ -456,9 +463,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      * 屏幕旋转导致悬浮窗坐标发生变化完成方法
      */
     protected void onScreenRotateInfluenceCoordinateChangeFinish() {
-        refreshWindowInfo();
-        refreshScreenPhysicalSize();
-        refreshLocationCoordinate();
+        // default implementation ignored
     }
 
     /**
@@ -548,7 +553,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         params.gravity = screenGravity;
 
         mEasyWindow.update();
-        refreshLocationCoordinate();
     }
 
     /**

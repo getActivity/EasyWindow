@@ -56,7 +56,7 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull ViewGroup windowRootLayout, @NonNull MotionEvent event) {
+    public boolean onDragWindow(@NonNull EasyWindow<?> easyWindow, @NonNull ViewGroup rootLayout, @NonNull MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // 记录按下的位置（相对 View 的坐标）
@@ -111,7 +111,14 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
      * 触发回弹 View 到屏幕边缘
      */
     public void dispatchSpringBackViewToScreenEdge() {
-        dispatchSpringBackViewToScreenEdge(getViewOnScreenX(), getViewOnScreenY());
+        ViewGroup rootLayout = getRootLayout();
+        if (rootLayout == null) {
+            return;
+        }
+
+        int[] location = new int[2];
+        rootLayout.getLocationOnScreen(location);
+        dispatchSpringBackViewToScreenEdge(location[0], location[1]);
     }
 
     /**

@@ -291,11 +291,6 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         mWindowParams.x = x;
         mWindowParams.y = y;
         delayUpdate();
-        sendTask(() -> {
-            if (mWindowDraggableRule != null) {
-                mWindowDraggableRule.refreshLocationCoordinate();
-            }
-        });
         return (X) this;
     }
 
@@ -837,7 +832,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         Rect windowVisibleRect = new Rect();
         anchorView.getWindowVisibleDisplayFrame(windowVisibleRect);
 
-        mWindowParams.gravity = Gravity.TOP | Gravity.START;
+        mWindowParams.gravity = Gravity.LEFT | Gravity.TOP;
         mWindowParams.x = anchorViewLocation[0] - windowVisibleRect.left + xOff;
         mWindowParams.y = anchorViewLocation[1] - windowVisibleRect.top + yOff;
 
@@ -1172,22 +1167,22 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      * 获取当前窗口视图的宽度
      */
     public int getWindowViewWidth() {
-        ViewGroup windowRootLayout = getRootLayout();
-        if (windowRootLayout == null) {
+        ViewGroup rootLayout = getRootLayout();
+        if (rootLayout == null) {
             return 0;
         }
-        return windowRootLayout.getWidth();
+        return rootLayout.getWidth();
     }
 
     /**
      * 获取当前窗口视图的高度
      */
     public int getWindowViewHeight() {
-        ViewGroup windowRootLayout = getRootLayout();
-        if (windowRootLayout == null) {
+        ViewGroup rootLayout = getRootLayout();
+        if (rootLayout == null) {
             return 0;
         }
-        return windowRootLayout.getHeight();
+        return rootLayout.getHeight();
     }
 
     /**
