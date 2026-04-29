@@ -409,10 +409,10 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
         // 先扣除 View 自身宽度，用剩余空余空间算比例
         int currentHorizontalGap = Math.max(screenWidth - windowViewWidth, 0);
-        final float leftGapRatio = currentHorizontalGap > 0 ? currentViewOnScreenX / (float) currentHorizontalGap : 0;
+        final float leftGapRatio = currentHorizontalGap > 0 ? currentViewOnScreenX / (float) currentHorizontalGap : 0.5f;
         // 先扣除 View 自身高度，用剩余空余空间算比例
         int currentVerticalGap = Math.max(screenHeight - windowViewHeight, 0);
-        final float topGapRatio = currentVerticalGap > 0 ? currentViewOnScreenY / (float) currentVerticalGap : 0;
+        final float topGapRatio = currentVerticalGap > 0 ? currentViewOnScreenY / (float) currentVerticalGap : 0.5f;
         // Log.i(getClass().getSimpleName(), "leftGapRatio = " + leftGapRatio + "，topGapRatio = " + topGapRatio);
 
         Looper.myQueue().addIdleHandler(() -> {
