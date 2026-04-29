@@ -435,17 +435,7 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             // Log.i(getClass().getSimpleName(), "屏幕旋转后 newViewOnScreenX = " + newViewOnScreenX + "，newViewOnScreenY = " + newViewOnScreenY);
             updateLocation(newViewOnScreenX, newViewOnScreenY);
 
-            // 需要注意，这里需要延迟执行，否则会有问题
-            easyWindow.sendTask(this::onScreenRotateInfluenceCoordinateChangeFinish);
-
         }, SCREEN_ROTATION_BUFFER_TIME);
-    }
-
-    /**
-     * 屏幕旋转导致悬浮窗坐标发生变化完成方法
-     */
-    protected void onScreenRotateInfluenceCoordinateChangeFinish() {
-        // default implementation ignored
     }
 
     /**

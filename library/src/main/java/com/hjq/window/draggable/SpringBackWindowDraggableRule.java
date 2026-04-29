@@ -109,20 +109,6 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
 
     /**
      * 触发回弹 View 到屏幕边缘
-     */
-    public void dispatchSpringBackViewToScreenEdge() {
-        ViewGroup rootLayout = getRootLayout();
-        if (rootLayout == null) {
-            return;
-        }
-
-        int[] location = new int[2];
-        rootLayout.getLocationOnScreen(location);
-        dispatchSpringBackViewToScreenEdge(location[0], location[1]);
-    }
-
-    /**
-     * 触发回弹 View 到屏幕边缘
      *
      * @param rawX              当前屏幕 x 坐标触摸点
      * @param rawY              当前屏幕 y 坐标触摸点
@@ -177,12 +163,6 @@ public class SpringBackWindowDraggableRule extends AbstractWindowDraggableRule {
             default:
                 break;
         }
-    }
-
-    @Override
-    protected void onScreenRotateInfluenceCoordinateChangeFinish() {
-        super.onScreenRotateInfluenceCoordinateChangeFinish();
-        dispatchSpringBackViewToScreenEdge();
     }
 
     /**
