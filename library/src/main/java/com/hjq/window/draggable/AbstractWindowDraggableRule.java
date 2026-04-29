@@ -413,47 +413,38 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         }
         // Log.i(getClass().getSimpleName(), "currentViewOnScreenX = " + currentViewOnScreenX + "，currentViewOnScreenY = " + currentViewOnScreenY);
 
-        // 计算水平坐标中心点百分比
-        final double horizontalCoordinatePercent;
-        if (currentViewOnScreenX <= minTouchDistance) {
-            horizontalCoordinatePercent = 0;
-        } else if (Math.abs(screenWidth - (currentViewOnScreenX + windowViewWidth)) <= minTouchDistance) {
-            horizontalCoordinatePercent = 1;
-        } else {
-            // 这里因为要计算中心点位置，所以要加上 View 宽度的二分之一，因为坐标是左上开始计算的
-            horizontalCoordinatePercent = (currentViewOnScreenX + windowViewWidth / 2f) / screenWidth;
-        }
-        // 计算垂直坐标中心点百分比
-        final double verticalCoordinatePercent;
-        if (currentViewOnScreenY <= minTouchDistance) {
-            verticalCoordinatePercent = 0;
-        } else if (Math.abs(screenHeight - (currentViewOnScreenY + windowViewHeight)) <= minTouchDistance) {
-            verticalCoordinatePercent = 1;
-        } else {
-            // 这里因为要计算中心点位置，所以要加上 View 高度的二分之一，因为坐标是左上开始计算的
-            verticalCoordinatePercent = (currentViewOnScreenY + windowViewHeight / 2d) / screenHeight;
-        }
-        // Log.i(getClass().getSimpleName(), "horizontalCoordinatePercent = " + horizontalCoordinatePercent + "，verticalCoordinatePercent = " + verticalCoordinatePercent);
+        // 先扣除 View 自身宽度，用剩余空余空间算比例
+        int currentHorizontalGap = Math.max(screenWidth - windowViewWidth, 0);
+        final float leftGapRatio = currentHorizontalGap > 0 ? currentViewOnScreenX / (float) currentHorizontalGap : 0;
+        // 先扣除 View 自身高度，用剩余空余空间算比例
+        int currentVerticalGap = Math.max(screenHeight - windowViewHeight, 0);
+        final float topGapRatio = currentVerticalGap > 0 ? currentViewOnScreenY / (float) currentVerticalGap : 0;
+        // Log.i(getClass().getSimpleName(), "leftGapRatio = " + leftGapRatio + "，topGapRatio = " + topGapRatio);
 
-        // Github issue 地址：https://github.com/getActivity/EasyWindow/issues/49
-        // 修复在竖屏状态下，先锁屏，再旋转到横屏，后进行解锁，出现的 View.getWindowVisibleDisplayFrame 计算有问题的 Bug
-        // 这是因为屏幕在旋转的时候，视图正处于改变状态，此时通过 View 获取窗口可视区域是有问题，会获取到旧的可视区域
-        // 解决方案是监听一下 View 布局变化监听，在收到回调的时候再去获取 View 获取窗口可视区域
         Looper.myQueue().addIdleHandler(() -> {
             easyWindow.sendTask(() -> {
-                // 先刷新当前窗口信息
                 refreshWindowInfo();
-                // 刷新屏幕的物理尺寸
                 refreshScreenPhysicalSize();
                 int newScreenWidth = getScreenWidth();
                 int newScreenHeight = getScreenHeight();
                 // Log.i(getClass().getSimpleName(), "屏幕旋转后 screenWidth = " + newScreenWidth + "，screenHeight = " + newScreenHeight);
-                int newViewOnScreenX = Math.max((int) (newScreenWidth * horizontalCoordinatePercent - windowViewWidth / 2d), 0);
-                int newViewOnScreenY = Math.max((int) (newScreenHeight * verticalCoordinatePercent - windowViewHeight / 2d), 0);
+
+                int newHorizontalGap = newScreenWidth - windowViewWidth;
+                int newVerticalGap = newScreenHeight - windowViewHeight;
+
+                int newViewOnScreenX = newHorizontalGap <= 0 ? 0 : (int) (newHorizontalGap * leftGapRatio);
+                int newViewOnScreenY = newVerticalGap <= 0 ? 0 : (int) (newVerticalGap * topGapRatio);
+
+                // 边界安全限位，防止浮点误差越界
+                newViewOnScreenX = Math.max(0, Math.min(newViewOnScreenX, newScreenWidth - windowViewWidth));
+                newViewOnScreenY = Math.max(0, Math.min(newViewOnScreenY, newScreenHeight - windowViewHeight));
+
                 // Log.i(getClass().getSimpleName(), "屏幕旋转后 newViewOnScreenX = " + newViewOnScreenX + "，newViewOnScreenY = " + newViewOnScreenY);
                 updateLocation(newViewOnScreenX, newViewOnScreenY);
+
                 // 需要注意，这里需要延迟执行，否则会有问题
                 easyWindow.sendTask(this::onScreenRotateInfluenceCoordinateChangeFinish);
+
             }, refreshDelayMillis);
             return false;
         });
