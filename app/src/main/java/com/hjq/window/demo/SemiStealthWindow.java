@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import com.hjq.toast.Toaster;
 import com.hjq.window.EasyWindow;
 import com.hjq.window.OnWindowLifecycleCallback;
+import com.hjq.window.OnWindowScreenRotationCallback;
 import com.hjq.window.OnWindowViewClickListener;
 import com.hjq.window.draggable.AbstractWindowDraggableRule;
 import com.hjq.window.draggable.AbstractWindowDraggableRule.OnWindowDraggingListener;
@@ -28,7 +29,8 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
                                     implements OnWindowDraggingListener,
                                                 SpringBackAnimCallback,
                                                 OnWindowViewClickListener<View>,
-                                                OnWindowLifecycleCallback {
+                                                OnWindowLifecycleCallback,
+    OnWindowScreenRotationCallback {
 
     /** 贴边间隔时间 */
     private static final int STAY_EDGE_INTERVAL_TIME = 3000;
@@ -58,6 +60,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
         setOnClickListenerByView(android.R.id.icon, this);
         setOnWindowLifecycleCallback(this);
+        setOnWindowScreenOrientationCallback(this);
 
         int x = 0;
         if (!windowDraggableRule.isAllowMoveToScreenSafeArea() && context instanceof Activity) {
@@ -259,12 +262,13 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
         postStayEdgeRunnable();
     }
 
+    /** {@link OnWindowScreenRotationCallback} */
+
     @Override
-    public void onScreenOrientationChange(int newOrientation) {
+    public void onWindowScreenRotationBefore(@NonNull EasyWindow<?> easyWindow, int screenOrientation) {
         if (isHalfShow()) {
             cancelHalfShow();
         }
-        super.onScreenOrientationChange(newOrientation);
         postStayEdgeRunnable();
     }
 }

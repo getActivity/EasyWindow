@@ -116,6 +116,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /** 窗口生命周期回调 */
     @Nullable
     private OnWindowLifecycleCallback mOnWindowLifecycleCallback;
+    /** 窗口屏幕方向回调 */
+    @Nullable
+    private OnWindowScreenRotationCallback mOnWindowScreenRotationCallback;
 
     /** 屏幕旋转监听 */
     @Nullable
@@ -709,6 +712,14 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
      */
     public X setOnWindowLifecycleCallback(@Nullable OnWindowLifecycleCallback callback) {
         mOnWindowLifecycleCallback = callback;
+        return (X) this;
+    }
+
+    /**
+     * 设置窗口屏幕旋转回调监听
+     */
+    public X setOnWindowScreenOrientationCallback(@Nullable OnWindowScreenRotationCallback callback) {
+        mOnWindowScreenRotationCallback = callback;
         return (X) this;
     }
 
@@ -1517,9 +1528,16 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
         if (!isShowing()) {
             return;
         }
-        if (mWindowDraggableRule == null) {
-            return;
+        if (mOnWindowScreenRotationCallback != null) {
+            mOnWindowScreenRotationCallback.onWindowScreenRotationBefore(this, newOrientation);
         }
-        mWindowDraggableRule.onScreenOrientationChange();
+        if (mWindowDraggableRule != null) {
+            mWindowDraggableRule.onScreenOrientationChange();
+        }
+        sendTask(() -> {
+            if (mOnWindowScreenRotationCallback != null) {
+                mOnWindowScreenRotationCallback.onWindowScreenRotationAfter(this, newOrientation);
+            }
+        }, AbstractWindowDraggableRule.SCREEN_ROTATION_BUFFER_TIME + 10);
     }
 }

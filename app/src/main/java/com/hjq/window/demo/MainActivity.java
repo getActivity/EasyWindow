@@ -2,11 +2,14 @@ package com.hjq.window.demo;
 
 import android.animation.Animator;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -31,6 +34,7 @@ import com.hjq.window.EasyWindow;
 import com.hjq.window.EasyWindowManager;
 import com.hjq.window.OnWindowLayoutInflateListener;
 import com.hjq.window.OnWindowLifecycleCallback;
+import com.hjq.window.OnWindowScreenRotationCallback;
 import com.hjq.window.OnWindowViewClickListener;
 import com.hjq.window.OnWindowViewKeyListener;
 import com.hjq.window.OnWindowViewLongClickListener;
@@ -230,6 +234,17 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         webView.loadUrl("https://github.com/getActivity/EasyWindow");
                     }
                 })
+                .setOnWindowScreenOrientationCallback(new OnWindowScreenRotationCallback() {
+
+                    @Override
+                    public void onWindowScreenRotationBefore(@NonNull EasyWindow<?> easyWindow, int screenOrientation) {
+                        View contentView = easyWindow.getContentView();
+                        if (contentView == null) {
+                            return;
+                        }
+                        contentView.requestLayout();
+                    }
+                })
                 .setWindowAnim(R.style.IOSAnimStyle)
                 // 设置成可拖拽的
                 .setWindowDraggableRule(new MovingWindowDraggableRule())
@@ -270,6 +285,9 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
 
         } else if (viewId == R.id.btn_main_list) {
 
+            final int listPortraitHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+            final int listLandscapeHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());;
+
             EasyWindow.with(this)
                 .setContentView(R.layout.window_list, new OnWindowLayoutInflateListener() {
 
@@ -299,6 +317,48 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                             }
                         });
                         recyclerView.setAdapter(adapter);
+
+                        ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
+                        if (layoutParams == null) {
+                            return;
+                        }
+                        Context context = recyclerView.getContext();
+                        if (context == null) {
+                            return;
+                        }
+                        int screenOrientation = context.getResources().getConfiguration().orientation;
+                        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                            layoutParams.height = listPortraitHeight;
+                        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            layoutParams.height = listLandscapeHeight;
+                        }
+                        recyclerView.setLayoutParams(layoutParams);
+                    }
+                })
+                .setOnWindowScreenOrientationCallback(new OnWindowScreenRotationCallback() {
+
+                    @Override
+                    public void onWindowScreenRotationAfter(@NonNull EasyWindow<?> easyWindow, int screenOrientation) {
+                        RecyclerView recyclerView = easyWindow.findViewById(R.id.rv_window_list_view);
+                        if (recyclerView == null) {
+                            return;
+                        }
+                        ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
+                        if (layoutParams == null) {
+                            return;
+                        }
+                        Context context = recyclerView.getContext();
+                        if (context == null) {
+                            return;
+                        }
+                        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                            layoutParams.height = listPortraitHeight;
+                        } else if (screenOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                            layoutParams.height = listLandscapeHeight;
+                        }
+                        recyclerView.setLayoutParams(layoutParams);
+                        // 这里需要注意要用延迟设置，否则会导致触摸事件会出现偏移的情况
+                        easyWindow.sendTask(() -> easyWindow.setWindowLocation(Gravity.CENTER, 0,0));
                     }
                 })
                 .setWindowAnim(R.style.IOSAnimStyle)

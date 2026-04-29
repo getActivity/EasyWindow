@@ -211,6 +211,8 @@ easyWindow.isShowing();
 
 // 设置窗口生命周期回调监听
 easyWindow.setOnWindowLifecycleCallback(@Nullable OnWindowLifecycleCallback callback);
+// 设置窗口屏幕旋转回调监听
+easyWindow.setOnWindowScreenOrientationCallback(@Nullable OnWindowScreenRotationCallback callback);
 // 设置悬浮窗拖拽规则（框架内部提供了两种拖拽规则，MovingWindowDraggableRule 和 SpringBackWindowDraggableRule ）
 easyWindow.setWindowDraggableRule(@Nullable AbstractWindowDraggableRule draggableRule);
 // 设置悬浮窗拖拽规则（可能为空）

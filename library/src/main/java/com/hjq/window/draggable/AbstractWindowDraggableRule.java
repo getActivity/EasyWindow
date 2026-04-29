@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Display;
@@ -42,6 +41,9 @@ import com.hjq.window.EasyWindow;
  *    desc   : 拖拽抽象类
  */
 public abstract class AbstractWindowDraggableRule implements OnTouchListener {
+
+    /** 屏幕旋转缓冲时间 */
+    public static final long SCREEN_ROTATION_BUFFER_TIME = 100;
 
     @Nullable
     private EasyWindow<?> mEasyWindow;
@@ -353,13 +355,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
 
         final WindowManager.LayoutParams windowParams = easyWindow.getWindowParams();
 
-        final long refreshDelayMillis = 100;
-
         if (!isFollowScreenRotationChanges()) {
             easyWindow.sendTask(() -> {
                 refreshWindowInfo();
                 refreshScreenPhysicalSize();
-            }, refreshDelayMillis);
+            }, SCREEN_ROTATION_BUFFER_TIME);
             return;
         }
 
@@ -415,33 +415,30 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         final float topGapRatio = currentVerticalGap > 0 ? currentViewOnScreenY / (float) currentVerticalGap : 0.5f;
         // Log.i(getClass().getSimpleName(), "leftGapRatio = " + leftGapRatio + "，topGapRatio = " + topGapRatio);
 
-        Looper.myQueue().addIdleHandler(() -> {
-            easyWindow.sendTask(() -> {
-                refreshWindowInfo();
-                refreshScreenPhysicalSize();
-                int newScreenWidth = getScreenWidth();
-                int newScreenHeight = getScreenHeight();
-                // Log.i(getClass().getSimpleName(), "屏幕旋转后 screenWidth = " + newScreenWidth + "，screenHeight = " + newScreenHeight);
+        easyWindow.sendTask(() -> {
+            refreshWindowInfo();
+            refreshScreenPhysicalSize();
+            int newScreenWidth = getScreenWidth();
+            int newScreenHeight = getScreenHeight();
+            // Log.i(getClass().getSimpleName(), "屏幕旋转后 screenWidth = " + newScreenWidth + "，screenHeight = " + newScreenHeight);
 
-                int newHorizontalGap = newScreenWidth - windowViewWidth;
-                int newVerticalGap = newScreenHeight - windowViewHeight;
+            int newHorizontalGap = newScreenWidth - windowViewWidth;
+            int newVerticalGap = newScreenHeight - windowViewHeight;
 
-                int newViewOnScreenX = newHorizontalGap <= 0 ? 0 : (int) (newHorizontalGap * leftGapRatio);
-                int newViewOnScreenY = newVerticalGap <= 0 ? 0 : (int) (newVerticalGap * topGapRatio);
+            int newViewOnScreenX = newHorizontalGap <= 0 ? 0 : (int) (newHorizontalGap * leftGapRatio);
+            int newViewOnScreenY = newVerticalGap <= 0 ? 0 : (int) (newVerticalGap * topGapRatio);
 
-                // 边界安全限位，防止浮点误差越界
-                newViewOnScreenX = Math.max(0, Math.min(newViewOnScreenX, newScreenWidth - windowViewWidth));
-                newViewOnScreenY = Math.max(0, Math.min(newViewOnScreenY, newScreenHeight - windowViewHeight));
+            // 边界安全限位，防止浮点误差越界
+            newViewOnScreenX = Math.max(0, Math.min(newViewOnScreenX, newScreenWidth - windowViewWidth));
+            newViewOnScreenY = Math.max(0, Math.min(newViewOnScreenY, newScreenHeight - windowViewHeight));
 
-                // Log.i(getClass().getSimpleName(), "屏幕旋转后 newViewOnScreenX = " + newViewOnScreenX + "，newViewOnScreenY = " + newViewOnScreenY);
-                updateLocation(newViewOnScreenX, newViewOnScreenY);
+            // Log.i(getClass().getSimpleName(), "屏幕旋转后 newViewOnScreenX = " + newViewOnScreenX + "，newViewOnScreenY = " + newViewOnScreenY);
+            updateLocation(newViewOnScreenX, newViewOnScreenY);
 
-                // 需要注意，这里需要延迟执行，否则会有问题
-                easyWindow.sendTask(this::onScreenRotateInfluenceCoordinateChangeFinish);
+            // 需要注意，这里需要延迟执行，否则会有问题
+            easyWindow.sendTask(this::onScreenRotateInfluenceCoordinateChangeFinish);
 
-            }, refreshDelayMillis);
-            return false;
-        });
+        }, SCREEN_ROTATION_BUFFER_TIME);
     }
 
     /**

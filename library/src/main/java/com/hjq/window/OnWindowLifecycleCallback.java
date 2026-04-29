@@ -39,7 +39,7 @@ public interface OnWindowLifecycleCallback {
         // default implementation ignored
     }
 
-    /***
+    /**
      * 窗口可见性发生变化
      *
      * @param visibility            窗口可见性类型，有三种类型：
