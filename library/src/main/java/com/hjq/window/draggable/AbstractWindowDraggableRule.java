@@ -363,12 +363,6 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
             return;
         }
 
-        // 这里为什么用 getMinTouchDistance()，而不是 0？
-        // 因为其实用 getLocationOnScreen 测量出来的值不太准，有时候是 0，有时候是 1，有时候 2
-        // 但大多数情况是 0 和 1，这里为了兼容这种误差，使用了最小触摸距离来作为基准值
-        final float minTouchDistance = getMinTouchDistance();
-        // Log.i(getClass().getSimpleName(), "最小触摸距离 minTouchDistance = " + minTouchDistance);
-
         final int screenWidth = getScreenWidth();
         final int screenHeight = getScreenHeight();
         // Log.i(getClass().getSimpleName(), "屏幕旋转前 screenWidth = " + screenWidth + "，screenHeight = " + screenHeight);
