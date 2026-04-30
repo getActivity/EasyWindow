@@ -1052,6 +1052,9 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
             mOnWindowLifecycleCallback.onWindowRecycle(this);
             mOnWindowLifecycleCallback = null;
         }
+        if (mOnWindowScreenRotationCallback != null) {
+            mOnWindowScreenRotationCallback = null;
+        }
         if (mWindowLifecycleControl != null) {
             mWindowLifecycleControl.unregister();
             mWindowLifecycleControl = null;
