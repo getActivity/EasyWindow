@@ -32,6 +32,7 @@ import androidx.core.view.NestedScrollingChild;
 import androidx.core.view.NestedScrollingParent;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 import com.hjq.window.EasyWindow;
 
 /**
@@ -678,17 +679,15 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         }
 
         // NestedScrollingChild 的子类有：RecyclerView、NestedScrollView、SwipeRefreshLayout 等等
-        if (view instanceof NestedScrollingChild || view instanceof NestedScrollingParent || view instanceof WebView ||
-            view instanceof ScrollView || view instanceof ListView || view instanceof SeekBar || view instanceof ViewPager) {
-            return canTouchByView(view);
-        }
-
-        Class<? extends View> viewClass = view.getClass();
         try {
-            if (viewClass.isAssignableFrom(Class.forName("androidx.viewpager2.widget.ViewPager2"))) {
+            if (view instanceof NestedScrollingChild || view instanceof NestedScrollingParent ||
+                view instanceof WebView || view instanceof ScrollView || view instanceof ListView ||
+                view instanceof SeekBar || view instanceof ViewPager || view instanceof ViewPager2) {
                 return canTouchByView(view);
             }
-        } catch (ClassNotFoundException ignored) {
+        } catch (Exception ignored) {
+            // 需要注意：Support 没有 ViewPager2，AndroidX 才有 ViewPager2
+            // java.lang.ClassNotFoundException: Didn't find class "androidx.viewpager2.widget.ViewPager2"
             // default implementation ignored
         }
 
