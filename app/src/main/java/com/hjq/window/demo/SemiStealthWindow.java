@@ -60,7 +60,7 @@ public final class SemiStealthWindow extends EasyWindow<SemiStealthWindow>
 
         setOnClickListenerByView(android.R.id.icon, this);
         setOnWindowLifecycleCallback(this);
-        setOnWindowScreenOrientationCallback(this);
+        setOnWindowScreenRotationCallback(this);
 
         int x = 0;
         if (!windowDraggableRule.isAllowMoveToScreenSafeArea() && context instanceof Activity) {

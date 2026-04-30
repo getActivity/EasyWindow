@@ -206,7 +206,7 @@ easyWindow.isShowing();
 // Set a lifecycle callback for the window
 easyWindow.setOnWindowLifecycleCallback(@Nullable OnWindowLifecycleCallback callback);
 // Set the window screen rotation callback listening
-easyWindow.setOnWindowScreenOrientationCallback(@Nullable OnWindowScreenRotationCallback callback);
+easyWindow.setOnWindowScreenRotationCallback(@Nullable OnWindowScreenRotationCallback callback);
 // Set the drag rule for the floating window (two built-in rules available: MovingWindowDraggableRule and SpringBackWindowDraggableRule)
 easyWindow.setWindowDraggableRule(@Nullable AbstractWindowDraggableRule draggableRule);
 // Get the drag rule (could be null)

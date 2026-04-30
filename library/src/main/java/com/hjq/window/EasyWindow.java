@@ -718,7 +718,7 @@ public class EasyWindow<X extends EasyWindow<?>> implements ScreenOrientationMon
     /**
      * 设置窗口屏幕旋转回调监听
      */
-    public X setOnWindowScreenOrientationCallback(@Nullable OnWindowScreenRotationCallback callback) {
+    public X setOnWindowScreenRotationCallback(@Nullable OnWindowScreenRotationCallback callback) {
         mOnWindowScreenRotationCallback = callback;
         return (X) this;
     }

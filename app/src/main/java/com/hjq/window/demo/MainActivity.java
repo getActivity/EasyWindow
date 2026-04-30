@@ -234,7 +234,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         webView.loadUrl("https://github.com/getActivity/EasyWindow");
                     }
                 })
-                .setOnWindowScreenOrientationCallback(new OnWindowScreenRotationCallback() {
+                .setOnWindowScreenRotationCallback(new OnWindowScreenRotationCallback() {
 
                     @Override
                     public void onWindowScreenRotationBefore(@NonNull EasyWindow<?> easyWindow, int screenOrientation) {
@@ -335,7 +335,7 @@ public final class MainActivity extends AppCompatActivity implements View.OnClic
                         recyclerView.setLayoutParams(layoutParams);
                     }
                 })
-                .setOnWindowScreenOrientationCallback(new OnWindowScreenRotationCallback() {
+                .setOnWindowScreenRotationCallback(new OnWindowScreenRotationCallback() {
 
                     @Override
                     public void onWindowScreenRotationAfter(@NonNull EasyWindow<?> easyWindow, int screenOrientation) {
