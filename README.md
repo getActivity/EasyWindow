@@ -66,7 +66,7 @@ dependencies {
 }
 ```
 
-* 方案二：如果你的项目仍处于 Support 阶段，目前不方便转到 **AndroidX** 中来，但又想用最新版本的框架，可以使用 **Google** 提供的 [JetifierStandalone](https://developer.android.google.cn/tools/jetifier?hl=zh-cn#install) 工具将已发布版本 [Release](https://github.com/getActivity/XXPermissions/releases) 中的 **aar** 包通过反向模式转成 **Support** 版本的 **aar** 包来使用。
+* 方案二：如果你的项目仍处于 Support 阶段，目前不方便转到 **AndroidX** 中来，但又想用最新版本的框架，可以使用 **Google** 提供的 [JetifierStandalone](https://developer.android.google.cn/tools/jetifier?hl=zh-cn#install) 工具将已发布版本 [Release](https://github.com/getActivity/EasyWindow/releases) 中的 **aar** 包通过反向模式转成 **Support** 版本的 **aar** 包来使用。
 
 * 上述两种方案任选其一即可，但是仍旧不推荐你那样做，因为这些只是权宜之计，并非长久之计，框架后续的版本已不再支持 **Support** 项目，最好的方案是将项目迁移到 **AndroidX**。
 
