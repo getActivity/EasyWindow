@@ -4,7 +4,7 @@
 
 * Project address: [Github](https://github.com/getActivity/EasyWindow)
 
-* [Click here to download demo apk directly](https://github.com/getActivity/EasyWindow/releases/download/15.2/EasyWindow.apk)
+* [Click here to download demo apk directly](https://github.com/getActivity/EasyWindow/releases/download/15.3/EasyWindow.apk)
 
 ![](picture/en/dynamic_figure.gif)
 
@@ -47,7 +47,7 @@ android {
 
 dependencies {
     // Floating window framework：https://github.com/getActivity/EasyWindow
-    implementation 'com.github.getActivity:EasyWindow:15.2'
+    implementation 'com.github.getActivity:EasyWindow:15.3'
 }
 ```
 
