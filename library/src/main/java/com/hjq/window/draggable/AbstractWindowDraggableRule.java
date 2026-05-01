@@ -409,11 +409,11 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
         // Log.i(getClass().getSimpleName(), "currentViewOnScreenX = " + currentViewOnScreenX + "，currentViewOnScreenY = " + currentViewOnScreenY);
 
         // 先扣除 View 自身宽度，用剩余空余空间算比例
-        int currentHorizontalGap = Math.max(screenWidth - windowViewWidth, 0);
-        final float leftGapRatio = currentHorizontalGap > 0 ? currentViewOnScreenX / (float) currentHorizontalGap : 0.5f;
+        final int currentHorizontalGap = Math.max(screenWidth - windowViewWidth, 0);
+        final float leftGapRatio = calculateGapSizeRatio(currentViewOnScreenX, currentHorizontalGap);
         // 先扣除 View 自身高度，用剩余空余空间算比例
-        int currentVerticalGap = Math.max(screenHeight - windowViewHeight, 0);
-        final float topGapRatio = currentVerticalGap > 0 ? currentViewOnScreenY / (float) currentVerticalGap : 0.5f;
+        final int currentVerticalGap = Math.max(screenHeight - windowViewHeight, 0);
+        final float topGapRatio = calculateGapSizeRatio(currentViewOnScreenY, currentVerticalGap);
         // Log.i(getClass().getSimpleName(), "leftGapRatio = " + leftGapRatio + "，topGapRatio = " + topGapRatio);
 
         easyWindow.sendTask(() -> {
@@ -444,6 +444,30 @@ public abstract class AbstractWindowDraggableRule implements OnTouchListener {
      */
     public boolean isFollowScreenRotationChanges() {
         return true;
+    }
+
+    /**
+     * 计算空余空间的比例
+     *
+     * @param gapSize        空余空间的大小
+     * @param totalSize      总空间的大小
+     */
+    protected float calculateGapSizeRatio(float gapSize, float totalSize) {
+        // 防止除零异常，如果没有空余空间了，就默认放在中间位置
+        if (totalSize <= 0) {
+            return 0.5f;
+        }
+        float ratio = gapSize / totalSize;
+        if (ratio > 0.99f) {
+            // 如果比例超过了 99%，就认为它已经贴边了，直接放在边缘位置
+            return 1f;
+        } else if (ratio < 0.01f) {
+            // 如果比例小于了 1%，就认为它已经贴边了，直接放在边缘位置
+            return 0f;
+        } else {
+            // 正常情况，返回计算的比例
+            return ratio;
+        }
     }
 
     public void updateLocation(float x, float y) {
